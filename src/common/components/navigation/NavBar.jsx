@@ -1,17 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
-import { useNavigate } from 'react-router-dom';
-import styled from 'styled-components';
+import { useNavigate } from "react-router-dom";
+import styled from "styled-components";
 
-import { Button } from 'common/components/Button';
-import { useUser } from 'common/contexts/UserContext';
+import { Button } from "common/components/Button";
+import { useUser } from "common/contexts/UserContext";
 
-import LogoutModal from './LogoutModal';
+//import '/Users/zhangyixi/frontend/src/App.css';
 
 const StyledNav = styled.nav`
   display: flex;
-  gap: 10px;
-  padding: 10px 20px;
+  background-color: #d9d9d920;
+  height: 65px;
+  width: 100%;
   font-size: 20px;
 `;
 
@@ -45,34 +46,34 @@ export default function NavBar() {
     try {
       await logout();
       setIsModalOpen(false);
-      navigate('/', { replace: true });
+      navigate("/", { replace: true });
     } catch (error) {
-      console.error('Logout error:', error);
+      console.error("Logout error:", error);
     }
   };
+  //if log in, show account seeting, if not, show log in. no setup.
 
   return (
     <StyledNav>
       <LeftAligned>
-        <LogoPlaceholder onClick={() => navigate('/')}>[LOGO]</LogoPlaceholder>
+        <LogoPlaceholder onClick={() => navigate("/")}>
+          <img id="ITAlogo" src="ITAlogo.png" alt="ITA Logo" />
+        </LogoPlaceholder>
       </LeftAligned>
-      {user ? (
-        <Button.Secondary onClick={handleLogoutClick}>Log Out</Button.Secondary>
-      ) : (
-        <>
-          <Button.Primary onClick={() => navigate('/signup')}>
-            Sign Up
-          </Button.Primary>
-          <Button.Secondary onClick={() => navigate('/login')}>
+      <>
+        {user ? ( // If user is logged in, show their name (clickable to Account Settings)
+          <div onClick={() => navigate("/account")}>
+            <span>
+              {user.firstname}
+              {user.lastname}
+            </span>
+          </div>
+        ) : (
+          <Button.Secondary onClick={() => navigate("/login")}>
             Login
           </Button.Secondary>
-        </>
-      )}
-      <LogoutModal
-        isOpen={isModalOpen}
-        onClose={handleModalClose}
-        onLogout={handleLogoutConfirm}
-      />
+        )}
+      </>
     </StyledNav>
   );
 }

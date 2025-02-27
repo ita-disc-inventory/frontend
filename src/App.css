@@ -7,6 +7,10 @@
   --text: #191a23;
 }
 
+#ITAlogo{
+  height:50px;
+}
+
 * {
   font-family: Verdana, sans-serif;
   color: var(--text);
