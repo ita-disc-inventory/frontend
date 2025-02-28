@@ -2,14 +2,26 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import ResetPassword from 'pages/account/ResetPassword';
-
 import FormPopup from './FormPopup';
+import ResetPassword from './ResetPassword';
 
 const ButtonContainer = styled.div`
   display: flex;
   justify-content: center;
   margin-top: 20px;
+`;
+
+const TriggerButton = styled.button`
+  padding: 10px 20px;
+  font-size: 16px;
+  color: white;
+  background-color: var(--violet-4);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  &:hover {
+    background-color: var(--violet-6);
+  }
 `;
 
 export default function PasswordChangeForm() {
@@ -30,6 +42,7 @@ export default function PasswordChangeForm() {
         >
           <ResetPassword />
         </FormPopup>
+        <TriggerButton>Reset Password</TriggerButton>
       </ButtonContainer>
     </div>
   );

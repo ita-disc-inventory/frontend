@@ -12,6 +12,19 @@ const ButtonContainer = styled.div`
   margin-top: 20px;
 `;
 
+const TriggerButton = styled.button`
+  padding: 10px 20px;
+  font-size: 16px;
+  color: white;
+  background-color: var(--violet-4);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  &:hover {
+    background-color: var(--violet-6);
+  }
+`;
+
 export default function PasswordChangeForm() {
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -30,6 +43,7 @@ export default function PasswordChangeForm() {
         >
           <ResetPassword />
         </FormPopup>
+        <TriggerButton>Reset Password</TriggerButton>
       </ButtonContainer>
     </div>
   );

@@ -181,7 +181,6 @@ export default function FormPopup({
           <StyledDescription>{description}</StyledDescription>
           <form onSubmit={onSubmit}>
             {children}
-            {/* if defaultSubmit is NOT true, caller is expected to have another button to submit form */}
             {defaultSubmit && (
               <div
                 style={{

@@ -181,22 +181,19 @@ export default function FormPopup({
           <StyledDescription>{description}</StyledDescription>
           <form onSubmit={onSubmit}>
             {children}
-            {/* if defaultSubmit is NOT true, caller is expected to have another button to submit form */}
-            {defaultSubmit && (
-              <div
-                style={{
-                  display: 'flex',
-                  marginTop: 25,
-                  justifyContent: 'flex-end',
-                }}
-              >
-                <Dialog.Close asChild>
-                  <StyledButton className='green' type='submit'>
-                    Save changes
-                  </StyledButton>
-                </Dialog.Close>
-              </div>
-            )}
+            <div
+              style={{
+                display: 'flex',
+                marginTop: 25,
+                justifyContent: 'flex-end',
+              }}
+            >
+              <Dialog.Close asChild>
+                <StyledButton className='green' type='submit'>
+                  Save changes
+                </StyledButton>
+              </Dialog.Close>
+            </div>
           </form>
           <Dialog.Close asChild>
             <IconButton aria-label='Close'>

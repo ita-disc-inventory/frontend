@@ -10,6 +10,9 @@ import SubmitButton from 'common/components/form/SubmitButton';
 import { RedSpan } from 'common/components/form/styles';
 import { useUser } from 'common/contexts/UserContext';
 
+// import NewOrderForm from 'common/components/NewOrderForm';
+// import PasswordChangeForm from 'common/components/PasswordChangeForm';
+import ResetPassword from './ResetPassword';
 import { StyledPage } from './styles';
 
 const StyledLink = styled(Link)`
@@ -93,6 +96,7 @@ export default function Login() {
           text='Sign in with Google'
         />
       </Form>
+      <ResetPassword />
     </StyledPage>
   );
 }
