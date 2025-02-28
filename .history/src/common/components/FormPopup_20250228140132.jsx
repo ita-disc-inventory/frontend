@@ -119,7 +119,7 @@ const StyledButton = styled.button`
 
   &.green {
     background-color: var(--green-4);
-    color: var (--green-11);
+    color: var(--green-11);
     outline-color: var(--green-7);
     &:hover {
       background-color: var(--green-5);
@@ -142,20 +142,12 @@ const IconButton = styled.button`
   right: 10px;
   background-color: rgb(255, 74, 74); // same color from Figma
   transition: all 0.3s ease;
-
-  svg {
-    height: 20px; // Set the height of the SVG
-    width: 20px; // Set the width of the SVG
-  }
-
   svg > path {
     fill: white;
   }
-
   &:hover {
     background-color: red; // button gets darker when they hover
   }
-
   &:focus {
     box-shadow: 0 0 0 2px red; // button appears a tad bigger when clicked
   }

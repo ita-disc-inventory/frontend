@@ -71,7 +71,7 @@ export default function NewOrderForm() {
   const handleSubmit = (e) => {
     e.preventDefault();
     // Handle new order logic here
-    handleOrderDescriptionChange(' ');
+    handleOrderDescriptionChange();
     console.log('New order created:', {
       orderName,
       orderDescription,

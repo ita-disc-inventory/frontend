@@ -107,7 +107,6 @@ const StyledButton = styled.button`
   font-weight: 500;
   height: 35px;
   user-select: none;
-
   &.violet {
     background-color: var(--violet-4);
     color: var(--violet-12);
@@ -116,7 +115,6 @@ const StyledButton = styled.button`
       background-color: var(--mauve-3);
     }
   }
-
   &.green {
     background-color: var(--green-4);
     color: var (--green-11);
@@ -131,33 +129,21 @@ const IconButton = styled.button`
   all: unset;
   font-family: inherit;
   border-radius: 100%;
-  height: 40px;
-  width: 40px;
+  height: 25px;
+  width: 25px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  color: white;
+  color: var(--violet-11);
   position: absolute;
   top: 10px;
   right: 10px;
-  background-color: rgb(255, 74, 74); // same color from Figma
-  transition: all 0.3s ease;
-
-  svg {
-    height: 20px; // Set the height of the SVG
-    width: 20px; // Set the width of the SVG
-  }
-
-  svg > path {
-    fill: white;
-  }
-
+  background-color: var(--gray-3);
   &:hover {
-    background-color: red; // button gets darker when they hover
+    background-color: var(--violet-4);
   }
-
   &:focus {
-    box-shadow: 0 0 0 2px red; // button appears a tad bigger when clicked
+    box-shadow: 0 0 0 2px red;
   }
 `;
 
