@@ -232,15 +232,6 @@ export default function ResetPassword() {
         <Button type='submit' disabled={isLoading}>
           {isLoading ? 'Updating...' : 'Update Password'}
         </Button>
-        <Button
-          type='reset'
-          style={{
-            backgroundColor: 'rgb(255, 74, 74)',
-            marginTop: '-10px',
-          }}
-        >
-          Cancel
-        </Button>
         {error && <ErrorMessage>{error}</ErrorMessage>}
       </Form>
     </Container>

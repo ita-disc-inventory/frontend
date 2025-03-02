@@ -12,6 +12,19 @@ const ButtonContainer = styled.div`
   margin-top: 20px;
 `;
 
+const Button = styled.button`
+  padding: 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+
+  &:disabled {
+    background-color: #ccc;
+  }
+`;
+
 export default function PasswordChangeForm() {
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -26,10 +39,10 @@ export default function PasswordChangeForm() {
           title='Reset Password'
           description='Enter your current and new password'
           onSubmit={handleSubmit}
-          maxWidth='40%'
-          defaultSubmit={false}
+          maxWidth='50%'
         >
           <ResetPassword />
+          <Button type='submit'>{'Cancel Password'}</Button>
         </FormPopup>
       </ButtonContainer>
     </div>

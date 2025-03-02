@@ -26,7 +26,7 @@ export default function PasswordChangeForm() {
           title='Reset Password'
           description='Enter your current and new password'
           onSubmit={handleSubmit}
-          maxWidth='40%'
+          maxWidth='50%'
           defaultSubmit={false}
         >
           <ResetPassword />

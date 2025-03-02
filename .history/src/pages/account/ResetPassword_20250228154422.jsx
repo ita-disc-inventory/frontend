@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
+import FormPopup from 'common/components/FormPopup';
 import { useUser } from 'common/contexts/UserContext';
 
 const Container = styled.div`
@@ -83,6 +84,25 @@ const PasswordContainer = styled.div`
   flex-direction: column;
 `;
 
+const ButtonContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+`;
+
+// const TriggerButton = styled.button`
+//   padding: 10px 20px;
+//   font-size: 16px;
+//   color: white;
+//   background-color: var(--violet-4);
+//   border: none;
+//   border-radius: 4px;
+//   cursor: pointer;
+//   &:hover {
+//     background-color: var(--violet-6);
+//   }
+// `;
+
 export default function ResetPassword() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -93,9 +113,7 @@ export default function ResetPassword() {
 
   useEffect(() => {
     const hash = window.location.hash.substring(1);
-
     const hashParams = new URLSearchParams(hash);
-
     const access_token = hashParams.get('access_token');
     const type = hashParams.get('type');
 
@@ -202,47 +220,59 @@ export default function ResetPassword() {
   };
 
   return (
-    <Container>
-      <h2>Set New Password</h2>
-      <Form onSubmit={handleSubmit}>
-        <PasswordContainer>
-          <Input
-            type='password'
-            placeholder='New Password'
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-          <PasswordStrength strength={checkPasswordStrength(password)} />
-          {password && (
-            <PasswordRequirements>
-              {validatePassword(password).map((req, index) => (
-                <li key={index}>{req}</li>
-              ))}
-            </PasswordRequirements>
-          )}
-        </PasswordContainer>
-        <Input
-          type='password'
-          placeholder='Confirm New Password'
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
-          required
-        />
-        <Button type='submit' disabled={isLoading}>
-          {isLoading ? 'Updating...' : 'Update Password'}
-        </Button>
-        <Button
-          type='reset'
-          style={{
-            backgroundColor: 'rgb(255, 74, 74)',
-            marginTop: '-10px',
-          }}
+    <div>
+      <ButtonContainer>
+        <FormPopup
+          title='Reset Password'
+          description='Enter your current and new password'
+          onSubmit={handleSubmit}
+          maxWidth='50%'
+          defaultSubmit={true}
         >
-          Cancel
-        </Button>
-        {error && <ErrorMessage>{error}</ErrorMessage>}
-      </Form>
-    </Container>
+          <Container>
+            <h2>Set New Password</h2>
+            <Form onSubmit={handleSubmit}>
+              <PasswordContainer>
+                <Input
+                  type='password'
+                  placeholder='New Password'
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                />
+                <PasswordStrength strength={checkPasswordStrength(password)} />
+                {password && (
+                  <PasswordRequirements>
+                    {validatePassword(password).map((req, index) => (
+                      <li key={index}>{req}</li>
+                    ))}
+                  </PasswordRequirements>
+                )}
+              </PasswordContainer>
+              <Input
+                type='password'
+                placeholder='Confirm New Password'
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                required
+              />
+              <Button type='submit' disabled={isLoading}>
+                {isLoading ? 'Updating...' : 'Update Password'}
+              </Button>
+              <Button
+                type='reset'
+                style={{
+                  backgroundColor: 'rgb(255, 74, 74)',
+                  marginTop: '-10px',
+                }}
+              >
+                Cancel
+              </Button>
+              {error && <ErrorMessage>{error}</ErrorMessage>}
+            </Form>
+          </Container>
+        </FormPopup>
+      </ButtonContainer>
+    </div>
   );
 }

@@ -4,8 +4,6 @@ import styled from 'styled-components';
 
 import ResetPassword from 'pages/account/ResetPassword';
 
-import FormPopup from './FormPopup';
-
 const ButtonContainer = styled.div`
   display: flex;
   justify-content: center;
@@ -22,15 +20,7 @@ export default function PasswordChangeForm() {
   return (
     <div>
       <ButtonContainer>
-        <FormPopup
-          title='Reset Password'
-          description='Enter your current and new password'
-          onSubmit={handleSubmit}
-          maxWidth='40%'
-          defaultSubmit={false}
-        >
-          <ResetPassword />
-        </FormPopup>
+        <ResetPassword />
       </ButtonContainer>
     </div>
   );
