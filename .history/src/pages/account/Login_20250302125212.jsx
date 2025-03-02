@@ -4,8 +4,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
 import GoogleButton from 'common/components/GoogleButton';
-import NewOrderForm from 'common/components/NewOrderForm';
-import PasswordChangeForm from 'common/components/PasswordChangeForm';
+// import NewOrderForm from 'common/components/NewOrderForm';
+// import PasswordChangeForm from 'common/components/PasswordChangeForm';
 import YNPopup from 'common/components/YNPopup';
 import { Form, FormTitle } from 'common/components/form/Form';
 import { Input } from 'common/components/form/Input';
@@ -96,9 +96,7 @@ export default function Login() {
           text='Sign in with Google'
         />
       </Form>
-      <YNPopup />
-      <NewOrderForm />
-      <PasswordChangeForm />
+      <YNPopup yesText='Confirm' noText='Cancel' />
     </StyledPage>
   );
 }

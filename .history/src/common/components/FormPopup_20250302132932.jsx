@@ -125,15 +125,6 @@ const StyledButton = styled.button`
       background-color: var(--green-5);
     }
   }
-
-  &.red {
-    background-color: var(--red-4);
-    color: var(--red-11);
-    outline-color: var(--red-7);
-    &:hover {
-      background-color: var(--red-5);
-    }
-  }
 `;
 
 const IconButton = styled.button`
@@ -174,14 +165,12 @@ const IconButton = styled.button`
 `;
 
 export default function FormPopup({
-  title = 'Form Popup',
-  description = 'Form Desc.',
+  title,
+  description,
   children,
   onSubmit,
-  maxWidth = '500px',
-  defaultSubmit = true,
-  submitText = 'Submit',
-  cancelText = 'Cancel',
+  maxWidth,
+  defaultSubmit,
 }) {
   return (
     <Dialog.Root>
@@ -213,10 +202,10 @@ export default function FormPopup({
                     }}
                   >
                     <StyledButton className='green' type='submit'>
-                      {submitText}
+                      Save changes
                     </StyledButton>
-                    <StyledButton className='red' type='submit'>
-                      {cancelText}
+                    <StyledButton className='violet' type='submit'>
+                      Save changes
                     </StyledButton>
                   </div>
                 </Dialog.Close>
@@ -241,14 +230,10 @@ FormPopup.propTypes = {
   onSubmit: PropTypes.func.isRequired,
   maxWidth: PropTypes.string,
   defaultSubmit: PropTypes.bool,
-  submitText: PropTypes.string,
-  cancelText: PropTypes.string,
 };
 
 FormPopup.defaultProps = {
   description: '',
   maxWidth: '500px',
   defaultSubmit: true,
-  submitText: 'Submit',
-  cancelText: 'Cancel',
 };

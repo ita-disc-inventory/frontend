@@ -174,14 +174,12 @@ const IconButton = styled.button`
 `;
 
 export default function FormPopup({
-  title = 'Form Popup',
-  description = 'Form Desc.',
+  title,
+  description,
   children,
   onSubmit,
-  maxWidth = '500px',
-  defaultSubmit = true,
-  submitText = 'Submit',
-  cancelText = 'Cancel',
+  maxWidth,
+  defaultSubmit,
 }) {
   return (
     <Dialog.Root>
@@ -213,10 +211,10 @@ export default function FormPopup({
                     }}
                   >
                     <StyledButton className='green' type='submit'>
-                      {submitText}
+                      Save changes
                     </StyledButton>
                     <StyledButton className='red' type='submit'>
-                      {cancelText}
+                      Save changes
                     </StyledButton>
                   </div>
                 </Dialog.Close>
@@ -241,14 +239,10 @@ FormPopup.propTypes = {
   onSubmit: PropTypes.func.isRequired,
   maxWidth: PropTypes.string,
   defaultSubmit: PropTypes.bool,
-  submitText: PropTypes.string,
-  cancelText: PropTypes.string,
 };
 
 FormPopup.defaultProps = {
   description: '',
   maxWidth: '500px',
   defaultSubmit: true,
-  submitText: 'Submit',
-  cancelText: 'Cancel',
 };

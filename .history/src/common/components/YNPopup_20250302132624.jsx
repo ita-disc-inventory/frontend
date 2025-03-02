@@ -201,19 +201,12 @@ export default function YNPopup({
                 justifyContent: 'flex-end',
               }}
             >
-              {/* Caller must provide + define functions for both buttons when clicked */}
               <Dialog.Close asChild>
-                <div
-                  style={{
-                    display: 'flex',
-                    flexDirection: 'row-reverse',
-                    gap: '10px',
-                  }}
-                >
-                  <StyledButton className={yesColor} onClick={yesOnClick}>
+                <div style={{ display: 'flex', flexDirection: 'row-reverse' }}>
+                  <StyledButton className='green' type='submit'>
                     {yesText}
                   </StyledButton>
-                  <StyledButton className={noColor} onClick={noOnClick}>
+                  <StyledButton className='red' type='submit'>
                     {noText}
                   </StyledButton>
                 </div>

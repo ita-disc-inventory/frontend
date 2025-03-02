@@ -1,6 +1,6 @@
 import React from 'react';
 
-// CSS files used below for coloring
+// Import CSS files
 import '@radix-ui/colors/black-alpha.css';
 import '@radix-ui/colors/green.css';
 import '@radix-ui/colors/mauve.css';
@@ -8,10 +8,10 @@ import '@radix-ui/colors/red.css';
 import '@radix-ui/colors/violet.css';
 import { Cross2Icon } from '@radix-ui/react-icons';
 import PropTypes from 'prop-types';
-import { Dialog } from 'radix-ui';
+import { AlertDialog, Dialog } from 'radix-ui';
 import styled, { keyframes } from 'styled-components';
 
-// Keyframes for open/close animations
+// Keyframes for animations
 const overlayShow = keyframes`
   from {
     opacity: 0;
@@ -32,15 +32,15 @@ const contentShow = keyframes`
   }
 `;
 
-// Converted CSS styles --> styled components
-const StyledOverlay = styled(Dialog.Overlay)`
+// Styled components
+const StyledOverlay = styled(AlertDialog.Overlay)`
   background-color: var(--black-a9);
   position: fixed;
   inset: 0;
   animation: ${overlayShow} 150ms cubic-bezier(0.16, 1, 0.3, 1);
 `;
 
-const StyledContent = styled(Dialog.Content)`
+const StyledContent = styled(AlertDialog.Content)`
   background-color: white;
   border-radius: 6px;
   box-shadow: var(--shadow-6);
@@ -58,14 +58,14 @@ const StyledContent = styled(Dialog.Content)`
   }
 `;
 
-const StyledTitle = styled(Dialog.Title)`
+const StyledTitle = styled(AlertDialog.Title)`
   margin: 0;
   color: var(--mauve-12);
   font-size: 17px;
   font-weight: 500;
 `;
 
-const StyledDescription = styled(Dialog.Description)`
+const StyledDescription = styled(AlertDialog.Description)`
   margin-bottom: 20px;
   color: var(--mauve-11);
   font-size: 15px;
@@ -83,10 +83,6 @@ const StyledButton = styled.button`
   font-weight: 500;
   height: 35px;
   user-select: none;
-
-  &:hover {
-    cursor: pointer;
-  }
 
   &:focus:not(:focus-visible) {
     outline: 0;
@@ -180,54 +176,37 @@ export default function YNPopup({
   noColor = 'red',
   title = 'Popup Title',
   description = 'Popup Desc.',
-  onSubmit,
 }) {
   return (
-    <Dialog.Root>
-      <Dialog.Trigger asChild>
+    <AlertDialog.Root>
+      <AlertDialog.Trigger asChild>
         <StyledButton className='violet'>Open YNPopup</StyledButton>
-      </Dialog.Trigger>
-      <Dialog.Portal>
+      </AlertDialog.Trigger>
+      <AlertDialog.Portal>
         <StyledOverlay />
         <StyledContent>
           <StyledTitle>{title}</StyledTitle>
           <StyledDescription>{description}</StyledDescription>
-          <form onSubmit={onSubmit}>
-            {/* if defaultSubmit is NOT true, caller is expected to have another button to submit form */}
-            <div
-              style={{
-                display: 'flex',
-                marginTop: 25,
-                justifyContent: 'flex-end',
-              }}
-            >
-              {/* Caller must provide + define functions for both buttons when clicked */}
-              <Dialog.Close asChild>
-                <div
-                  style={{
-                    display: 'flex',
-                    flexDirection: 'row-reverse',
-                    gap: '10px',
-                  }}
-                >
-                  <StyledButton className={yesColor} onClick={yesOnClick}>
-                    {yesText}
-                  </StyledButton>
-                  <StyledButton className={noColor} onClick={noOnClick}>
-                    {noText}
-                  </StyledButton>
-                </div>
-              </Dialog.Close>
-            </div>
-          </form>
+          <div style={{ display: 'flex', gap: 25, justifyContent: 'flex-end' }}>
+            <AlertDialog.Cancel asChild>
+              <StyledButton className={noColor} onClick={noOnClick}>
+                {noText}
+              </StyledButton>
+            </AlertDialog.Cancel>
+            <AlertDialog.Action asChild>
+              <StyledButton className={yesColor} onClick={yesOnClick}>
+                {yesText}
+              </StyledButton>
+            </AlertDialog.Action>
+          </div>
           <Dialog.Close asChild>
             <IconButton aria-label='Close'>
               <Cross2Icon />
             </IconButton>
           </Dialog.Close>
         </StyledContent>
-      </Dialog.Portal>
-    </Dialog.Root>
+      </AlertDialog.Portal>
+    </AlertDialog.Root>
   );
 }
 
@@ -240,7 +219,6 @@ YNPopup.propTypes = {
   noColor: PropTypes.string,
   title: PropTypes.string,
   description: PropTypes.string,
-  onSubmit: PropTypes.func.isRequired,
 };
 
 YNPopup.defaultProps = {
