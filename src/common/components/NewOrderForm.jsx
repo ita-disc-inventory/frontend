@@ -12,7 +12,6 @@ const FormContainer = styled.div`
 
   @media (max-width: 1400px) {
     flex-direction: column;
-    gap: 0px;
   }
 `;
 
@@ -71,7 +70,6 @@ export default function NewOrderForm() {
   const handleSubmit = (e) => {
     e.preventDefault();
     // Handle new order logic here
-    handleOrderDescriptionChange(' ');
     console.log('New order created:', {
       orderName,
       orderDescription,

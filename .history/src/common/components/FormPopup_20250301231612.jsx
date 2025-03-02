@@ -67,34 +67,34 @@ const StyledDescription = styled(Dialog.Description)`
   line-height: 1.5;
 `;
 
-const StyledFieldset = styled.fieldset`
-  display: flex;
-  gap: 20px;
-  align-items: center;
-  margin-bottom: 15px;
-`;
+// const StyledFieldset = styled.fieldset`
+//   display: flex;
+//   gap: 20px;
+//   align-items: center;
+//   margin-bottom: 15px;
+// `;
 
-const StyledLabel = styled.label`
-  font-size: 15px;
-  color: var(--violet-11);
-  width: 90px;
-  text-align: right;
-`;
+// const StyledLabel = styled.label`
+//   font-size: 15px;
+//   color: var(--violet-11);
+//   width: 90px;
+//   text-align: right;
+// `;
 
-const StyledInput = styled.input`
-  width: 100%;
-  flex: 1;
-  border-radius: 4px;
-  padding: 0 10px;
-  font-size: 15px;
-  line-height: 1;
-  color: var(--violet-11);
-  box-shadow: 0 0 0 1px var(--violet-7);
-  height: 35px;
-  &:focus {
-    box-shadow: 0 0 0 2px var(--violet-8);
-  }
-`;
+// const StyledInput = styled.input`
+//   width: 100%;
+//   flex: 1;
+//   border-radius: 4px;
+//   padding: 0 10px;
+//   font-size: 15px;
+//   line-height: 1;
+//   color: var(--violet-11);
+//   box-shadow: 0 0 0 1px var(--violet-7);
+//   height: 35px;
+//   &:focus {
+//     box-shadow: 0 0 0 2px var(--violet-8);
+//   }
+// `;
 
 const StyledButton = styled.button`
   display: inline-flex;
@@ -119,7 +119,7 @@ const StyledButton = styled.button`
 
   &.green {
     background-color: var(--green-4);
-    color: var(--green-11);
+    color: var (--green-11);
     outline-color: var(--green-7);
     &:hover {
       background-color: var(--green-5);
@@ -131,8 +131,8 @@ const IconButton = styled.button`
   all: unset;
   font-family: inherit;
   border-radius: 100%;
-  height: 25px;
-  width: 25px;
+  height: 40px;
+  width: 40px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -140,16 +140,27 @@ const IconButton = styled.button`
   position: absolute;
   top: 10px;
   right: 10px;
-  background-color: rgb(255, 74, 74); // same color from Figma
-  transition: all 1s ease;
+  background-color: inherit;
+  transition: all 0.3s ease;
+
+  svg {
+    height: 20px; // Set the height of the SVG
+    width: 20px; // Set the width of the SVG
+  }
+
   svg > path {
-    fill: white;
+    fill: red;
   }
+
   &:hover {
-    background-color: blue; // button gets darker when they hover
+    background-color: #ededed; // button gets darker when they hover
   }
+
   &:focus {
-    box-shadow: 0 0 0 2px red; // button appears a tad bigger when clicked
+    svg {
+      height: 25px;
+      width: 25px;
+    }
   }
 `;
 
@@ -159,6 +170,7 @@ export default function FormPopup({
   children,
   onSubmit,
   maxWidth,
+  defaultSubmit,
 }) {
   return (
     <Dialog.Root>
@@ -172,19 +184,29 @@ export default function FormPopup({
           <StyledDescription>{description}</StyledDescription>
           <form onSubmit={onSubmit}>
             {children}
-            <div
-              style={{
-                display: 'flex',
-                marginTop: 25,
-                justifyContent: 'flex-end',
-              }}
-            >
-              <Dialog.Close asChild>
-                <StyledButton className='green' type='submit'>
-                  Save changes
-                </StyledButton>
-              </Dialog.Close>
-            </div>
+            {/* if defaultSubmit is NOT true, caller is expected to have another button to submit form */}
+            {defaultSubmit && (
+              <div
+                style={{
+                  display: 'flex',
+                  marginTop: 25,
+                  justifyContent: 'flex-end',
+                }}
+              >
+                <Dialog.Close asChild>
+                  <div
+                    style={{ display: 'flex', flexDirection: 'row-reverse' }}
+                  >
+                    <StyledButton className='green' type='submit'>
+                      Save changes
+                    </StyledButton>
+                    <StyledButton className='violet' type='submit'>
+                      Save changes
+                    </StyledButton>
+                  </div>
+                </Dialog.Close>
+              </div>
+            )}
           </form>
           <Dialog.Close asChild>
             <IconButton aria-label='Close'>
@@ -203,9 +225,11 @@ FormPopup.propTypes = {
   children: PropTypes.node.isRequired,
   onSubmit: PropTypes.func.isRequired,
   maxWidth: PropTypes.string,
+  defaultSubmit: PropTypes.bool,
 };
 
 FormPopup.defaultProps = {
   description: '',
   maxWidth: '500px',
+  defaultSubmit: true,
 };

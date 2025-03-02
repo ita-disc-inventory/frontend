@@ -1,134 +1,89 @@
+// Used for New Order Form, Change Password Form
 import React from 'react';
 
 import { Cross2Icon } from '@radix-ui/react-icons';
-//import PropTypes from 'prop-types';
-// import styled from 'styled-components';
+import PropTypes from 'prop-types';
 import { Dialog } from 'radix-ui';
+import styled from 'styled-components';
 
-/* reset */
-// button,
-// fieldset,
-// input {
-//   all: unset;
-// }
+// MAKE SURE TO STYLE COMPONENT IN SAME FILE IT IS BEING EXPORTED FROM!!
+const StyledOverlay = styled(Dialog.Overlay)`
+  background-color: var(--black-a9);
+  position: fixed;
+  inset: 0;
+  animation: overlayShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
+`;
 
-// .DialogOverlay {
-//   background-color: var(--black-a9);
-//   position: fixed;
-//   inset: 0;
-//   animation: overlayShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
-// }
+const StyledContent = styled(Dialog.Content)`
+  background-color: var(--secondary-lightgrey);
+  border-radius: 6px;
+  box-shadow: var(--shadow-6);
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90vw;
+  max-width: ${(props) => props.maxWidth || '500px'};
+  max-height: 85vh;
+  padding: 25px;
+  overflow: hidden;
+  animation: contentShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
+  &:focus {
+    outline: none;
+  }
 
-// .DialogContent {
-//   background-color: var(--secondary-lightgrey);
-//   border-radius: 6px;
-//   box-shadow: var(--shadow-6);
-//   position: fixed;
-//   top: 50%;
-//   left: 50%;
-//   transform: translate(-50%, -50%);
-//   width: 90vw;
-//   max-width: 500px;
-//   max-height: 85vh;
-//   padding: 25px;
-//   animation: contentShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
-// }
-// .DialogContent:focus {
-//   outline: none;
-// }
+  @keyframes overlayShow {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
 
-// .DialogTitle {
-//   margin: 0;
-//   font-weight: 500;
-//   color: var(--mauve-12);
-//   font-size: 17px;
-// }
+  @keyframes contentShow {
+    from {
+      opacity: 0;
+      transform: translate(-50%, -48%) scale(0.96);
+    }
+    to {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
+  }
+`;
 
-// .DialogDescription {
-//   margin: 10px 0 20px;
-//   color: var(--mauve-11);
-//   font-size: 15px;
-//   line-height: 1.5;
-// }
+const StyledTitle = styled(Dialog.Title)`
+  margin: 0;
+  font-weight: 500;
+  color: var(--mauve-12);
+  font-size: 17px;
+`;
 
-// .Button {
-//   display: inline-flex;
-//   align-items: center;
-//   justify-content: center;
-//   border-radius: 4px;
-//   padding: 0 15px;
-//   font-size: 15px;
-//   line-height: 1;
-//   font-weight: 500;
-//   height: 35px;
-//   user-select: none;
-// }
-// .Button:focus:not(:focus-visible) {
-//   outline: 0;
-// }
-// .Button:focus-visible {
-//   outline: 2px solid var(--violet-6);
-//   outline-offset: 1px;
-// }
-// .Button.violet {
-//   background-color: var(--violet-4);
-//   color: var(--violet-12);
-//   outline-color: var(--violet-6);
-// }
-// .Button.violet:hover {
-//   background-color: var(--mauve-3);
-// }
-// .Button.green {
-//   background-color: var(--green-4);
-//   color: var(--green-11);
-//   outline-color: var(--green-7);
-// }
-// .Button.green:hover {
-//   background-color: var(--green-5);
-// }
+const StyledDescription = styled(Dialog.Description)`
+  margin: 10px 0 20px;
+  color: var(--mauve-11);
+  font-size: 15px;
+  line-height: 1.5;
+`;
 
-// .IconButton {
-//   all: unset;
-//   font-family: inherit;
-//   border-radius: 100%;
-//   height: 25px;
-//   width: 25px;
-//   display: inline-flex;
-//   align-items: center;
-//   justify-content: center;
-//   color: var(--violet-11);
-//   position: absolute;
-//   top: 10px;
-//   right: 10px;
-//   background-color: var(--gray-3);
-// }
-// .IconButton:hover {
-//   background-color: var(--violet-4);
-// }
-// .IconButton:focus {
-//   box-shadow: 0 0 0 2px var(--violet-7);
-// }
-
-// .Fieldset {
+// const StyledFieldset = styled.fieldset`
 //   display: flex;
 //   gap: 20px;
 //   align-items: center;
 //   margin-bottom: 15px;
-// }
+// `;
 
-// .Label {
+// const StyledLabel = styled.label`
 //   font-size: 15px;
 //   color: var(--violet-11);
 //   width: 90px;
 //   text-align: right;
-// }
+// `;
 
-// .Input {
+// const StyledInput = styled.input`
 //   width: 100%;
 //   flex: 1;
-//   display: inline-flex;
-//   align-items: center;
-//   justify-content: center;
 //   border-radius: 4px;
 //   padding: 0 10px;
 //   font-size: 15px;
@@ -136,96 +91,145 @@ import { Dialog } from 'radix-ui';
 //   color: var(--violet-11);
 //   box-shadow: 0 0 0 1px var(--violet-7);
 //   height: 35px;
-// }
-// .Input:focus {
-//   box-shadow: 0 0 0 2px var(--violet-8);
-// }
+//   &:focus {
+//     box-shadow: 0 0 0 2px var(--violet-8);
+//   }
+// `;
 
-// @keyframes overlayShow {
-//   from {
-//     opacity: 0;
-//   }
-//   to {
-//     opacity: 1;
-//   }
-// }
+const StyledButton = styled.button`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  padding: 0 15px;
+  font-size: 15px;
+  line-height: 1;
+  font-weight: 500;
+  height: 35px;
+  user-select: none;
 
-// @keyframes contentShow {
-//   from {
-//     opacity: 0;
-//     transform: translate(-50%, -48%) scale(0.96);
-//   }
-//   to {
-//     opacity: 1;
-//     transform: translate(-50%, -50%) scale(1);
-//   }
-// }
-export default function FormPopup() {
+  &.violet {
+    background-color: var(--violet-4);
+    color: var(--violet-12);
+    outline-color: var(--violet-6);
+    &:hover {
+      background-color: var(--mauve-3);
+    }
+  }
+
+  &.green {
+    background-color: var(--green-4);
+    color: var (--green-11);
+    outline-color: var(--green-7);
+    &:hover {
+      background-color: var(--green-5);
+    }
+  }
+`;
+
+const IconButton = styled.button`
+  all: unset;
+  font-family: inherit;
+  border-radius: 100%;
+  height: 40px;
+  width: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: inherit;
+  transition: all 0.3s ease;
+
+  svg {
+    height: 20px; // Set the height of the SVG
+    width: 20px; // Set the width of the SVG
+  }
+
+  svg > path {
+    fill: red;
+  }
+
+  &:hover {
+    background-color: #ededed; // button gets darker when they hover
+  }
+
+  &:focus {
+    svg {
+      height: 27px;
+      width: 27px;
+    }
+  }
+`;
+
+export default function FormPopup({
+  title,
+  description,
+  children,
+  onSubmit,
+  maxWidth,
+  defaultSubmit,
+}) {
   return (
     <Dialog.Root>
       <Dialog.Trigger asChild>
-        <button className='Button violet'>Edit profile</button>
+        <StyledButton className='violet'>Open Form</StyledButton>
       </Dialog.Trigger>
       <Dialog.Portal>
-        <Dialog.Overlay className='DialogOverlay' />
-        <Dialog.Content className='DialogContent'>
-          <Dialog.Title className='DialogTitle'>Edit profile</Dialog.Title>
-          <Dialog.Description className='DialogDescription'>
-            Make changes to your profile here. Click save when you&apos;re done.
-          </Dialog.Description>
-          <fieldset className='Fieldset'>
-            <label className='Label' htmlFor='name'>
-              Name
-            </label>
-            <input className='Input' id='name' defaultValue='Pedro Duarte' />
-          </fieldset>
-          <fieldset className='Fieldset'>
-            <label className='Label' htmlFor='username'>
-              Username
-            </label>
-            <input className='Input' id='username' defaultValue='@peduarte' />
-          </fieldset>
-          <div
-            style={{
-              display: 'flex',
-              marginTop: 25,
-              justifyContent: 'flex-end',
-            }}
-          >
-            <Dialog.Close asChild>
-              <button className='Button green'>Save changes</button>
-            </Dialog.Close>
-          </div>
+        <StyledOverlay />
+        <StyledContent maxWidth={maxWidth}>
+          <StyledTitle>{title}</StyledTitle>
+          <StyledDescription>{description}</StyledDescription>
+          <form onSubmit={onSubmit}>
+            {children}
+            {/* if defaultSubmit is NOT true, caller is expected to have another button to submit form */}
+            {defaultSubmit && (
+              <div
+                style={{
+                  display: 'flex',
+                  marginTop: 25,
+                  justifyContent: 'flex-end',
+                }}
+              >
+                <Dialog.Close asChild>
+                  <div
+                    style={{ display: 'flex', flexDirection: 'row-reverse' }}
+                  >
+                    <StyledButton className='green' type='submit'>
+                      Save changes
+                    </StyledButton>
+                    <StyledButton className='violet' type='submit'>
+                      Save changes
+                    </StyledButton>
+                  </div>
+                </Dialog.Close>
+              </div>
+            )}
+          </form>
           <Dialog.Close asChild>
-            <button className='IconButton' aria-label='Close'>
+            <IconButton aria-label='Close'>
               <Cross2Icon />
-            </button>
+            </IconButton>
           </Dialog.Close>
-        </Dialog.Content>
+        </StyledContent>
       </Dialog.Portal>
     </Dialog.Root>
   );
 }
 
-// export default function FormPopup() {
-//   return (
-//     <div>
-//       <h1>FormPopup</h1>
-//     </div>
-//   );
-// }
+FormPopup.propTypes = {
+  title: PropTypes.string.isRequired,
+  description: PropTypes.string,
+  children: PropTypes.node.isRequired,
+  onSubmit: PropTypes.func.isRequired,
+  maxWidth: PropTypes.string,
+  defaultSubmit: PropTypes.bool,
+};
 
-// FormPopup.propTypes = {
-//   promptText: PropTypes.string,
-//   placeholderText: PropTypes.string,
-//   submitButtonText: PropTypes.string,
-//   cancelButtonText: PropTypes.string,
-//   onSubmit: PropTypes.func,
-// };
-
-// FormPopup.defaultProps = {
-//   promptText: 'Prompt',
-//   placeholderText: 'Enter text here',
-//   submitButtonText: 'Submit',
-//   cancelButtonText: 'Cancel',
-// };
+FormPopup.defaultProps = {
+  description: '',
+  maxWidth: '500px',
+  defaultSubmit: true,
+};

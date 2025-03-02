@@ -233,7 +233,6 @@ export default function ResetPassword() {
         <Button type='submit' disabled={isLoading}>
           {isLoading ? 'Updating...' : 'Update Password'}
         </Button>
-        {/* Makes it so form closes when we press 'Cancel' */}
         <Dialog.Close asChild>
           <Button
             type='reset'

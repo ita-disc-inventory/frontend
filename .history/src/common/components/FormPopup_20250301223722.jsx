@@ -1,8 +1,8 @@
-// Used for New Order Form, Change Password Form
 import React from 'react';
 
 import { Cross2Icon } from '@radix-ui/react-icons';
-import PropTypes from 'prop-types';
+//import PropTypes from 'prop-types';
+// import styled from 'styled-components';
 import { Dialog } from 'radix-ui';
 import styled from 'styled-components';
 
@@ -119,7 +119,7 @@ const StyledButton = styled.button`
 
   &.green {
     background-color: var(--green-4);
-    color: var(--green-11);
+    color: var (--green-11);
     outline-color: var(--green-7);
     &:hover {
       background-color: var(--green-5);
@@ -131,21 +131,33 @@ const IconButton = styled.button`
   all: unset;
   font-family: inherit;
   border-radius: 100%;
-  height: 25px;
-  width: 25px;
+  height: 40px;
+  width: 40px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  color: var(--violet-11);
+  color: white;
   position: absolute;
   top: 10px;
   right: 10px;
-  background-color: var(--gray-3);
-  &:hover {
-    background-color: var(--violet-4);
+  background-color: rgb(255, 74, 74); // same color from Figma
+  transition: all 0.3s ease;
+
+  svg {
+    height: 20px; // Set the height of the SVG
+    width: 20px; // Set the width of the SVG
   }
+
+  svg > path {
+    fill: white;
+  }
+
+  &:hover {
+    background-color: red; // button gets darker when they hover
+  }
+
   &:focus {
-    box-shadow: 0 0 0 2px var(--violet-7);
+    box-shadow: 0 0 0 2px red; // button appears a tad bigger when clicked
   }
 `;
 
@@ -159,49 +171,68 @@ export default function FormPopup({
   return (
     <Dialog.Root>
       <Dialog.Trigger asChild>
-        <StyledButton className='violet'>Open Form</StyledButton>
+        <button className='Button violet'>Edit profile</button>
       </Dialog.Trigger>
       <Dialog.Portal>
-        <StyledOverlay />
-        <StyledContent maxWidth={maxWidth}>
-          <StyledTitle>{title}</StyledTitle>
-          <StyledDescription>{description}</StyledDescription>
-          <form onSubmit={onSubmit}>
-            {children}
-            <div
-              style={{
-                display: 'flex',
-                marginTop: 25,
-                justifyContent: 'flex-end',
-              }}
-            >
-              <Dialog.Close asChild>
-                <StyledButton className='green' type='submit'>
-                  Save changes
-                </StyledButton>
-              </Dialog.Close>
-            </div>
-          </form>
+        <Dialog.Overlay className='DialogOverlay' />
+        <Dialog.Content className='DialogContent'>
+          <Dialog.Title className='DialogTitle'>Edit profile</Dialog.Title>
+          <Dialog.Description className='DialogDescription'>
+            Make changes to your profile here. Click save when you&apos;re done.
+          </Dialog.Description>
+          <fieldset className='Fieldset'>
+            <label className='Label' htmlFor='name'>
+              Name
+            </label>
+            <input className='Input' id='name' defaultValue='Pedro Duarte' />
+          </fieldset>
+          <fieldset className='Fieldset'>
+            <label className='Label' htmlFor='username'>
+              Username
+            </label>
+            <input className='Input' id='username' defaultValue='@peduarte' />
+          </fieldset>
+          <div
+            style={{
+              display: 'flex',
+              marginTop: 25,
+              justifyContent: 'flex-end',
+            }}
+          >
+            <Dialog.Close asChild>
+              <button className='Button green'>Save changes</button>
+            </Dialog.Close>
+          </div>
           <Dialog.Close asChild>
-            <IconButton aria-label='Close'>
+            <button className='IconButton' aria-label='Close'>
               <Cross2Icon />
-            </IconButton>
+            </button>
           </Dialog.Close>
-        </StyledContent>
+        </Dialog.Content>
       </Dialog.Portal>
     </Dialog.Root>
   );
 }
 
-FormPopup.propTypes = {
-  title: PropTypes.string.isRequired,
-  description: PropTypes.string,
-  children: PropTypes.node.isRequired,
-  onSubmit: PropTypes.func.isRequired,
-  maxWidth: PropTypes.string,
-};
+// export default function FormPopup() {
+//   return (
+//     <div>
+//       <h1>FormPopup</h1>
+//     </div>
+//   );
+// }
 
-FormPopup.defaultProps = {
-  description: '',
-  maxWidth: '500px',
-};
+// FormPopup.propTypes = {
+//   promptText: PropTypes.string,
+//   placeholderText: PropTypes.string,
+//   submitButtonText: PropTypes.string,
+//   cancelButtonText: PropTypes.string,
+//   onSubmit: PropTypes.func,
+// };
+
+// FormPopup.defaultProps = {
+//   promptText: 'Prompt',
+//   placeholderText: 'Enter text here',
+//   submitButtonText: 'Submit',
+//   cancelButtonText: 'Cancel',
+// };
