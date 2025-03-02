@@ -234,7 +234,7 @@ export default function ResetPassword() {
           {isLoading ? 'Updating...' : 'Update Password'}
         </Button>
         {/* Makes it so form closes when we press 'Cancel' -- Brock added this, no functionality
-            behind button is needed (For now...?) */}
+            behind button is needed */}
         <Dialog.Close asChild>
           <Button
             type='reset'

@@ -196,9 +196,6 @@ export default function FormPopup({
         <StyledContent maxWidth={maxWidth}>
           <StyledTitle>{title}</StyledTitle>
           <StyledDescription>{description}</StyledDescription>
-          {/* if custom form is true, then caller must be providing their own form (since form nested in a form is NOT allowed) */}
-          {customForm && <div>{children}</div>}
-          {/* if custom form is false, then caller is expecting to use supplied form (not providing their own) */}
           {!customForm && (
             <form onSubmit={onSubmit}>
               {children} {/* what will go in the form */}

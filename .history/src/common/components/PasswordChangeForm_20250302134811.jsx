@@ -21,7 +21,6 @@ export default function PasswordChangeForm() {
           description='Enter your current and new password'
           maxWidth='40%'
           defaultSubmit={false}
-          customForm={true}
         >
           {/* ResetPassword component (from template) handles Logic for resetting password */}
           <ResetPassword />

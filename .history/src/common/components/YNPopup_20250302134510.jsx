@@ -180,20 +180,20 @@ export default function YNPopup({
   yesColor = 'green', // default color styling for 'Yes' button
   noColor = 'red', // default color styling for 'No' button
   title = 'Popup Title', // default Title text for YNPopup
-  description = 'Popup Desc.', // default description for YNPopup
-  buttonText = 'Open YNPopup', // text that appears over form button --> click --> opens form
+  description = 'Popup Desc.',
+  onSubmit,
 }) {
   return (
     <Dialog.Root>
       <Dialog.Trigger asChild>
-        <StyledButton className='violet'>{buttonText}</StyledButton>
+        <StyledButton className='violet'>Open YNPopup</StyledButton>
       </Dialog.Trigger>
       <Dialog.Portal>
         <StyledOverlay />
         <StyledContent>
           <StyledTitle>{title}</StyledTitle>
           <StyledDescription>{description}</StyledDescription>
-          <form>
+          <form onSubmit={onSubmit}>
             {/* if defaultSubmit is NOT true, caller is expected to have another button to submit form */}
             <div
               style={{
@@ -241,7 +241,7 @@ YNPopup.propTypes = {
   noColor: PropTypes.string,
   title: PropTypes.string,
   description: PropTypes.string,
-  buttonText: PropTypes.string,
+  onSubmit: PropTypes.func.isRequired,
 };
 
 YNPopup.defaultProps = {
@@ -251,5 +251,4 @@ YNPopup.defaultProps = {
   noColor: 'red',
   title: 'Popup Title',
   description: 'Popup Desc.',
-  buttonText: 'Open YNPopup',
 };

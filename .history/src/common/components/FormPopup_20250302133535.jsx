@@ -67,7 +67,7 @@ const StyledDescription = styled(Dialog.Description)`
   font-size: 15px;
   line-height: 1.5;
 `;
-// Below is unused for now, may use later (leaving commented out, ignore until further notice)
+
 // const StyledFieldset = styled.fieldset`
 //   display: flex;
 //   gap: 20px;
@@ -175,63 +175,55 @@ const IconButton = styled.button`
 `;
 
 export default function FormPopup({
-  title = 'Form Popup', // title of the form
-  description = 'Form Desc.', // form desc.
-  children, // any additional DOM elts you would want to add to form
-  onSubmit, // what happens when form is submitted
-  maxWidth = '500px', // allows us to define how wide this form is
-  defaultSubmit = true, // if true, then basic 'Submit' and 'Cancel' buttons. If false, then caller expected to provide buttons
-  submitText = 'Submit', // default 'Submit' text
-  cancelText = 'Cancel', // default 'Cancel' text
-  buttonText = 'Open Form', // text that appears over form button --> click --> opens form
-  customForm = false, // if false, then caller must provide input fields. If true, then caller must provide another form
+  title = 'Form Popup',
+  description = 'Form Desc.',
+  children,
+  onSubmit,
+  maxWidth = '500px',
+  defaultSubmit = true,
+  submitText = 'Submit',
+  cancelText = 'Cancel',
 }) {
   return (
     <Dialog.Root>
       <Dialog.Trigger asChild>
-        <StyledButton className='violet'>{buttonText}</StyledButton>
+        <StyledButton className='violet'>Open Form</StyledButton>
       </Dialog.Trigger>
       <Dialog.Portal>
-        <StyledOverlay /> {/* allows for 'dimmed' background */}
+        <StyledOverlay />
         <StyledContent maxWidth={maxWidth}>
           <StyledTitle>{title}</StyledTitle>
           <StyledDescription>{description}</StyledDescription>
-          {/* if custom form is true, then caller must be providing their own form (since form nested in a form is NOT allowed) */}
-          {customForm && <div>{children}</div>}
-          {/* if custom form is false, then caller is expecting to use supplied form (not providing their own) */}
-          {!customForm && (
-            <form onSubmit={onSubmit}>
-              {children} {/* what will go in the form */}
-              {/* if defaultSubmit is NOT true, caller is expected to have another button to submit form */}
-              {defaultSubmit && (
-                <div
-                  style={{
-                    display: 'flex',
-                    marginTop: 25,
-                    justifyContent: 'flex-end',
-                  }}
-                >
-                  <Dialog.Close asChild>
-                    <div
-                      style={{
-                        display: 'flex',
-                        flexDirection: 'row-reverse',
-                        gap: '10px',
-                      }}
-                    >
-                      <StyledButton className='green' type='submit'>
-                        {submitText}
-                      </StyledButton>
-                      <StyledButton className='red' type='submit'>
-                        {cancelText}
-                      </StyledButton>
-                    </div>
-                  </Dialog.Close>
-                </div>
-              )}
-            </form>
-          )}
-          {/* The 'X' close button that allows us to close the form */}
+          <form onSubmit={onSubmit}>
+            {children}
+            {/* if defaultSubmit is NOT true, caller is expected to have another button to submit form */}
+            {defaultSubmit && (
+              <div
+                style={{
+                  display: 'flex',
+                  marginTop: 25,
+                  justifyContent: 'flex-end',
+                }}
+              >
+                <Dialog.Close asChild>
+                  <div
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'row-reverse',
+                      gap: '10px',
+                    }}
+                  >
+                    <StyledButton className='green' type='submit'>
+                      {submitText}
+                    </StyledButton>
+                    <StyledButton className='red' type='submit'>
+                      {cancelText}
+                    </StyledButton>
+                  </div>
+                </Dialog.Close>
+              </div>
+            )}
+          </form>
           <Dialog.Close asChild>
             <IconButton aria-label='Close'>
               <Cross2Icon />
@@ -243,9 +235,6 @@ export default function FormPopup({
   );
 }
 
-// Form title, children nodes, and onSubmit functionality are required. Title because
-// the user must know that the form does, children because the form must include some content, and
-// onSubmit because the form must do something when it is completed
 FormPopup.propTypes = {
   title: PropTypes.string.isRequired,
   description: PropTypes.string,
@@ -255,17 +244,12 @@ FormPopup.propTypes = {
   defaultSubmit: PropTypes.bool,
   submitText: PropTypes.string,
   cancelText: PropTypes.string,
-  buttonText: PropTypes.string,
-  customForm: PropTypes.bool,
 };
 
-// Reiteration of default values for the FormPopup component
 FormPopup.defaultProps = {
   description: '',
   maxWidth: '500px',
   defaultSubmit: true,
   submitText: 'Submit',
   cancelText: 'Cancel',
-  buttonText: 'Open Form',
-  customForm: false,
 };
