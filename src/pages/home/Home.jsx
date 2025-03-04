@@ -2,7 +2,9 @@ import React, { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
+
 import { Button } from 'common/components/Button';
+
 import { Subtitle, Title } from 'common/components/Text';
 import UsersList from 'common/components/Users/UsersList';
 import { UserContext } from 'common/contexts/UserContext';
@@ -47,6 +49,8 @@ export default function Home() {
       </ButtonContainer>
       
       <UsersList />
+      <FormPopup />
+      <OrederTable />
     </HomePage>
   );
 }
