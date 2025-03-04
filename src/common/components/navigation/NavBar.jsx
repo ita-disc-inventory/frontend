@@ -49,7 +49,7 @@ export default function NavBar() {
       </LeftAligned>
       <>
         {user ? ( // If user is logged in, show their name (clickable to Account Settings)
-          <RightAligned onClick={() => navigate('/account')}>
+          <RightAligned onClick={() => navigate('/setting')}>
             <span id='userName_display'>
               {user.firstname} {user.lastname}
             </span>
