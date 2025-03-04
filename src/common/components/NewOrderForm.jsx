@@ -91,7 +91,7 @@ export default function NewOrderForm() {
           <RelativeContainer>
             {/* Program Budget Field - Dropdown */}
             <CustomInput.Text
-              title='Select Program Budget '
+              title='Select Program'
               value={orderName}
               onChange={handleBudgetChange}
               placeholder='REPLACE WITH DROPDOWN'

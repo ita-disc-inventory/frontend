@@ -1,9 +1,13 @@
 import React, { useContext } from 'react';
-
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
+<<<<<<< HEAD
 import FormPopup from 'common/components/FormPopup';
 import OrederTable from 'common/components/OrderTable';
+=======
+import { Button } from 'common/components/Button';
+>>>>>>> 3ea9f70c7d9dc4b15bd9f23d4353f75365df3a39
 import { Subtitle, Title } from 'common/components/Text';
 import UsersList from 'common/components/Users/UsersList';
 import { UserContext } from 'common/contexts/UserContext';
@@ -12,6 +16,7 @@ const TextContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 20px;
+  margin-bottom: 2rem;
 `;
 
 const HomePage = styled.div`
@@ -23,8 +28,16 @@ const HomePage = styled.div`
   padding: 2rem;
 `;
 
+const ButtonContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+`;
+
 export default function Home() {
   const { user } = useContext(UserContext);
+  const navigate = useNavigate();
 
   return (
     <HomePage>
@@ -32,6 +45,12 @@ export default function Home() {
         <Title>Home Page</Title>
         <Subtitle>Welcome, {user?.firstname || 'User'}!</Subtitle>
       </TextContainer>
+      
+      <ButtonContainer>
+        <Button.Primary onClick={() => navigate('/admin')}>Admin</Button.Primary>
+        <Button.Primary onClick={() => navigate('/therapist')}>Therapist</Button.Primary>
+      </ButtonContainer>
+      
       <UsersList />
       <FormPopup />
       <OrederTable />
