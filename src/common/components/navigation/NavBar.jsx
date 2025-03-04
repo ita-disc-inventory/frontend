@@ -1,12 +1,11 @@
-import React, { useState } from "react";
+import React from 'react';
 
-import { useNavigate } from "react-router-dom";
-import styled from "styled-components";
+import 'App.css';
+import { useNavigate } from 'react-router-dom';
+import styled from 'styled-components';
 
-import { Button } from "common/components/Button";
-import { useUser } from "common/contexts/UserContext";
-
-import '../../../App.css';
+import { Button } from 'common/components/Button';
+import { useUser } from 'common/contexts/UserContext';
 
 const StyledNav = styled.nav`
   display: flex;
@@ -28,7 +27,6 @@ const RightAligned = styled.div`
   padding-right: 20px;
 `;
 
-
 const LogoPlaceholder = styled(Button.Invisible)`
   padding: 0;
   font-size: 1.7rem;
@@ -37,45 +35,27 @@ const LogoPlaceholder = styled(Button.Invisible)`
 `;
 
 export default function NavBar() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
-  const { user, logout } = useUser();
+  const { user } = useUser();
 
-  const handleLogoutClick = () => {
-    setIsModalOpen(true);
-  };
-
-  const handleModalClose = () => {
-    setIsModalOpen(false);
-  };
-
-  const handleLogoutConfirm = async () => {
-    try {
-      await logout();
-      setIsModalOpen(false);
-      navigate("/", { replace: true });
-    } catch (error) {
-      console.error("Logout error:", error);
-    }
-  };
   //if log in, show account seeting, if not, show log in. no setup.
 
   return (
     <StyledNav>
       <LeftAligned>
-        <LogoPlaceholder onClick={() => navigate("/")}>
-          <img id="ITAlogo" src="ITAlogo.png" alt="ITA Logo" />
+        <LogoPlaceholder onClick={() => navigate('/')}>
+          <img id='ITAlogo' src='ITAlogo.png' alt='ITA Logo' />
         </LogoPlaceholder>
       </LeftAligned>
       <>
         {user ? ( // If user is logged in, show their name (clickable to Account Settings)
-          <RightAligned onClick={() => navigate("/account")}>
-          <span id="userName_display">
-            {user.firstname} {user.lastname}
-          </span>
-        </RightAligned>
+          <RightAligned onClick={() => navigate('/account')}>
+            <span id='userName_display'>
+              {user.firstname} {user.lastname}
+            </span>
+          </RightAligned>
         ) : (
-          <Button.Secondary onClick={() => navigate("/login")}>
+          <Button.Secondary onClick={() => navigate('/login')}>
             Login
           </Button.Secondary>
         )}
