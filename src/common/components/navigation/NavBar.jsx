@@ -6,12 +6,12 @@ import styled from "styled-components";
 import { Button } from "common/components/Button";
 import { useUser } from "common/contexts/UserContext";
 
-//import '/Users/zhangyixi/frontend/src/App.css';
+import '../../../App.css';
 
 const StyledNav = styled.nav`
   display: flex;
   background-color: #d9d9d920;
-  height: 65px;
+  height: 60px;
   width: 100%;
   font-size: 20px;
 `;
@@ -21,6 +21,13 @@ const LeftAligned = styled.div`
   display: flex;
   gap: 10px;
 `;
+const RightAligned = styled.div`
+  display: flex;
+  align-items: center;
+  height: 100%;
+  padding-right: 20px;
+`;
+
 
 const LogoPlaceholder = styled(Button.Invisible)`
   padding: 0;
@@ -62,12 +69,11 @@ export default function NavBar() {
       </LeftAligned>
       <>
         {user ? ( // If user is logged in, show their name (clickable to Account Settings)
-          <div onClick={() => navigate("/account")}>
-            <span>
-              {user.firstname}
-              {user.lastname}
-            </span>
-          </div>
+          <RightAligned onClick={() => navigate("/account")}>
+          <span id="userName_display">
+            {user.firstname} {user.lastname}
+          </span>
+        </RightAligned>
         ) : (
           <Button.Secondary onClick={() => navigate("/login")}>
             Login

@@ -1,4 +1,6 @@
 /* global color presets */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
 :root {
   --primary-green: #45bf84;
   --secondary-lightgrey: #f3f3f3;
@@ -8,10 +10,19 @@
 }
 
 #ITAlogo{
-  height:50px;
+  height:60px;
+}
+
+#userName_display {
+  font-size: 16px;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  height: 100%;
+  padding-right: 20px; 
 }
 
 * {
-  font-family: Verdana, sans-serif;
+  font-family: 'Inter', sans-serif;
   color: var(--text);
 }
