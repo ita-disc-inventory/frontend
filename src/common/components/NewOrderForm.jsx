@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
-import styled from 'styled-components';
+import styled from "styled-components";
 
-import FormPopup from './FormPopup';
-import { CustomInput } from './form/CustomInput';
+import FormPopup from "./FormPopup";
+import { CustomInput } from "./form/CustomInput";
 
 const FormContainer = styled.div`
   display: flex;
@@ -58,9 +58,9 @@ const AbsoluteH6 = styled.h6`
 `;
 
 export default function NewOrderForm() {
-  const [orderName, setOrderName] = useState('');
-  const [orderDescription, setOrderDescription] = useState('');
-  const [reasonForBuying, setReasonForBuying] = useState('');
+  const [orderName, setOrderName] = useState("");
+  const [orderDescription, setOrderDescription] = useState("");
+  const [reasonForBuying, setReasonForBuying] = useState("");
 
   const handleBudgetChange = (e) => setOrderName(e.target.value);
   const handleOrderDescriptionChange = (e) =>
@@ -70,7 +70,7 @@ export default function NewOrderForm() {
   const handleSubmit = (e) => {
     e.preventDefault();
     // Handle new order logic here
-    console.log('New order created:', {
+    console.log("New order created:", {
       orderName,
       orderDescription,
       reasonForBuying,
@@ -79,11 +79,11 @@ export default function NewOrderForm() {
 
   return (
     <FormPopup
-      title='New Order Form'
-      description='Please fill out all fields of the form below for your requested
-                item and read the Order Guidelines.'
+      title="New Order Form"
+      description="Please fill out all fields of the form below for your requested
+                item and read the Order Guidelines."
       onSubmit={handleSubmit}
-      maxWidth='50%'
+      maxWidth="50%"
       defaultSubmit={true}
     >
       <FormContainer>
@@ -91,77 +91,77 @@ export default function NewOrderForm() {
           <RelativeContainer>
             {/* Program Budget Field - Dropdown */}
             <CustomInput.Text
-              title='Select Program Budget '
+              title="Select Program Budget "
               value={orderName}
               onChange={handleBudgetChange}
-              placeholder='REPLACE WITH DROPDOWN'
+              placeholder="REPLACE WITH DROPDOWN"
               required
             />
             <AbsoluteH6>Selected program budget: 4 BILLION</AbsoluteH6>
           </RelativeContainer>
           {/* Link Field - Text Input */}
           <CustomInput.Text
-            title='Link to Purchase Item'
+            title="Link to Purchase Item"
             value={orderDescription}
             onChange={handleOrderDescriptionChange}
-            placeholder='https://ExampleSite.com'
+            placeholder="https://ExampleSite.com"
             required
           />
           {/* PPU Field - Text Input */}
           <CustomInput.Text
-            title='Price Per Unit'
+            title="Price Per Unit"
             value={orderDescription}
             onChange={handleOrderDescriptionChange}
-            placeholder='x.xx'
+            placeholder="x.xx"
             required
           />
         </Column>
         <Column>
           {/* Quantity Field - Text Input */}
           <CustomInput.Text
-            title='Quantity'
+            title="Quantity"
             value={orderDescription}
             onChange={handleOrderDescriptionChange}
-            placeholder='Enter Quantity'
+            placeholder="Enter Quantity"
             required
           />
           {/* Priority Level Field - Dropdown */}
           <CustomInput.Text
-            title='Priority Level'
+            title="Priority Level"
             value={orderDescription}
             onChange={handleOrderDescriptionChange}
-            placeholder='REPLACE WITH PRIORITY LEVEL DROPDOWN'
+            placeholder="REPLACE WITH PRIORITY LEVEL DROPDOWN"
             required
           />
           {/* Reason for Buying Field - Textarea */}
           <TextAreaContainer>
             <label
-              htmlFor='reasonForBuying'
+              htmlFor="reasonForBuying"
               style={{
-                display: 'block',
-                fontSize: '15px',
-                color: 'black',
+                display: "block",
+                fontSize: "15px",
+                color: "black",
               }}
             >
               Reason for buying (150 characters max)
-              <span style={{ color: 'red' }}>*</span>
+              <span style={{ color: "red" }}>*</span>
             </label>
             <textarea
-              id='reasonForBuying'
+              id="reasonForBuying"
               value={reasonForBuying}
               onChange={handleReasonForBuyingChange}
-              placeholder='Enter reason for buying'
+              placeholder="Enter reason for buying"
               required
               style={{
-                width: '100%',
-                borderRadius: '4px',
-                padding: '10px',
-                fontSize: '15px',
-                lineHeight: '1.5',
-                color: 'black',
-                border: 'solid 2px var(--text)',
-                height: '100px',
-                resize: 'none',
+                width: "100%",
+                borderRadius: "4px",
+                padding: "10px",
+                fontSize: "15px",
+                lineHeight: "1.5",
+                color: "black",
+                border: "solid 2px var(--text)",
+                height: "100px",
+                resize: "none",
               }}
             />
           </TextAreaContainer>

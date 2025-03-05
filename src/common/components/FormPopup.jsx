@@ -1,10 +1,10 @@
 // Used for New Order Form, Change Password Form
-import React from 'react';
+import React from "react";
 
-import { Cross2Icon } from '@radix-ui/react-icons';
-import PropTypes from 'prop-types';
-import { Dialog } from 'radix-ui';
-import styled from 'styled-components';
+import { Cross2Icon } from "@radix-ui/react-icons";
+import PropTypes from "prop-types";
+import { Dialog } from "radix-ui";
+import styled from "styled-components";
 
 // MAKE SURE TO STYLE COMPONENT IN SAME FILE IT IS BEING EXPORTED FROM!!
 // Below is styling for FormPopup, translated from CSS to styled components
@@ -24,7 +24,7 @@ const StyledContent = styled(Dialog.Content)`
   left: 50%;
   transform: translate(-50%, -50%);
   width: 90vw;
-  max-width: ${(props) => props.maxWidth || '500px'};
+  max-width: ${(props) => props.maxWidth || "500px"};
   max-height: 85vh;
   padding: 25px;
   overflow: hidden;
@@ -175,21 +175,21 @@ const IconButton = styled.button`
 `;
 
 export default function FormPopup({
-  title = 'Form Popup', // title of the form
-  description = 'Form Desc.', // form desc.
+  title = "Form Popup", // title of the form
+  description = "Form Desc.", // form desc.
   children, // any additional DOM elts you would want to add to form
   onSubmit, // what happens when form is submitted
-  maxWidth = '500px', // allows us to define how wide this form is
+  maxWidth = "500px", // allows us to define how wide this form is
   defaultSubmit = true, // if true, then basic 'Submit' and 'Cancel' buttons. If false, then caller expected to provide buttons
-  submitText = 'Submit', // default 'Submit' text
-  cancelText = 'Cancel', // default 'Cancel' text
-  buttonText = 'Open Form', // text that appears over form button --> click --> opens form
+  submitText = "Submit", // default 'Submit' text
+  cancelText = "Cancel", // default 'Cancel' text
+  buttonText = "Open Form", // text that appears over form button --> click --> opens form
   customForm = false, // if false, then caller must provide input fields. If true, then caller must provide another form
 }) {
   return (
     <Dialog.Root>
       <Dialog.Trigger asChild>
-        <StyledButton className='violet'>{buttonText}</StyledButton>
+        <StyledButton className="violet">{buttonText}</StyledButton>
       </Dialog.Trigger>
       <Dialog.Portal>
         <StyledOverlay /> {/* allows for 'dimmed' background */}
@@ -206,23 +206,23 @@ export default function FormPopup({
               {defaultSubmit && (
                 <div
                   style={{
-                    display: 'flex',
+                    display: "flex",
                     marginTop: 25,
-                    justifyContent: 'flex-end',
+                    justifyContent: "flex-end",
                   }}
                 >
                   <Dialog.Close asChild>
                     <div
                       style={{
-                        display: 'flex',
-                        flexDirection: 'row-reverse',
-                        gap: '10px',
+                        display: "flex",
+                        flexDirection: "row-reverse",
+                        gap: "10px",
                       }}
                     >
-                      <StyledButton className='green' type='submit'>
+                      <StyledButton className="green" type="submit">
                         {submitText}
                       </StyledButton>
-                      <StyledButton className='red' type='submit'>
+                      <StyledButton className="red" type="submit">
                         {cancelText}
                       </StyledButton>
                     </div>
@@ -233,7 +233,7 @@ export default function FormPopup({
           )}
           {/* The 'X' close button that allows us to close the form */}
           <Dialog.Close asChild>
-            <IconButton aria-label='Close'>
+            <IconButton aria-label="Close">
               <Cross2Icon />
             </IconButton>
           </Dialog.Close>
@@ -261,11 +261,11 @@ FormPopup.propTypes = {
 
 // Reiteration of default values for the FormPopup component
 FormPopup.defaultProps = {
-  description: '',
-  maxWidth: '500px',
+  description: "",
+  maxWidth: "500px",
   defaultSubmit: true,
-  submitText: 'Submit',
-  cancelText: 'Cancel',
-  buttonText: 'Open Form',
+  submitText: "Submit",
+  cancelText: "Cancel",
+  buttonText: "Open Form",
   customForm: false,
 };

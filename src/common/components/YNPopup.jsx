@@ -1,16 +1,16 @@
 // YNPopup === Yes/No Popup -- used for simple Confirm/Deny actions
-import React from 'react';
+import React from "react";
 
 // CSS files used below for coloring
-import '@radix-ui/colors/black-alpha.css';
-import '@radix-ui/colors/green.css';
-import '@radix-ui/colors/mauve.css';
-import '@radix-ui/colors/red.css';
-import '@radix-ui/colors/violet.css';
-import { Cross2Icon } from '@radix-ui/react-icons';
-import PropTypes from 'prop-types';
-import { Dialog } from 'radix-ui';
-import styled, { keyframes } from 'styled-components';
+import "@radix-ui/colors/black-alpha.css";
+import "@radix-ui/colors/green.css";
+import "@radix-ui/colors/mauve.css";
+import "@radix-ui/colors/red.css";
+import "@radix-ui/colors/violet.css";
+import { Cross2Icon } from "@radix-ui/react-icons";
+import PropTypes from "prop-types";
+import { Dialog } from "radix-ui";
+import styled, { keyframes } from "styled-components";
 
 // Keyframes for open/close animations
 const overlayShow = keyframes`
@@ -173,20 +173,20 @@ const IconButton = styled.button`
 `;
 
 export default function YNPopup({
-  yesText = 'Yes', // default text for the 'Yes/Confirm' button
-  noText = 'No', // default text for the 'No/Deny' button
+  yesText = "Yes", // default text for the 'Yes/Confirm' button
+  noText = "No", // default text for the 'No/Deny' button
   noOnClick, // functionality for what happens when user clicks 'No'
   yesOnClick, // functionality for what happens when user clicks 'Yes'
-  yesColor = 'green', // default color styling for 'Yes' button
-  noColor = 'red', // default color styling for 'No' button
-  title = 'Popup Title', // default Title text for YNPopup
-  description = 'Popup Desc.', // default description for YNPopup
-  buttonText = 'Open YNPopup', // text that appears over form button --> click --> opens form
+  yesColor = "green", // default color styling for 'Yes' button
+  noColor = "red", // default color styling for 'No' button
+  title = "Popup Title", // default Title text for YNPopup
+  description = "Popup Desc.", // default description for YNPopup
+  buttonText = "Open YNPopup", // text that appears over form button --> click --> opens form
 }) {
   return (
     <Dialog.Root>
       <Dialog.Trigger asChild>
-        <StyledButton className='violet'>{buttonText}</StyledButton>
+        <StyledButton className="violet">{buttonText}</StyledButton>
       </Dialog.Trigger>
       <Dialog.Portal>
         <StyledOverlay />
@@ -197,18 +197,18 @@ export default function YNPopup({
             {/* if defaultSubmit is NOT true, caller is expected to have another button to submit form */}
             <div
               style={{
-                display: 'flex',
+                display: "flex",
                 marginTop: 25,
-                justifyContent: 'flex-end',
+                justifyContent: "flex-end",
               }}
             >
               {/* Caller must provide + define functions for both buttons when clicked */}
               <Dialog.Close asChild>
                 <div
                   style={{
-                    display: 'flex',
-                    flexDirection: 'row-reverse',
-                    gap: '10px',
+                    display: "flex",
+                    flexDirection: "row-reverse",
+                    gap: "10px",
                   }}
                 >
                   <StyledButton className={yesColor} onClick={yesOnClick}>
@@ -222,7 +222,7 @@ export default function YNPopup({
             </div>
           </form>
           <Dialog.Close asChild>
-            <IconButton aria-label='Close'>
+            <IconButton aria-label="Close">
               <Cross2Icon />
             </IconButton>
           </Dialog.Close>
@@ -245,11 +245,11 @@ YNPopup.propTypes = {
 };
 
 YNPopup.defaultProps = {
-  yesText: 'Yes',
-  noText: 'No',
-  yesColor: 'green',
-  noColor: 'red',
-  title: 'Popup Title',
-  description: 'Popup Desc.',
-  buttonText: 'Open YNPopup',
+  yesText: "Yes",
+  noText: "No",
+  yesColor: "green",
+  noColor: "red",
+  title: "Popup Title",
+  description: "Popup Desc.",
+  buttonText: "Open YNPopup",
 };

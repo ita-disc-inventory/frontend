@@ -13,6 +13,7 @@
 }
 
 * {
-  font-family: Verdana, sans-serif;
-  color: var(--text);
+  font-family: inter;
+  font-size: 21px;
+  color: black;
 }
