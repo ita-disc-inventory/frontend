@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 
 import styled from 'styled-components';
 
-import FormPopup from './FormPopup';
 import { CustomInput } from './form/CustomInput';
+import FormPopup from './templates/FormPopup';
 
 const FormContainer = styled.div`
   display: flex;
