@@ -48,7 +48,7 @@ export default function StatusDropdown({ value, onStatusChange }) {
 
   return (
     <Dropdown
-      styles={{ backgroundColor: backgroundColor, color: 'black' }} // pass an object not a string
+      styles={{ backgroundColor: backgroundColor }} // pass an object not a string
       placeholder='Status...'
       onValueChange={handleStatusChange}
       value={status} // changed from defaultValue to value

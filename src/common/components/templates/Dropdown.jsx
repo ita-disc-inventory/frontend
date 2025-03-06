@@ -31,7 +31,7 @@ const StyledTrigger = styled(Select.Trigger)`
     color: var(--violet-9);
   }
   & > span {
-    color: #999999;
+    color: black;
   }
 `;
 
@@ -89,6 +89,9 @@ const StyledItemIndicator = styled(Select.ItemIndicator)`
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  & > span {
+    color: black;
+  }
 `;
 
 // basically a wrapper for Select.Item, extracts the children and className while
@@ -134,7 +137,7 @@ export const StyledSelectItem = styled(SelectItemBase)`
   }
   &[data-highlighted] {
     outline: none;
-    background-color: var(--violet-9);
+    background-color: lightgray; // responsible for changing text color of selected value
     color: var(--violet-1);
   }
 `;

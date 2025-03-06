@@ -110,7 +110,8 @@ const orderNameRenderer = (params) => {
 // Responsible for formatting the 'Status' column
 // See StatusDropdown.jsx to see how status to color relationships work
 const statusRenderer = (params) => {
-  console.log(params);
+  // need to implement logic for if status is being changed to 'Deny' or 'Pick up' or 'Arrived', as
+  // these should trigger a pop-up
   return (
     <StatusDropdown
       value={params.value}
@@ -119,6 +120,44 @@ const statusRenderer = (params) => {
       }}
     />
   );
+};
+
+// Responsible for formatting & styling the 'Priority' column
+const priorityRenderer = (params) => {
+  const priority = params.value;
+  const isUrgent = priority === 'regular' ? false : true;
+  // if priority is regular, then do not apply additional styles
+  return (
+    <div style={{ display: 'flex' }}>
+      <span
+        style={{
+          backgroundColor: isUrgent ? 'orange' : 'inherit',
+          width: '100px',
+          height: '35px',
+          borderRadius: isUrgent ? '4px' : 'inherit',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        {
+          isUrgent
+            ? priority
+            : String(priority[0]).toUpperCase() +
+              String(priority).slice(1) /* first letter == uppercase */
+        }
+      </span>
+    </div>
+  );
+};
+
+// Responsible for formatting the 'Description' column
+// Regardless of text length, user is able to click on the description and
+// open a pop-up that shows the full description
+const descriptionRenderer = (params) => {
+  const desc = params.value;
+  console.log(desc);
+  return desc;
 };
 
 // Responsible for formatting the 'Link' column
@@ -134,6 +173,9 @@ const linkRenderer = (params) => {
   );
 };
 
+// Responsible for formatting the 'Tracking Number' column
+// Tracking number should only show up if the status of respective row is NOT 'pending', or 'denied'
+
 // Responsible for formatting the 'price' column
 function currencyFormatter(params) {
   // if price value is not null, return formatted price to column
@@ -144,6 +186,15 @@ function currencyFormatter(params) {
 function requestDateFormatter(params) {
   const [year, month, day] = params.value.split('-');
   return `${month}/${day}/${year}`;
+}
+
+// Changes program name to its respective abbreviation
+function programToAbbrev(params) {
+  const program = params.value;
+  if (program === 'private') return 'PT';
+  if (program === 'community') return 'CP';
+  if (program === 'creative') return 'CKC';
+  if (program === 'school') return 'SP';
 }
 
 // Use a cellRenderer when we want to:
@@ -159,6 +210,7 @@ export default function OrderTable() {
       field: 'orderName',
       cellRenderer: orderNameRenderer, // see comments before OrderTable() definition
       filter: true, // 'filter: true' activates the filter option at top of specified column (3 dashed horizontal lines)
+      cellStyle: { justifyContent: 'flex-start' },
     },
     {
       headerName: 'Status',
@@ -166,13 +218,16 @@ export default function OrderTable() {
       cellRenderer: statusRenderer,
     },
     {
-      headerName: 'Priority Level',
+      headerName: 'Priority',
       field: 'priorityLevel',
+      width: 150,
+      cellRenderer: priorityRenderer,
       filter: true,
     },
     {
       headerName: 'Description',
       field: 'description',
+      cellRenderer: descriptionRenderer,
     },
     {
       headerName: 'Price',
@@ -202,6 +257,8 @@ export default function OrderTable() {
     {
       headerName: 'Program',
       field: 'program',
+      valueFormatter: programToAbbrev,
+      width: 110,
     },
     {
       headerName: 'Therapist Name',
@@ -213,6 +270,11 @@ export default function OrderTable() {
     return {
       resizable: false, // 'resizable: false' means user cannot resize columns, as cols are meant to fit to width
       suppressMovable: true, // 'suppressMovable: true' means the user cannot move columns around
+      cellStyle: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+      },
     };
   }, []);
   useEffect(() => {
