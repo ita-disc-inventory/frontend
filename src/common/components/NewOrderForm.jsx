@@ -58,23 +58,24 @@ const AbsoluteH6 = styled.h6`
 `;
 
 export default function NewOrderForm() {
-  const [orderName, setOrderName] = useState('');
-  const [orderDescription, setOrderDescription] = useState('');
+  const [budget, setBudget] = useState('');
+  const [itemName, setItemName] = useState('');
+  const [quantity, setQuantity] = useState('');
+  const [link, setLink] = useState('');
+  const [priorityLevel, setPriorityLevel] = useState('');
+  const [PPU, setPPU] = useState('');
   const [reasonForBuying, setReasonForBuying] = useState('');
 
-  const handleBudgetChange = (e) => setOrderName(e.target.value);
-  const handleOrderDescriptionChange = (e) =>
-    setOrderDescription(e.target.value);
+  const handleBudgetChange = (e) => setBudget(e.target.value);
+  const handleItemNameChange = (e) => setItemName(e.target.value);
+  const handleQuantityChange = (e) => setQuantity(e.target.value);
+  const handleLinkChange = (e) => setLink(e.target.value);
+  const handlePriorityLevelChange = (e) => setPriorityLevel(e.target.value);
+  const handlePPUChange = (e) => setPPU(e.target.value);
   const handleReasonForBuyingChange = (e) => setReasonForBuying(e.target.value);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Handle new order logic here
-    console.log('New order created:', {
-      orderName,
-      orderDescription,
-      reasonForBuying,
-    });
   };
 
   return (
@@ -92,26 +93,34 @@ export default function NewOrderForm() {
             {/* Program Budget Field - Dropdown */}
             <CustomInput.Text
               title='Select Program'
-              value={orderName}
+              value={budget}
               onChange={handleBudgetChange}
               placeholder='REPLACE WITH DROPDOWN'
               required
             />
             <AbsoluteH6>Selected program budget: 4 BILLION</AbsoluteH6>
           </RelativeContainer>
+          {/* Item Name Field - Text Input */}
+          <CustomInput.Text
+            title='Item Name'
+            value={itemName}
+            onChange={handleItemNameChange}
+            placeholder='Markers'
+            required
+          />
           {/* Link Field - Text Input */}
           <CustomInput.Text
             title='Link to Purchase Item'
-            value={orderDescription}
-            onChange={handleOrderDescriptionChange}
+            value={link}
+            onChange={handleLinkChange}
             placeholder='https://ExampleSite.com'
             required
           />
           {/* PPU Field - Text Input */}
           <CustomInput.Text
             title='Price Per Unit'
-            value={orderDescription}
-            onChange={handleOrderDescriptionChange}
+            value={PPU}
+            onChange={handlePPUChange}
             placeholder='x.xx'
             required
           />
@@ -120,16 +129,16 @@ export default function NewOrderForm() {
           {/* Quantity Field - Text Input */}
           <CustomInput.Text
             title='Quantity'
-            value={orderDescription}
-            onChange={handleOrderDescriptionChange}
+            value={quantity}
+            onChange={handleQuantityChange}
             placeholder='Enter Quantity'
             required
           />
           {/* Priority Level Field - Dropdown */}
           <CustomInput.Text
             title='Priority Level'
-            value={orderDescription}
-            onChange={handleOrderDescriptionChange}
+            value={priorityLevel}
+            onChange={handlePriorityLevelChange}
             placeholder='REPLACE WITH PRIORITY LEVEL DROPDOWN'
             required
           />

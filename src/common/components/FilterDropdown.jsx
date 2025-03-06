@@ -7,7 +7,7 @@ import Dropdown, {
   StyledSelectItem,
   StyledSeparator,
 } from 'common/components/templates/Dropdown';
-import { Filters } from 'common/order-table-util/Filters';
+import { Filters } from 'common/utils/Filters';
 
 export default function FilterDropdown() {
   const [filterValue, setFilter] = useState('');

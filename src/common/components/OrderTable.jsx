@@ -12,6 +12,7 @@ import { AgGridReact } from 'ag-grid-react';
 import styled from 'styled-components';
 
 import FilterDropdown from './FilterDropdown';
+import StatusDropdown from './StatusDropdown';
 
 // Mark all grids as using legacy themes
 provideGlobalGridOptions({ theme: 'legacy' });
@@ -63,18 +64,19 @@ const StyledLink = styled.a`
   }
 
   &:visited {
-    color: purple;
+    color: blue;
   }
 
   &:hover {
     color: darkblue;
   }
 
-  &:actve {
-    color: red;
+  &:active {
+    color: purple;
   }
 `;
 
+// Responsible for formatting values under 'Order Name' column.
 const orderNameRenderer = (params) => {
   return (
     <div
@@ -88,6 +90,7 @@ const orderNameRenderer = (params) => {
         textOverflow: 'ellipsis',
       }}
     >
+      {/* Bolded item/product name */}
       <span style={{ fontWeight: 'bold' }}>{params.value}</span>
       <span
         style={{
@@ -97,15 +100,33 @@ const orderNameRenderer = (params) => {
           top: '15px',
         }}
       >
+        {/* PPU and Quantity acting as 'subheaders' beneath item name */}
         Price per unit: ${params.data.ppu} — Qty: {params.data.quantity}
       </span>
     </div>
   );
 };
 
+// Responsible for formatting the 'Status' column
+// See StatusDropdown.jsx to see how status to color relationships work
+const statusRenderer = (params) => {
+  console.log(params);
+  return (
+    <StatusDropdown
+      value={params.value}
+      onStatusChange={(newValue) => {
+        params.node.setDataValue('status', newValue);
+      }}
+    />
+  );
+};
+
+// Responsible for formatting the 'Link' column
 const linkRenderer = (params) => {
   return (
     <span>
+      {/* Use basic StyledLink component (defined at top of doc) for styling.
+      Link remains blue after visiting, subject to change in future. */}
       <StyledLink href={params.value} target='_blank' rel='noreferrer'>
         Link
       </StyledLink>
@@ -113,10 +134,13 @@ const linkRenderer = (params) => {
   );
 };
 
+// Responsible for formatting the 'price' column
 function currencyFormatter(params) {
+  // if price value is not null, return formatted price to column
   return params.value == null ? '' : '$' + params.value.toLocaleString();
 }
 
+// Changes date format from YYYY-MM-DD to MM/DD/YYYY for easier readability
 function requestDateFormatter(params) {
   const [year, month, day] = params.value.split('-');
   return `${month}/${day}/${year}`;
@@ -133,68 +157,62 @@ export default function OrderTable() {
     {
       headerName: 'Order Name',
       field: 'orderName',
-      cellRenderer: orderNameRenderer,
-      suppressMovable: true, // 'suppressMovable: true' means the user cannot move columns around
+      cellRenderer: orderNameRenderer, // see comments before OrderTable() definition
+      filter: true, // 'filter: true' activates the filter option at top of specified column (3 dashed horizontal lines)
     },
     {
       headerName: 'Status',
       field: 'status',
-      suppressMovable: true,
+      cellRenderer: statusRenderer,
     },
     {
       headerName: 'Priority Level',
       field: 'priorityLevel',
       filter: true,
-      suppressMovable: true,
     },
     {
       headerName: 'Description',
       field: 'description',
-      suppressMovable: true,
     },
     {
       headerName: 'Price',
       field: 'price',
+      width: 110,
       valueFormatter: currencyFormatter,
-      suppressMovable: true,
     },
     {
       headerName: 'Link',
       field: 'link',
-      suppressMovable: true,
+      width: 65,
       cellRenderer: linkRenderer,
     },
     {
       headerName: 'Tracking Number',
       field: 'trackingNumber',
-      suppressMovable: true,
     },
     {
       headerName: 'Request Date',
       field: 'requestDate',
-      suppressMovable: true,
       valueFormatter: requestDateFormatter,
     },
     {
       headerName: 'Specialization',
       field: 'specialization',
-      suppressMovable: true,
     },
     {
       headerName: 'Program',
       field: 'program',
-      suppressMovable: true,
     },
     {
       headerName: 'Therapist Name',
       field: 'therapistName',
-      suppressMovable: true,
     },
   ]);
-
+  // Default column definitions for table; columns cannot be resized, instead they fit to width
   const defaultColDef = useMemo(() => {
     return {
-      resizable: false,
+      resizable: false, // 'resizable: false' means user cannot resize columns, as cols are meant to fit to width
+      suppressMovable: true, // 'suppressMovable: true' means the user cannot move columns around
     };
   }, []);
   useEffect(() => {
@@ -224,16 +242,12 @@ export default function OrderTable() {
   const autoSizeStrategy = useMemo(() => {
     return {
       type: 'fitGridWidth',
-      defaultMinWidth: 100,
+      defaultMinWidth: 65,
       columnLimits: [
         // can specify minimum widths for certain columns
         {
           colId: 'orderName',
-          minWidth: 180,
-        },
-        {
-          colId: 'link',
-          minWidth: 50,
+          minWidth: 185,
         },
       ],
     };
@@ -271,7 +285,7 @@ export default function OrderTable() {
           </div>
         </div>
       </div>
-      {/* Upcoming table */}
+      {/* The actual order table */}
       <div className='ag-theme-quartz' style={{ height: '500px' }}>
         <AgGridReact
           rowData={rowData}

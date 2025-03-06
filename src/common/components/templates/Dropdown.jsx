@@ -16,19 +16,16 @@ const StyledTrigger = styled(Select.Trigger)`
   align-items: center;
   justify-content: space-between;
   border-radius: 4px;
-  padding: 0 15px;
+  padding: ${(props) => (props.forStatus ? '0px 10px' : '0 15px')};
   font-size: 13px;
   line-height: 1;
   height: 35px;
-  min-width: 150px;
+  ${(props) => (props.forStatus ? 'width: 100px;' : 'min-width: 150px;')}
   background-color: white;
   color: var(--violet-11);
   border: 1px #ccc solid;
   &:hover {
     background-color: var(--mauve-3);
-  }
-  &:focus {
-    box-shadow: 0 0 0 2px black;
   }
   &[data-placeholder] {
     color: var(--violet-9);
@@ -143,30 +140,32 @@ export const StyledSelectItem = styled(SelectItemBase)`
 `;
 
 export default function Dropdown({
-  placeholder, // what dropdown will say before user selects anything
-  children, // the possible dropdown options, see example below function
-  defaultValue, // the default value of the dropdown
+  placeholder,
+  children,
+  value, // renamed from defaultValue to value
+  forStatus,
+  styles, // expecting an inline style object
   ...props
 }) {
   return (
-    <Select.Root defaultValue={defaultValue} {...props}>
-      <StyledTrigger aria-label='Dropdown'>
+    <Select.Root value={value} onValueChange={props.onValueChange} {...props}>
+      <StyledTrigger
+        aria-label='Dropdown'
+        forStatus={forStatus}
+        style={styles} // updated: pass the styles object directly
+      >
         <Select.Value placeholder={placeholder} />
         <StyledIcon>
           <ChevronDownIcon />
         </StyledIcon>
       </StyledTrigger>
-
       <Select.Portal>
         <StyledContent>
           {/* Scroll up */}
           <StyledScrollButton>
             <ChevronUpIcon />
           </StyledScrollButton>
-
           <StyledViewport>{children}</StyledViewport>
-
-          {/* Scroll down - reuse same styled scroll button but pass the other component */}
           <StyledScrollButton as={Select.ScrollDownButton}>
             <ChevronDownIcon />
           </StyledScrollButton>
@@ -181,10 +180,15 @@ Dropdown.propTypes = {
   /* the items/groups to appear in the dropdown, typically <Select.Group> or <StyledSelectItem> elements */
   children: PropTypes.node.isRequired,
   /* the default value if you want a pre-selected item */
-  defaultValue: PropTypes.string,
+  value: PropTypes.string, // updated prop name
+  /* forStatus = for status dropdown; if true, custom styling applied to fit */
+  forStatus: PropTypes.bool,
+  onValueChange: PropTypes.func,
+  styles: PropTypes.object,
 };
 
 Dropdown.defaultProps = {
   placeholder: 'Select an option...',
-  defaultValue: undefined,
+  value: '', // updated default value
+  forStatus: false,
 };
