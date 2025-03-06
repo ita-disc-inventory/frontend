@@ -13,6 +13,7 @@ import styled from 'styled-components';
 
 import FilterDropdown from './FilterDropdown';
 import StatusDropdown from './StatusDropdown';
+import YNPopup from './templates/YNPopup';
 
 // Mark all grids as using legacy themes
 provideGlobalGridOptions({ theme: 'legacy' });
@@ -357,6 +358,7 @@ export default function OrderTable() {
           autoSizeStrategy={autoSizeStrategy}
         />
       </div>
+      <YNPopup buttonColor='blue' />
     </div>
   );
 }

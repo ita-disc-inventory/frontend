@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { Button } from 'common/components/Button';
-import OrderTable from 'common/components/OrderTable';
 import { Subtitle, Title } from 'common/components/Text';
 
 const TherapistHomePage = styled.div`
@@ -42,7 +41,6 @@ export default function TherapistHome() {
           Therapist Account Settings
         </Button.Primary>
       </ButtonContainer>
-      <OrderTable />
     </TherapistHomePage>
   );
 }
