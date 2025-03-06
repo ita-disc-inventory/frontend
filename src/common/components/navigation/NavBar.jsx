@@ -39,6 +39,18 @@ export default function NavBar() {
   const { user } = useUser();
 
   //if log in, show account seeting, if not, show log in. no setup.
+  const handleNavigation = () => {
+    if (!user) {
+      navigate('/login');
+      return;
+    }
+    console.log(user.position_title);
+    if (user.position_title === 'admin') {
+      navigate('/admin/settings');
+    } else {
+      navigate('therapist/settings');
+    }
+  };
 
   return (
     <StyledNav>
@@ -49,7 +61,7 @@ export default function NavBar() {
       </LeftAligned>
       <>
         {user ? ( // If user is logged in, show their name (clickable to Account Settings)
-          <RightAligned onClick={() => navigate('/setting')}>
+          <RightAligned onClick={handleNavigation}>
             <span id='userName_display'>
               {user.firstname} {user.lastname}
             </span>
@@ -63,3 +75,5 @@ export default function NavBar() {
     </StyledNav>
   );
 }
+//user.position === 'admin'
+//user.position == 'therapist'
