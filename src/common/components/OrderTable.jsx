@@ -13,6 +13,7 @@ import styled from 'styled-components';
 
 import FilterDropdown from './FilterDropdown';
 import StatusDropdown from './StatusDropdown';
+import FormPopup from './templates/FormPopup';
 import YNPopup from './templates/YNPopup';
 
 // Mark all grids as using legacy themes
@@ -157,7 +158,7 @@ const priorityRenderer = (params) => {
 // open a pop-up that shows the full description
 const descriptionRenderer = (params) => {
   const desc = params.value;
-  console.log(desc);
+  //console.log(params.data['orderName']);
   return desc;
 };
 
@@ -358,7 +359,8 @@ export default function OrderTable() {
           autoSizeStrategy={autoSizeStrategy}
         />
       </div>
-      <YNPopup buttonColor='blue' />
+      <YNPopup buttoncolor='blue' />
+      <FormPopup />
     </div>
   );
 }

@@ -97,15 +97,51 @@ const StyledButton = styled.button`
   }
 
   &:focus-visible {
-    outline: 2px solid var(--violet-6);
+    outline: 2px solid ${({ buttoncolor }) => `var(--${buttoncolor}-6)`};
     outline-offset: 1px;
   }
 
-  background-color: ${({ buttonColor }) => `var(--${buttonColor}-4)`};
-  color: ${({ buttonColor }) => `var(--${buttonColor}-11)`};
-  outline-color: ${({ buttonColor }) => `var(--${buttonColor}-7)`};
+  background-color: ${({ buttoncolor }) => `var(--${buttoncolor}-4)`};
+  color: ${({ buttoncolor }) => `var(--${buttoncolor}-11)`};
+  outline-color: ${({ buttoncolor }) => `var(--${buttoncolor}-7)`};
   &:hover {
-    background-color: ${({ buttonColor }) => `var(--${buttonColor}-5)`};
+    background-color: ${({ buttoncolor }) => `var(--${buttoncolor}-5)`};
+  }
+
+  &.red {
+    background-color: var(--red-4);
+    color: var(--red-11);
+    outline-color: var(--red-7);
+    &:hover {
+      background-color: var(--red-5);
+    }
+  }
+
+  &.green {
+    background-color: var(--green-4);
+    color: var(--green-11);
+    outline-color: var(--green-7);
+    &:hover {
+      background-color: var(--green-5);
+    }
+  }
+
+  &.blue {
+    background-color: var(--blue-4);
+    color: var(--blue-11);
+    outline-color: var(--blue-7);
+    &:hover {
+      background-color: var(--blue-5);
+    }
+  }
+
+  &.yellow {
+    background-color: var(--yellow-4);
+    color: var(--yellow-11);
+    outline-color: var(--yellow-7);
+    &:hover {
+      background-color: var(--yellow-5);
+    }
   }
 `;
 
@@ -153,7 +189,7 @@ export default function YNPopup({
   yesOnClick, // functionality for what happens when user clicks 'Yes'
   yesColor = 'green', // default color styling for 'Yes' button
   noColor = 'red', // default color styling for 'No' button
-  buttonColor = 'blue', // default color for button that opens popup
+  buttoncolor = 'blue', // default color for button that opens popup
   title = 'Popup Title', // default Title text for YNPopup
   description = 'Popup Desc.', // default description for YNPopup
   buttonText = 'Open YNPopup', // text that appears over form button --> click --> opens form
@@ -162,7 +198,7 @@ export default function YNPopup({
     <Dialog.Root>
       <Dialog.Trigger asChild>
         {/* specify the button color here as a prop */}
-        <StyledButton buttonColor={buttonColor}>{buttonText}</StyledButton>
+        <StyledButton buttoncolor={buttoncolor}>{buttonText}</StyledButton>
       </Dialog.Trigger>
       <Dialog.Portal>
         <StyledOverlay />
@@ -215,7 +251,7 @@ YNPopup.propTypes = {
   yesOnClick: PropTypes.func,
   yesColor: PropTypes.string,
   noColor: PropTypes.string,
-  buttonColor: PropTypes.string,
+  buttoncolor: PropTypes.string,
   title: PropTypes.string,
   description: PropTypes.string,
   buttonText: PropTypes.string,
@@ -226,7 +262,7 @@ YNPopup.defaultProps = {
   noText: 'No',
   yesColor: 'green',
   noColor: 'red',
-  buttonColor: 'blue',
+  buttoncolor: 'blue',
   title: 'Popup Title',
   description: 'Popup Desc.',
   buttonText: 'Open YNPopup',
