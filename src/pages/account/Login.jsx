@@ -3,9 +3,15 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
-import FreeResponsePopup from "common/components/FreeResponsePopup";
+import ItemArrivedConfirm from "common/components/Admin_Modals/ItemArrivedConfirm";
+import ItemReadyConfirm from "common/components/Admin_Modals/ItemReadyConfirm";
+import NewAdminConfirm from "common/components/Admin_Modals/NewAdminConfirm";
+import NewMonthlyBudget from "common/components/Admin_Modals/NewMonthlyBudget";
+import OrderApprovalConfirm from "common/components/Admin_Modals/OrderApprovalConfirm";
+import OrderTrackingNumber from "common/components/Admin_Modals/OrderTrackingNumber";
+import ReasonForDenial from "common/components/Admin_Modals/ReasonForDenial";
 import GoogleButton from "common/components/GoogleButton";
-import YNPopup from "common/components/YNPopup";
+import LogoutConfirm from "common/components/Therapist_Modals/Logout_Confirmation";
 import { Form, FormTitle } from "common/components/form/Form";
 import { Input } from "common/components/form/Input";
 import SubmitButton from "common/components/form/SubmitButton";
@@ -93,8 +99,15 @@ export default function Login() {
           isLoading={isLoading}
           text="Sign in with Google"
         />
-        <FreeResponsePopup />
-        <YNPopup />
+        <OrderApprovalConfirm />
+        <LogoutConfirm />
+        <ItemArrivedConfirm />
+        <ItemReadyConfirm />
+        <NewAdminConfirm />
+        <br />
+        <ReasonForDenial />
+        <NewMonthlyBudget />
+        <OrderTrackingNumber />
       </Form>
     </StyledPage>
   );

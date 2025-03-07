@@ -68,7 +68,8 @@ const StyledTitle = styled(Dialog.Title)`
 
 const StyledDescription = styled(Dialog.Description)`
   margin-bottom: 20px;
-  color: var(--mauve-11);
+  margin-top: 10px;
+  color: black;
   font-size: 15px;
   line-height: 1.5;
 `;
@@ -177,7 +178,7 @@ export default function YNPopup({
   noText = "No", // default text for the 'No/Deny' button
   noOnClick, // functionality for what happens when user clicks 'No'
   yesOnClick, // functionality for what happens when user clicks 'Yes'
-  yesColor = "green", // default color styling for 'Yes' button
+  yesColor = "mauve", // default color styling for 'Yes' button
   noColor = "red", // default color styling for 'No' button
   title = "Popup Title", // default Title text for YNPopup
   description = "Popup Desc.", // default description for YNPopup
