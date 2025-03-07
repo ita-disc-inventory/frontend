@@ -12,6 +12,7 @@ const FormContainer = styled.div`
 
   @media (max-width: 1400px) {
     flex-direction: column;
+    gap: 0px;
   }
 `;
 

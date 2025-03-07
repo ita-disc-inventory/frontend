@@ -16,11 +16,11 @@ const StyledTrigger = styled(Select.Trigger)`
   align-items: center;
   justify-content: space-between;
   border-radius: 4px;
-  padding: ${(props) => (props.forStatus ? '0px 10px' : '0 15px')};
+  padding: ${(props) => (props.$forstatus ? '0px 10px' : '0 15px')};
   font-size: 13px;
   line-height: 1;
   height: 35px;
-  ${(props) => (props.forStatus ? 'width: 100px;' : 'min-width: 150px;')}
+  ${(props) => (props.$forstatus ? 'width: 100px;' : 'min-width: 150px;')}
   background-color: white;
   color: var(--violet-11);
   border: 1px #ccc solid;
@@ -146,7 +146,7 @@ export default function Dropdown({
   placeholder,
   children,
   value, // renamed from defaultValue to value
-  forStatus,
+  $forstatus,
   styles, // expecting an inline style object
   ...props
 }) {
@@ -154,7 +154,7 @@ export default function Dropdown({
     <Select.Root value={value} onValueChange={props.onValueChange} {...props}>
       <StyledTrigger
         aria-label='Dropdown'
-        forStatus={forStatus}
+        $forstatus={$forstatus}
         style={styles} // updated: pass the styles object directly
       >
         <Select.Value placeholder={placeholder} />
@@ -184,8 +184,8 @@ Dropdown.propTypes = {
   children: PropTypes.node.isRequired,
   /* the default value if you want a pre-selected item */
   value: PropTypes.string, // updated prop name
-  /* forStatus = for status dropdown; if true, custom styling applied to fit */
-  forStatus: PropTypes.bool,
+  /* $forstatus = for status dropdown; if true, custom styling applied to fit */
+  $forstatus: PropTypes.bool,
   onValueChange: PropTypes.func,
   styles: PropTypes.object,
 };
@@ -193,5 +193,5 @@ Dropdown.propTypes = {
 Dropdown.defaultProps = {
   placeholder: 'Select an option...',
   value: '', // updated default value
-  forStatus: false,
+  $forstatus: false,
 };

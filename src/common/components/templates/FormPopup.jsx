@@ -4,6 +4,7 @@ import React from 'react';
 // CSS files used below for coloring
 import '@radix-ui/colors/black-alpha.css';
 import '@radix-ui/colors/blue.css';
+import '@radix-ui/colors/gray.css';
 import '@radix-ui/colors/green.css';
 import '@radix-ui/colors/mauve.css';
 import '@radix-ui/colors/orange.css';
@@ -32,11 +33,12 @@ const StyledContent = styled(Dialog.Content)`
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 90vw;
+  width: 100%;
   max-width: ${(props) => props.maxWidth || '500px'};
   max-height: 85vh;
   padding: 25px;
-  overflow: hidden;
+  overflow-y: auto; /* changed from scroll to auto to remove persistent scrollbar space */
+  overflow-x: hidden;
   animation: contentShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
   &:focus {
     outline: none;
@@ -126,19 +128,6 @@ const StyledButton = styled.button`
     outline: 0;
   }
 
-  &:focus-visible {
-    outline: 2px solid ${({ buttoncolor }) => `var(--${buttoncolor}-6)`};
-    outline-offset: 1px;
-  }
-
-  background-color: ${({ buttoncolor }) => `var(--${buttoncolor}-4)`};
-  color: ${({ buttoncolor }) => `var(--${buttoncolor}-11)`};
-  outline-color: ${({ buttoncolor }) => `var(--${buttoncolor}-7)`};
-  &:hover {
-    background-color: ${({ buttoncolor }) => `var(--${buttoncolor}-5)`};
-  }
-  }
-
   &.red {
     background-color: var(--red-4);
     color: var(--red-11);
@@ -174,6 +163,16 @@ const StyledButton = styled.button`
       background-color: var(--yellow-5);
     }
   }
+
+  &.gray {
+    background-color: var(--gray-4);
+    color: var(--gray-12);
+    outline-color: var(--gray-7);
+    box-shadow: 0 5px 5px -4px var(--gray-9);
+    &:hover {
+      background-color: var(--gray-6);
+    }
+  }
 `;
 
 const IconButton = styled.button`
@@ -205,7 +204,7 @@ const IconButton = styled.button`
     background-color: #ededed; // button gets darker when they hover
   }
 
-  &:focus {
+  &:active {
     svg {
       height: 27px;
       width: 27px;
@@ -225,14 +224,14 @@ export default function FormPopup({
   buttonText = 'Open Form', // text that appears over form button --> click --> opens form
   submitColor = 'green',
   cancelColor = 'red',
-  buttoncolor = 'blue',
+  buttonColor = 'blue',
   customForm = false, // if false, then caller must provide input fields. If true, then caller must provide another form
 }) {
   return (
     <Dialog.Root>
       <Dialog.Trigger asChild>
         {/* specify the button color here as a prop */}
-        <StyledButton buttoncolor={buttoncolor}>{buttonText}</StyledButton>
+        <StyledButton className={buttonColor}>{buttonText}</StyledButton>
       </Dialog.Trigger>
       <Dialog.Portal>
         <StyledOverlay /> {/* allows for 'dimmed' background */}
@@ -301,7 +300,7 @@ FormPopup.propTypes = {
   buttonText: PropTypes.string,
   submitColor: PropTypes.string,
   cancelColor: PropTypes.string,
-  buttoncolor: PropTypes.string,
+  buttonColor: PropTypes.string,
   customForm: PropTypes.bool,
 };
 
@@ -315,6 +314,6 @@ FormPopup.defaultProps = {
   buttonText: 'Open Form',
   submitColor: 'green',
   cancelColor: 'red',
-  buttoncolor: 'blue',
+  buttonColor: 'blue',
   customForm: false,
 };

@@ -12,6 +12,7 @@ import { AgGridReact } from 'ag-grid-react';
 import styled from 'styled-components';
 
 import FilterDropdown from './FilterDropdown';
+import NewOrderForm from './NewOrderForm';
 import StatusDropdown from './StatusDropdown';
 import FormPopup from './templates/FormPopup';
 import YNPopup from './templates/YNPopup';
@@ -158,8 +159,36 @@ const priorityRenderer = (params) => {
 // open a pop-up that shows the full description
 const descriptionRenderer = (params) => {
   const desc = params.value;
-  //console.log(params.data['orderName']);
-  return desc;
+  if (desc.length < 9) {
+    return desc;
+  } else {
+    return (
+      <FormPopup
+        title={
+          params.data['therapistName'] +
+          "'s Reason for Buying " +
+          params.data['orderName']
+        }
+        description=''
+        defaultSubmit={false}
+        buttonText={desc.slice(0, 10) + '...'}
+        buttonColor='gray'
+      >
+        <div
+          style={{
+            padding: '10px',
+            border: '1px solid #ccc',
+            borderRadius: '4px',
+            outline: 'none',
+            whiteSpace: 'normal',
+            overflowWrap: 'break-word',
+          }}
+        >
+          {desc}
+        </div>
+      </FormPopup>
+    );
+  }
 };
 
 // Responsible for formatting the 'Link' column
@@ -359,8 +388,9 @@ export default function OrderTable() {
           autoSizeStrategy={autoSizeStrategy}
         />
       </div>
-      <YNPopup buttoncolor='blue' />
+      <YNPopup buttonColor='blue' />
       <FormPopup />
+      <NewOrderForm />
     </div>
   );
 }

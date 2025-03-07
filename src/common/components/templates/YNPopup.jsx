@@ -4,6 +4,7 @@ import React from 'react';
 // CSS files used below for coloring
 import '@radix-ui/colors/black-alpha.css';
 import '@radix-ui/colors/blue.css';
+import '@radix-ui/colors/gray.css';
 import '@radix-ui/colors/green.css';
 import '@radix-ui/colors/mauve.css';
 import '@radix-ui/colors/orange.css';
@@ -96,18 +97,6 @@ const StyledButton = styled.button`
     outline: 0;
   }
 
-  &:focus-visible {
-    outline: 2px solid ${({ buttoncolor }) => `var(--${buttoncolor}-6)`};
-    outline-offset: 1px;
-  }
-
-  background-color: ${({ buttoncolor }) => `var(--${buttoncolor}-4)`};
-  color: ${({ buttoncolor }) => `var(--${buttoncolor}-11)`};
-  outline-color: ${({ buttoncolor }) => `var(--${buttoncolor}-7)`};
-  &:hover {
-    background-color: ${({ buttoncolor }) => `var(--${buttoncolor}-5)`};
-  }
-
   &.red {
     background-color: var(--red-4);
     color: var(--red-11);
@@ -141,6 +130,15 @@ const StyledButton = styled.button`
     outline-color: var(--yellow-7);
     &:hover {
       background-color: var(--yellow-5);
+    }
+  }
+
+  &.gray {
+    background-color: var(--gray-4);
+    color: var(--gray-11);
+    outline-color: var(--gray-7);
+    &:hover {
+      background-color: var(--gray-5);
     }
   }
 `;
@@ -189,7 +187,7 @@ export default function YNPopup({
   yesOnClick, // functionality for what happens when user clicks 'Yes'
   yesColor = 'green', // default color styling for 'Yes' button
   noColor = 'red', // default color styling for 'No' button
-  buttoncolor = 'blue', // default color for button that opens popup
+  buttonColor = 'blue', // default color for button that opens popup
   title = 'Popup Title', // default Title text for YNPopup
   description = 'Popup Desc.', // default description for YNPopup
   buttonText = 'Open YNPopup', // text that appears over form button --> click --> opens form
@@ -198,7 +196,7 @@ export default function YNPopup({
     <Dialog.Root>
       <Dialog.Trigger asChild>
         {/* specify the button color here as a prop */}
-        <StyledButton buttoncolor={buttoncolor}>{buttonText}</StyledButton>
+        <StyledButton className={buttonColor}>{buttonText}</StyledButton>
       </Dialog.Trigger>
       <Dialog.Portal>
         <StyledOverlay />
@@ -251,7 +249,7 @@ YNPopup.propTypes = {
   yesOnClick: PropTypes.func,
   yesColor: PropTypes.string,
   noColor: PropTypes.string,
-  buttoncolor: PropTypes.string,
+  buttonColor: PropTypes.string,
   title: PropTypes.string,
   description: PropTypes.string,
   buttonText: PropTypes.string,
@@ -262,7 +260,7 @@ YNPopup.defaultProps = {
   noText: 'No',
   yesColor: 'green',
   noColor: 'red',
-  buttoncolor: 'blue',
+  buttonColor: 'blue',
   title: 'Popup Title',
   description: 'Popup Desc.',
   buttonText: 'Open YNPopup',

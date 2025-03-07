@@ -52,7 +52,7 @@ export default function StatusDropdown({ value, onStatusChange }) {
       placeholder='Status...'
       onValueChange={handleStatusChange}
       value={status} // changed from defaultValue to value
-      forStatus={true}
+      $forstatus={true}
     >
       {AdminStatuses.map((groupOrSeparator, i) => {
         if (groupOrSeparator.separator) {
