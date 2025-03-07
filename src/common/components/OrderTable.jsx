@@ -1,6 +1,9 @@
 import React, { useEffect, useMemo, useState } from 'react';
 
-import { MagnifyingGlassIcon } from '@radix-ui/react-icons';
+import {
+  MagnifyingGlassIcon,
+  OpenInNewWindowIcon,
+} from '@radix-ui/react-icons';
 import {
   AllCommunityModule,
   ModuleRegistry,
@@ -163,30 +166,42 @@ const descriptionRenderer = (params) => {
     return desc;
   } else {
     return (
-      <FormPopup
-        title={
-          params.data['therapistName'] +
-          "'s Reason for Buying " +
-          params.data['orderName']
-        }
-        description=''
-        defaultSubmit={false}
-        buttonText={desc.slice(0, 10) + '...'}
-        buttonColor='gray'
-      >
+      <div style={{ position: 'relative' }}>
+        <FormPopup
+          title={
+            params.data['therapistName'] +
+            "'s Reason for Buying " +
+            params.data['orderName']
+          }
+          description=''
+          defaultSubmit={false}
+          buttonText={desc.slice(0, 10) + '...'}
+          buttonColor='white'
+        >
+          <div
+            style={{
+              padding: '10px',
+              border: '1px solid #ccc',
+              borderRadius: '4px',
+              outline: 'none',
+              whiteSpace: 'normal',
+              overflowWrap: 'break-word',
+            }}
+          >
+            {desc}
+          </div>
+        </FormPopup>
         <div
           style={{
-            padding: '10px',
-            border: '1px solid #ccc',
-            borderRadius: '4px',
-            outline: 'none',
-            whiteSpace: 'normal',
-            overflowWrap: 'break-word',
+            position: 'absolute',
+            top: '4px',
+            left: '110px',
+            pointerEvents: 'none',
           }}
         >
-          {desc}
+          <OpenInNewWindowIcon style={{ width: '13px', height: '13px' }} />
         </div>
-      </FormPopup>
+      </div>
     );
   }
 };
@@ -247,13 +262,13 @@ export default function OrderTable() {
       headerName: 'Status',
       field: 'status',
       cellRenderer: statusRenderer,
+      filter: true,
     },
     {
       headerName: 'Priority',
       field: 'priorityLevel',
       width: 150,
       cellRenderer: priorityRenderer,
-      filter: true,
     },
     {
       headerName: 'Description',
@@ -265,6 +280,7 @@ export default function OrderTable() {
       field: 'price',
       width: 110,
       valueFormatter: currencyFormatter,
+      filter: true,
     },
     {
       headerName: 'Link',
@@ -280,10 +296,12 @@ export default function OrderTable() {
       headerName: 'Request Date',
       field: 'requestDate',
       valueFormatter: requestDateFormatter,
+      filter: true,
     },
     {
       headerName: 'Specialization',
       field: 'specialization',
+      filter: true,
     },
     {
       headerName: 'Program',

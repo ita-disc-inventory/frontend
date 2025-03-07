@@ -10,6 +10,7 @@ import '@radix-ui/colors/mauve.css';
 import '@radix-ui/colors/orange.css';
 import '@radix-ui/colors/red.css';
 import '@radix-ui/colors/violet.css';
+import '@radix-ui/colors/white-alpha.css';
 import '@radix-ui/colors/yellow.css';
 import { Cross2Icon } from '@radix-ui/react-icons';
 import PropTypes from 'prop-types';
@@ -171,6 +172,16 @@ const StyledButton = styled.button`
     box-shadow: 0 5px 5px -4px var(--gray-9);
     &:hover {
       background-color: var(--gray-6);
+    }
+  }
+
+  &.white {
+    background-color: var(--white-a4);
+    color: black;
+    outline-color: var(--white-a7);
+    box-shadow: 0 5px 5px -4px var(--gray-9);
+    &:hover {
+      background-color: var(--gray-4);
     }
   }
 `;
