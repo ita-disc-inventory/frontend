@@ -1,8 +1,11 @@
 /* global color presets */
+
+
 @import "@radix-ui/colors/black-alpha.css";
 @import "@radix-ui/colors/green.css";
 @import "@radix-ui/colors/mauve.css";
 @import "@radix-ui/colors/violet.css";
+
 
 :root {
   --primary-green: #45bf84;
@@ -12,8 +15,21 @@
   --text: #191a23;
 }
 
+#ITAlogo{
+  height:60px;
+}
+
+#userName_display {
+  font-size: 16px;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  height: 100%;
+  padding-right: 20px; 
+}
+
 * {
-  font-family: Verdana, sans-serif;
+  font-family: 'Inter', sans-serif;
   color: var(--text);
 }
 

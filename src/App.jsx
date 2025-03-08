@@ -33,7 +33,10 @@ export default function App() {
               <Route path='admin' element={<AdminHome />} />
               <Route path='admin/settings' element={<AdminSettings />} />
               <Route path='therapist' element={<TherapistHome />} />
-              <Route path='therapist/settings' element={<TherapistSettings />} />
+              <Route
+                path='therapist/settings'
+                element={<TherapistSettings />}
+              />
             </Route>
             <Route element={<PublicOnlyRoute />}>
               <Route path='login' element={<Login />} />
