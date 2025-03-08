@@ -50,7 +50,6 @@ export default function Home() {
           Therapist
         </Button.Primary>
       </ButtonContainer>
-
       <UsersList />
     </HomePage>
   );

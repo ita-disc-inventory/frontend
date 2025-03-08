@@ -1,9 +1,10 @@
 import React from 'react';
+
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
-import { Title, Subtitle } from 'common/components/Text';
 import { Button } from 'common/components/Button';
+import { Subtitle, Title } from 'common/components/Text';
 
 const TherapistHomePage = styled.div`
   flex: 1 0 0;
@@ -34,9 +35,11 @@ export default function TherapistHome() {
         <Title>Therapist Homepage</Title>
         <Subtitle>Welcome to the therapist dashboard!</Subtitle>
       </TextContainer>
-      
+
       <ButtonContainer>
-        <Button.Primary onClick={() => navigate('/therapist/settings')}>Therapist Account Settings</Button.Primary>
+        <Button.Primary onClick={() => navigate('/therapist/settings')}>
+          Therapist Account Settings
+        </Button.Primary>
       </ButtonContainer>
     </TherapistHomePage>
   );

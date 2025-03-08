@@ -3,10 +3,14 @@ import React from 'react';
 
 // CSS files used below for coloring
 import '@radix-ui/colors/black-alpha.css';
+import '@radix-ui/colors/blue.css';
+import '@radix-ui/colors/gray.css';
 import '@radix-ui/colors/green.css';
 import '@radix-ui/colors/mauve.css';
+import '@radix-ui/colors/orange.css';
 import '@radix-ui/colors/red.css';
 import '@radix-ui/colors/violet.css';
+import '@radix-ui/colors/yellow.css';
 import { Cross2Icon } from '@radix-ui/react-icons';
 import PropTypes from 'prop-types';
 import { Dialog } from 'radix-ui';
@@ -93,20 +97,6 @@ const StyledButton = styled.button`
     outline: 0;
   }
 
-  &:focus-visible {
-    outline: 2px solid var(--violet-6);
-    outline-offset: 1px;
-  }
-
-  &.violet {
-    background-color: var(--violet-4);
-    color: var(--violet-12);
-    outline-color: var(--violet-6);
-    &:hover {
-      background-color: var(--mauve-3);
-    }
-  }
-
   &.red {
     background-color: var(--red-4);
     color: var(--red-11);
@@ -116,21 +106,39 @@ const StyledButton = styled.button`
     }
   }
 
-  &.mauve {
-    background-color: var(--mauve-4);
-    color: var(--mauve-11);
-    outline-color: var(--mauve-7);
-    &:hover {
-      background-color: var(--mauve-5);
-    }
-  }
-
   &.green {
     background-color: var(--green-4);
     color: var(--green-11);
     outline-color: var(--green-7);
     &:hover {
       background-color: var(--green-5);
+    }
+  }
+
+  &.blue {
+    background-color: var(--blue-4);
+    color: var(--blue-11);
+    outline-color: var(--blue-7);
+    &:hover {
+      background-color: var(--blue-5);
+    }
+  }
+
+  &.yellow {
+    background-color: var(--yellow-4);
+    color: var(--yellow-11);
+    outline-color: var(--yellow-7);
+    &:hover {
+      background-color: var(--yellow-5);
+    }
+  }
+
+  &.gray {
+    background-color: var(--gray-4);
+    color: var(--gray-11);
+    outline-color: var(--gray-7);
+    &:hover {
+      background-color: var(--gray-5);
     }
   }
 `;
@@ -179,6 +187,7 @@ export default function YNPopup({
   yesOnClick, // functionality for what happens when user clicks 'Yes'
   yesColor = 'green', // default color styling for 'Yes' button
   noColor = 'red', // default color styling for 'No' button
+  buttonColor = 'blue', // default color for button that opens popup
   title = 'Popup Title', // default Title text for YNPopup
   description = 'Popup Desc.', // default description for YNPopup
   buttonText = 'Open YNPopup', // text that appears over form button --> click --> opens form
@@ -186,7 +195,8 @@ export default function YNPopup({
   return (
     <Dialog.Root>
       <Dialog.Trigger asChild>
-        <StyledButton className='violet'>{buttonText}</StyledButton>
+        {/* specify the button color here as a prop */}
+        <StyledButton className={buttonColor}>{buttonText}</StyledButton>
       </Dialog.Trigger>
       <Dialog.Portal>
         <StyledOverlay />
@@ -239,6 +249,7 @@ YNPopup.propTypes = {
   yesOnClick: PropTypes.func,
   yesColor: PropTypes.string,
   noColor: PropTypes.string,
+  buttonColor: PropTypes.string,
   title: PropTypes.string,
   description: PropTypes.string,
   buttonText: PropTypes.string,
@@ -249,6 +260,7 @@ YNPopup.defaultProps = {
   noText: 'No',
   yesColor: 'green',
   noColor: 'red',
+  buttonColor: 'blue',
   title: 'Popup Title',
   description: 'Popup Desc.',
   buttonText: 'Open YNPopup',

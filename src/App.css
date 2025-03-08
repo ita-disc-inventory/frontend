@@ -32,3 +32,8 @@
   font-family: 'Inter', sans-serif;
   color: var(--text);
 }
+
+/* makes column labels in center */
+.ag-header-cell-label {
+  justify-content: center;
+}

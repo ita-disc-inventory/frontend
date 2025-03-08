@@ -1,6 +1,17 @@
 // Used for New Order Form, Change Password Form
 import React from 'react';
 
+// CSS files used below for coloring
+import '@radix-ui/colors/black-alpha.css';
+import '@radix-ui/colors/blue.css';
+import '@radix-ui/colors/gray.css';
+import '@radix-ui/colors/green.css';
+import '@radix-ui/colors/mauve.css';
+import '@radix-ui/colors/orange.css';
+import '@radix-ui/colors/red.css';
+import '@radix-ui/colors/violet.css';
+import '@radix-ui/colors/white-alpha.css';
+import '@radix-ui/colors/yellow.css';
 import { Cross2Icon } from '@radix-ui/react-icons';
 import PropTypes from 'prop-types';
 import { Dialog } from 'radix-ui';
@@ -23,11 +34,12 @@ const StyledContent = styled(Dialog.Content)`
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 90vw;
+  width: 100%;
   max-width: ${(props) => props.maxWidth || '500px'};
   max-height: 85vh;
   padding: 25px;
-  overflow: hidden;
+  overflow-y: auto; /* changed from scroll to auto to remove persistent scrollbar space */
+  overflow-x: hidden;
   animation: contentShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
   &:focus {
     outline: none;
@@ -109,22 +121,12 @@ const StyledButton = styled.button`
   height: 35px;
   user-select: none;
 
-  &.violet {
-    background-color: var(--violet-4);
-    color: var(--violet-12);
-    outline-color: var(--violet-6);
-    &:hover {
-      background-color: var(--mauve-3);
-    }
+  &:hover {
+    cursor: pointer;
   }
 
-  &.green {
-    background-color: var(--green-4);
-    color: var (--green-11);
-    outline-color: var(--green-7);
-    &:hover {
-      background-color: var(--green-5);
-    }
+  &:focus:not(:focus-visible) {
+    outline: 0;
   }
 
   &.red {
@@ -133,6 +135,53 @@ const StyledButton = styled.button`
     outline-color: var(--red-7);
     &:hover {
       background-color: var(--red-5);
+    }
+  }
+
+  &.green {
+    background-color: var(--green-4);
+    color: var(--green-11);
+    outline-color: var(--green-7);
+    &:hover {
+      background-color: var(--green-5);
+    }
+  }
+
+  &.blue {
+    background-color: var(--blue-4);
+    color: var(--blue-11);
+    outline-color: var(--blue-7);
+    &:hover {
+      background-color: var(--blue-5);
+    }
+  }
+
+  &.yellow {
+    background-color: var(--yellow-4);
+    color: var(--yellow-11);
+    outline-color: var(--yellow-7);
+    &:hover {
+      background-color: var(--yellow-5);
+    }
+  }
+
+  &.gray {
+    background-color: var(--gray-4);
+    color: var(--gray-12);
+    outline-color: var(--gray-7);
+    box-shadow: 0 5px 5px -4px var(--gray-9);
+    &:hover {
+      background-color: var(--gray-6);
+    }
+  }
+
+  &.white {
+    background-color: var(--white-a4);
+    color: black;
+    outline-color: var(--white-a7);
+    box-shadow: 0 5px 5px -4px var(--gray-9);
+    &:hover {
+      background-color: var(--gray-4);
     }
   }
 `;
@@ -166,7 +215,7 @@ const IconButton = styled.button`
     background-color: #ededed; // button gets darker when they hover
   }
 
-  &:focus {
+  &:active {
     svg {
       height: 27px;
       width: 27px;
@@ -184,12 +233,16 @@ export default function FormPopup({
   submitText = 'Submit', // default 'Submit' text
   cancelText = 'Cancel', // default 'Cancel' text
   buttonText = 'Open Form', // text that appears over form button --> click --> opens form
+  submitColor = 'green',
+  cancelColor = 'red',
+  buttonColor = 'blue',
   customForm = false, // if false, then caller must provide input fields. If true, then caller must provide another form
 }) {
   return (
     <Dialog.Root>
       <Dialog.Trigger asChild>
-        <StyledButton className='violet'>{buttonText}</StyledButton>
+        {/* specify the button color here as a prop */}
+        <StyledButton className={buttonColor}>{buttonText}</StyledButton>
       </Dialog.Trigger>
       <Dialog.Portal>
         <StyledOverlay /> {/* allows for 'dimmed' background */}
@@ -219,10 +272,10 @@ export default function FormPopup({
                         gap: '10px',
                       }}
                     >
-                      <StyledButton className='green' type='submit'>
+                      <StyledButton className={submitColor} type='submit'>
                         {submitText}
                       </StyledButton>
-                      <StyledButton className='red' type='submit'>
+                      <StyledButton className={cancelColor} type='submit'>
                         {cancelText}
                       </StyledButton>
                     </div>
@@ -256,6 +309,9 @@ FormPopup.propTypes = {
   submitText: PropTypes.string,
   cancelText: PropTypes.string,
   buttonText: PropTypes.string,
+  submitColor: PropTypes.string,
+  cancelColor: PropTypes.string,
+  buttonColor: PropTypes.string,
   customForm: PropTypes.bool,
 };
 
@@ -267,5 +323,8 @@ FormPopup.defaultProps = {
   submitText: 'Submit',
   cancelText: 'Cancel',
   buttonText: 'Open Form',
+  submitColor: 'green',
+  cancelColor: 'red',
+  buttonColor: 'blue',
   customForm: false,
 };
