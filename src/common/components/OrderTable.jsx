@@ -338,7 +338,7 @@ export default function OrderTable() {
       .then((data) => {
         // tranform each order of JSON into flat object for table
         const transformedData = data.map((order) => ({
-          orderName: 'testName', // adjust according to your desired field
+          orderName: order.items.item_name,
           status: order.status,
           priorityLevel: order.priority_level,
           description: order.order_description,

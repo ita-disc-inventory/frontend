@@ -5,7 +5,6 @@ export const AdminStatuses = [
       { label: 'Approved', value: 'approved' },
       { label: 'Pending', value: 'pending' },
       { label: 'Denied', value: 'denied' },
-      { label: 'Purchased', value: 'purchased' },
       { label: 'Arrived', value: 'arrived' },
       { label: 'Picked Up', value: 'picked up' },
     ],
