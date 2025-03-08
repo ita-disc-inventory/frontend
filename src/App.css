@@ -8,11 +8,27 @@
 
 
 :root {
-  --primary-green: #45bf84;
-  --secondary-lightgrey: #f3f3f3;
+  --primary-green: #1dF244;
+  --secondary-lightgrey: #d9d9d9;
   --darkgrey: #747474;
   --white: #fff;
   --text: #191a23;
+  --primary-orange: #F99C30;
+  --admin-enterbudget-gray: #c5bfbf;
+  --popup-approve-green: #8DFB91;
+  --popup-decline-logout-red: #F66E6F;
+  --exit-popup-red: #ff494a;
+  --newadmin-purple: #5245c8;
+  --changepassword-text: #0069FF;
+  --status-approved-green: #1dF244;
+  --status-pending-yellow:#FFD65A;
+  --status-arrived-blue:#329FF2;
+  
+
+
+
+
+
 }
 
 #ITAlogo{

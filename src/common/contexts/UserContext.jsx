@@ -88,6 +88,7 @@ export function UserProvider({ children }) {
         throw new Error('Logout failed');
       }
 
+      localStorage.removeItem('authToken');
       setUser(null);
       return true;
     } catch (error) {
