@@ -3,6 +3,8 @@ import styled from 'styled-components';
 
 import { Title, Subtitle } from 'common/components/Text';
 import { useUser } from 'common/contexts/UserContext';
+import { useNavigate } from 'react-router-dom';
+import PasswordChangeForm from 'common/components/PasswordChangeForm';
 
 const SettingsPage = styled.div`
   flex: 1 0 0;
@@ -39,24 +41,44 @@ const FieldValue = styled.div`
 `;
 
 const ChangePasswordButton = styled.button`
-  background-color: #4a90e2;
-  color: white;
+  color: #0069ff;
   border: none;
   padding: 0.75rem 1.5rem;
   border-radius: 4px;
   cursor: pointer;
   font-size: 1rem;
   margin-top: 1rem;
-  transition: background-color 0.2s;
   align-self: center;
-  
-  &:hover {
-    background-color: #3a80d2;
-  }
+`;
+
+const LogoutButton = styled.button`
+  background-color: #f66e6f;
+  color: white;
+  border-radius: 25px;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  cursor: pointer;
+  font-size: 1.25rem;
+  margin-top: 1rem;
+  align-self: center;
 `;
 
 export default function AdminSettings() {
-  const { user } = useUser();
+  const { user, logout } = useUser();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    try {
+      const success = await logout(); // Use the context's logout function
+      if (success) {
+        navigate('/'); // Navigate only after successful logout
+      }
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
+  };
+
+
   return (
     <SettingsPage>
       <TextContainer>
@@ -71,7 +93,8 @@ export default function AdminSettings() {
         <FieldValue>{user.position_title}</FieldValue>
         <FieldLabel>Specialization</FieldLabel>
         <FieldValue>{user.specialization}</FieldValue>
-        <ChangePasswordButton>Change Password</ChangePasswordButton>
+        <PasswordChangeForm />
+        <LogoutButton onClick={handleLogout}>Logout</LogoutButton>
       </TextContainer>
     </SettingsPage>
   );
