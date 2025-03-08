@@ -56,7 +56,11 @@ export default function NavBar() {
     <StyledNav>
       <LeftAligned>
         <LogoPlaceholder onClick={() => navigate('/')}>
-          <img id='ITAlogo' src='ITAlogo.png' alt='ITA Logo' />
+          <img
+            id='ITAlogo'
+            src={`${process.env.PUBLIC_URL}/ITAlogo.png`}
+            alt='ITA Logo'
+          />
         </LogoPlaceholder>
       </LeftAligned>
       <>
