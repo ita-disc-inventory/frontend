@@ -14,11 +14,17 @@ import 'ag-grid-community/styles/ag-theme-quartz.css';
 import { AgGridReact } from 'ag-grid-react';
 import styled from 'styled-components';
 
+import ItemArrivedConfirm from 'common/components/admin_modals/ItemArrivedConfirm';
+import ItemReadyConfirm from 'common/components/admin_modals/ItemReadyConfirm';
+import NewAdminConfirm from 'common/components/admin_modals/NewAdminConfirm';
+import NewMonthlyBudget from 'common/components/admin_modals/NewMonthlyBudget';
+import OrderApprovalConfirm from 'common/components/admin_modals/OrderApprovalConfirm';
+import OrderTrackingNumber from 'common/components/admin_modals/OrderTrackingNumber';
+import ReasonForDenial from 'common/components/admin_modals/ReasonForDenial';
+
 import FilterDropdown from './FilterDropdown';
-import NewOrderForm from './NewOrderForm';
 import StatusDropdown from './StatusDropdown';
 import FormPopup from './templates/FormPopup';
-import YNPopup from './templates/YNPopup';
 
 // Mark all grids as using legacy themes
 provideGlobalGridOptions({ theme: 'legacy' });
@@ -406,9 +412,13 @@ export default function OrderTable() {
           autoSizeStrategy={autoSizeStrategy}
         />
       </div>
-      <YNPopup buttonColor='blue' />
-      <FormPopup />
-      <NewOrderForm />
+      <ItemArrivedConfirm />
+      <ItemReadyConfirm />
+      <NewAdminConfirm />
+      <NewMonthlyBudget />
+      <OrderApprovalConfirm />
+      <OrderTrackingNumber />
+      <ReasonForDenial />
     </div>
   );
 }
