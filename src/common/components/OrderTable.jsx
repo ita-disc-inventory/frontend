@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import {
   MagnifyingGlassIcon,
@@ -14,12 +14,7 @@ import 'ag-grid-community/styles/ag-theme-quartz.css';
 import { AgGridReact } from 'ag-grid-react';
 import styled from 'styled-components';
 
-import ItemArrivedConfirm from 'common/components/admin_modals/ItemArrivedConfirm';
-import ItemReadyConfirm from 'common/components/admin_modals/ItemReadyConfirm';
-import NewAdminConfirm from 'common/components/admin_modals/NewAdminConfirm';
-import NewMonthlyBudget from 'common/components/admin_modals/NewMonthlyBudget';
 import OrderApprovalConfirm from 'common/components/admin_modals/OrderApprovalConfirm';
-import OrderTrackingNumber from 'common/components/admin_modals/OrderTrackingNumber';
 import ReasonForDenial from 'common/components/admin_modals/ReasonForDenial';
 
 import FilterDropdown from './FilterDropdown';
@@ -119,21 +114,6 @@ const orderNameRenderer = (params) => {
   );
 };
 
-// Responsible for formatting the 'Status' column
-// See StatusDropdown.jsx to see how status to color relationships work
-const statusRenderer = (params) => {
-  // need to implement logic for if status is being changed to 'Deny' or 'Pick up' or 'Arrived', as
-  // these should trigger a pop-up
-  return (
-    <StatusDropdown
-      value={params.value}
-      onStatusChange={(newValue) => {
-        params.node.setDataValue('status', newValue);
-      }}
-    />
-  );
-};
-
 // Responsible for formatting & styling the 'Priority' column
 const priorityRenderer = (params) => {
   const priority = params.value;
@@ -225,9 +205,6 @@ const linkRenderer = (params) => {
   );
 };
 
-// Responsible for formatting the 'Tracking Number' column
-// Tracking number should only show up if the status of respective row is NOT 'pending', or 'denied'
-
 // Responsible for formatting the 'price' column
 function currencyFormatter(params) {
   // if price value is not null, return formatted price to column
@@ -255,6 +232,31 @@ function programToAbbrev(params) {
 //    • Introduce custom interactive components (like dropdowns or custom tooltips)
 export default function OrderTable() {
   const [rowData, setRowData] = useState([]);
+  // Store the pending row with its previous status
+  const [pendingRow, setPendingRow] = useState(null);
+  const [showApprovalConfirm, setShowApprovalConfirm] = useState(false);
+  const [showReasonForDenial, setShowReasonForDenial] = useState(false);
+  // const [showItemArrived, setShowItemArrived] = useState(false); // if true, then 'Item Arrived?' Popup
+  // const [showItemPickUp, setShowItemPickUp] = useState(false); // if true, then 'Item Ready for Pickup?' Popup
+  // const [showNewBudget, setShowNewBudget] = useState(false); // if true, then 'Enter new budget' Popup
+  // New separate status cell renderer function:
+  const statusCellRenderer = (params) => {
+    const handleStatusChange = (newValue) => {
+      if (newValue === 'denied') {
+        // Save reference to row along with the previous status.
+        setPendingRow({ params, prev: params.value });
+        setShowApprovalConfirm(true);
+      } else {
+        params.node.setDataValue('status', newValue);
+      }
+    };
+    return (
+      <StatusDropdown
+        value={params.value}
+        onStatusChange={handleStatusChange}
+      />
+    );
+  };
   // all column names and respective settings
   const [colDefs] = useState([
     {
@@ -267,7 +269,7 @@ export default function OrderTable() {
     {
       headerName: 'Status',
       field: 'status',
-      cellRenderer: statusRenderer,
+      cellRenderer: statusCellRenderer, // use new function here
       filter: true,
     },
     {
@@ -355,6 +357,13 @@ export default function OrderTable() {
         setRowData(transformedData);
       });
   }, []);
+
+  // gets us the row ID of whatever we are trying to update
+  const getRowId = useCallback((params) => {
+    console.log(rowData);
+    return params.data.id;
+  }, []);
+
   // makes columns fit to width of the grid, no overflow/scrolling
   const autoSizeStrategy = useMemo(() => {
     return {
@@ -405,20 +414,55 @@ export default function OrderTable() {
       {/* The actual order table */}
       <div className='ag-theme-quartz' style={{ height: '500px' }}>
         <AgGridReact
-          rowData={rowData}
-          defaultColDef={defaultColDef}
-          columnDefs={colDefs}
-          rowHeight={50}
-          autoSizeStrategy={autoSizeStrategy}
+          rowData={rowData} // store row data
+          defaultColDef={defaultColDef} // default col defs
+          columnDefs={colDefs} // specific col defs
+          rowHeight={50} // how tall each row is
+          autoSizeStrategy={autoSizeStrategy} // make cols fit width of grid/table
         />
       </div>
-      <ItemArrivedConfirm />
-      <ItemReadyConfirm />
-      <NewAdminConfirm />
-      <NewMonthlyBudget />
-      <OrderApprovalConfirm />
-      <OrderTrackingNumber />
-      <ReasonForDenial />
+      {/* if showApprovalConfirm == true, then show the popup */}
+      {showApprovalConfirm && (
+        <OrderApprovalConfirm
+          open={true}
+          onApprove={() => {
+            // "Approve" means cancel denial process; revert status.
+            if (pendingRow) {
+              pendingRow.params.node.setDataValue('status', pendingRow.prev);
+            }
+            setShowApprovalConfirm(false);
+            setPendingRow(null);
+          }}
+          onDeny={() => {
+            // Proceed to ask for reason.
+            setShowApprovalConfirm(false);
+            setShowReasonForDenial(true);
+          }}
+        />
+      )}
+      {/* if showReasonForDenial == true, then show the popup + input */}
+      {showReasonForDenial && (
+        <ReasonForDenial
+          open={true}
+          onSubmit={(reason) => {
+            // When submitted, update cell value to 'denied'.
+            if (pendingRow) {
+              pendingRow.params.node.setDataValue('status', 'denied');
+            }
+            setShowReasonForDenial(false);
+            setPendingRow(null);
+            // Optionally process "reason"
+          }}
+          onCancel={() => {
+            // If cancelled, revert the dropdown to its previous state.
+            if (pendingRow) {
+              pendingRow.params.node.setDataValue('status', pendingRow.prev);
+            }
+            setShowReasonForDenial(false);
+            setPendingRow(null);
+          }}
+        />
+      )}
     </div>
   );
 }
