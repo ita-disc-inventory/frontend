@@ -65,19 +65,6 @@ const LogoutButton = styled.button`
 
 export default function AdminSettings() {
   const { user, logout } = useUser();
-  const navigate = useNavigate();
-
-  const handleLogout = async () => {
-    try {
-      const success = await logout(); // Use the context's logout function
-      if (success) {
-        navigate('/'); // Navigate only after successful logout
-      }
-    } catch (error) {
-      console.error('Logout failed:', error);
-    }
-  };
-
 
   return (
     <SettingsPage>
@@ -94,7 +81,7 @@ export default function AdminSettings() {
         <FieldLabel>Specialization</FieldLabel>
         <FieldValue>{user.specialization}</FieldValue>
         <PasswordChangeForm />
-        <LogoutButton onClick={handleLogout}>Logout</LogoutButton>
+        <LogoutButton onClick={logout}>Logout</LogoutButton>
       </TextContainer>
     </SettingsPage>
   );
