@@ -1,18 +1,15 @@
 import React, { useEffect, useMemo, useState } from 'react';
 
-import {
-  MagnifyingGlassIcon,
-  OpenInNewWindowIcon,
-} from '@radix-ui/react-icons';
-import {
-  AllCommunityModule,
-  ModuleRegistry,
-  provideGlobalGridOptions,
-} from 'ag-grid-community';
+
+
+import { MagnifyingGlassIcon, OpenInNewWindowIcon } from '@radix-ui/react-icons';
+import { AllCommunityModule, ModuleRegistry, provideGlobalGridOptions } from 'ag-grid-community';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
 import { AgGridReact } from 'ag-grid-react';
 import styled from 'styled-components';
+
+
 
 import ItemArrivedConfirm from 'common/components/admin_modals/ItemArrivedConfirm';
 import ItemReadyConfirm from 'common/components/admin_modals/ItemReadyConfirm';
@@ -22,9 +19,15 @@ import OrderApprovalConfirm from 'common/components/admin_modals/OrderApprovalCo
 import OrderTrackingNumber from 'common/components/admin_modals/OrderTrackingNumber';
 import ReasonForDenial from 'common/components/admin_modals/ReasonForDenial';
 
+
+
 import FilterDropdown from './FilterDropdown';
 import StatusDropdown from './StatusDropdown';
 import FormPopup from './templates/FormPopup';
+
+
+
+
 
 // Mark all grids as using legacy themes
 provideGlobalGridOptions({ theme: 'legacy' });
@@ -87,6 +90,38 @@ const StyledLink = styled.a`
     color: purple;
   }
 `;
+
+const EditableCell = (props) => {
+  const [value, setValue] = useState(props.value);
+
+  const onChange = (event) => {
+    setValue(event.target.value);
+  };
+
+  const onBlur = async () => {
+    console.log(props.data);
+    await fetch(`http://localhost:5050/admin/tracking/${props.data.orderId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ tracking_number: value }),
+    });
+    props.api.stopEditing();
+    props.updateTrackingNumber(props.data.orderId, value);
+    setValue(props.value);
+  };
+
+  return (
+    <input
+      type='text'
+      value={value}
+      onChange={onChange}
+      onBlur={onBlur}
+      style={{ width: '100%' }}
+    />
+  );
+};
 
 // Responsible for formatting values under 'Order Name' column.
 const orderNameRenderer = (params) => {
@@ -255,6 +290,16 @@ function programToAbbrev(params) {
 //    • Introduce custom interactive components (like dropdowns or custom tooltips)
 export default function OrderTable() {
   const [rowData, setRowData] = useState([]);
+  const updateTrackingNumber = (orderId, newTrackingNumber) => {
+    setRowData((prevRowData) =>
+      prevRowData.map((row) =>
+        row.orderId === orderId
+          ? { ...row, trackingNumber: newTrackingNumber }
+          : row
+      )
+    );
+  };
+
   // all column names and respective settings
   const [colDefs] = useState([
     {
@@ -297,6 +342,14 @@ export default function OrderTable() {
     {
       headerName: 'Tracking Number',
       field: 'trackingNumber',
+      editable: (params) => {
+        // Specify your conditions here
+        return params.data.status == 'approved';
+      },
+      cellEditor: EditableCell,
+      cellEditorParams: {
+        updateTrackingNumber,
+      }
     },
     {
       headerName: 'Request Date',
@@ -337,7 +390,9 @@ export default function OrderTable() {
       .then((result) => result.json())
       .then((data) => {
         // tranform each order of JSON into flat object for table
+
         const transformedData = data.map((order) => ({
+          orderId: order.order_id,
           orderName: order.items.item_name,
           status: order.status,
           priorityLevel: order.priority_level,
@@ -352,6 +407,7 @@ export default function OrderTable() {
           ppu: order.items.price_per_unit,
           quantity: order.quantity,
         }));
+        console.log(transformedData);
         setRowData(transformedData);
       });
   }, []);
