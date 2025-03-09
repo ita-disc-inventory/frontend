@@ -16,9 +16,8 @@ const StyledLink = styled(Link)`
   color: #007bff;
   text-decoration: none;
   font-size: 0.9rem;
-  margin-top: -10px;
-  align-self: flex-end;
-
+  align-self: center;
+  margin-top: 10px;
   &:hover {
     text-decoration: underline;
   }
@@ -83,10 +82,13 @@ export default function Login() {
           onChange={handleChange}
           required
         />
-        <StyledLink to='/forgot-password'>Forgot Password?</StyledLink>
         <SubmitButton disabled={isLoading}>
           {isLoading ? 'Logging in...' : 'Log In'}
         </SubmitButton>
+        <StyledLink to='/forgot-password'>Forgot Password?</StyledLink>
+        <StyledLink to='/signup'>
+          Does not have an account? Sign up here!
+        </StyledLink>
         <GoogleButton
           onClick={handleGoogleLogin}
           isLoading={isLoading}
