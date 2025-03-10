@@ -1,9 +1,6 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
-import {
-  MagnifyingGlassIcon,
-  OpenInNewWindowIcon,
-} from '@radix-ui/react-icons';
+import { OpenInNewWindowIcon } from '@radix-ui/react-icons';
 import {
   AllCommunityModule,
   ModuleRegistry,
@@ -14,10 +11,14 @@ import 'ag-grid-community/styles/ag-theme-quartz.css';
 import { AgGridReact } from 'ag-grid-react';
 import styled from 'styled-components';
 
+import ItemArrivedConfirm from 'common/components/admin_modals/ItemArrivedConfirm';
+import ItemReadyConfirm from 'common/components/admin_modals/ItemReadyConfirm';
+import NewAdminConfirm from 'common/components/admin_modals/NewAdminConfirm';
+import NewMonthlyBudget from 'common/components/admin_modals/NewMonthlyBudget';
 import OrderApprovalConfirm from 'common/components/admin_modals/OrderApprovalConfirm';
+import OrderTrackingNumber from 'common/components/admin_modals/OrderTrackingNumber';
 import ReasonForDenial from 'common/components/admin_modals/ReasonForDenial';
 
-import FilterDropdown from './FilterDropdown';
 import StatusDropdown from './StatusDropdown';
 import FormPopup from './templates/FormPopup';
 
@@ -25,44 +26,6 @@ import FormPopup from './templates/FormPopup';
 provideGlobalGridOptions({ theme: 'legacy' });
 
 ModuleRegistry.registerModules([AllCommunityModule]);
-
-const SearchContainer = styled.div`
-  display: flex;
-  width: 100%;
-  max-width: 24rem;
-  height: 40px;
-`;
-
-const SearchIcon = styled.div`
-  font-family: inherit;
-  border-radius: 100%;
-  height: 40px;
-  width: 40px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  position: absolute;
-  color: white;
-  background-color: inherit;
-  transition: all 0.3s ease;
-
-  svg {
-    height: 20px; // Set the height of the SVG
-    width: 20px; // Set the width of the SVG
-  }
-
-  svg > path {
-    fill: gray;
-  }
-`;
-
-const Input = styled.input`
-  width: 100%;
-  height: 100%;
-  padding: 10px 10px 10px 40px; /* extra left padding for the icon */
-  border: 1px solid #ccc;
-  border-radius: 4px;
-`;
 
 const StyledLink = styled.a`
   text-decoration: underline;
@@ -82,6 +45,38 @@ const StyledLink = styled.a`
     color: purple;
   }
 `;
+
+const EditableCell = (params) => {
+  const [value, setValue] = useState(params.value);
+
+  const onChange = (event) => {
+    setValue(event.target.value);
+  };
+
+  const onBlur = async () => {
+    console.log(params.data);
+    await fetch(`http://localhost:5050/admin/tracking/${params.data.orderId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ tracking_number: value }),
+    });
+    params.api.stopEditing();
+    params.updateTrackingNumber(params.data.orderId, value);
+    setValue(params.value);
+  };
+
+  return (
+    <input
+      type='text'
+      value={value}
+      onChange={onChange}
+      onBlur={onBlur}
+      style={{ width: '100%' }}
+    />
+  );
+};
 
 // Responsible for formatting values under 'Order Name' column.
 const orderNameRenderer = (params) => {
@@ -113,6 +108,21 @@ const orderNameRenderer = (params) => {
     </div>
   );
 };
+
+// Responsible for formatting the 'Status' column
+// See StatusDropdown.jsx to see how status to color relationships work
+// const statusRenderer = (params) => {
+//   // need to implement logic for if status is being changed to 'Deny' or 'Pick up' or 'Arrived', as
+//   // these should trigger a pop-up
+//   return (
+//     <StatusDropdown
+//       value={params.value}
+//       onStatusChange={(newValue) => {
+//         params.node.setDataValue('status', newValue);
+//       }}
+//     />
+//   );
+// };
 
 // Responsible for formatting & styling the 'Priority' column
 const priorityRenderer = (params) => {
@@ -205,6 +215,9 @@ const linkRenderer = (params) => {
   );
 };
 
+// Responsible for formatting the 'Tracking Number' column
+// Tracking number should only show up if the status of respective row is NOT 'pending', or 'denied'
+
 // Responsible for formatting the 'price' column
 function currencyFormatter(params) {
   // if price value is not null, return formatted price to column
@@ -257,6 +270,16 @@ export default function OrderTable() {
       />
     );
   };
+  const updateTrackingNumber = (orderId, newTrackingNumber) => {
+    setRowData((prevRowData) =>
+      prevRowData.map((row) =>
+        row.orderId === orderId
+          ? { ...row, trackingNumber: newTrackingNumber }
+          : row
+      )
+    );
+  };
+
   // all column names and respective settings
   const [colDefs] = useState([
     {
@@ -269,7 +292,7 @@ export default function OrderTable() {
     {
       headerName: 'Status',
       field: 'status',
-      cellRenderer: statusCellRenderer, // use new function here
+      cellRenderer: statusCellRenderer,
       filter: true,
     },
     {
@@ -286,7 +309,7 @@ export default function OrderTable() {
     {
       headerName: 'Price',
       field: 'price',
-      width: 110,
+      width: 140, // adjust width of price column
       valueFormatter: currencyFormatter,
       filter: true,
     },
@@ -299,6 +322,14 @@ export default function OrderTable() {
     {
       headerName: 'Tracking Number',
       field: 'trackingNumber',
+      editable: (params) => {
+        // Specify your conditions here
+        return params.data.status == 'approved';
+      },
+      cellEditor: EditableCell,
+      cellEditorParams: {
+        updateTrackingNumber,
+      },
     },
     {
       headerName: 'Request Date',
@@ -339,7 +370,9 @@ export default function OrderTable() {
       .then((result) => result.json())
       .then((data) => {
         // tranform each order of JSON into flat object for table
+
         const transformedData = data.map((order) => ({
+          orderId: order.order_id,
           orderName: order.items.item_name,
           status: order.status,
           priorityLevel: order.priority_level,
@@ -354,16 +387,10 @@ export default function OrderTable() {
           ppu: order.items.price_per_unit,
           quantity: order.quantity,
         }));
+        console.log(transformedData);
         setRowData(transformedData);
       });
   }, []);
-
-  // gets us the row ID of whatever we are trying to update
-  const getRowId = useCallback((params) => {
-    console.log(rowData);
-    return params.data.id;
-  }, []);
-
   // makes columns fit to width of the grid, no overflow/scrolling
   const autoSizeStrategy = useMemo(() => {
     return {
@@ -381,88 +408,48 @@ export default function OrderTable() {
   // the component we are actually returning
   return (
     <div style={{ padding: '20px' }}>
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '12px',
-          marginBottom: '32px',
-          marginTop: '24px',
-        }}
-      >
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'flex-end',
-            gap: '20px',
-          }}
-        >
-          {/* Search Input for searching an order by name */}
-          <SearchContainer>
-            <SearchIcon>
-              <MagnifyingGlassIcon />
-            </SearchIcon>
-            <Input type='search' placeholder='Search an order...' />
-          </SearchContainer>
-          {/* Dropdown for selecting Filters */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-            <FilterDropdown />
-          </div>
-        </div>
-      </div>
       {/* The actual order table */}
       <div className='ag-theme-quartz' style={{ height: '500px' }}>
         <AgGridReact
-          rowData={rowData} // store row data
-          defaultColDef={defaultColDef} // default col defs
-          columnDefs={colDefs} // specific col defs
-          rowHeight={50} // how tall each row is
-          autoSizeStrategy={autoSizeStrategy} // make cols fit width of grid/table
+          rowData={rowData}
+          defaultColDef={defaultColDef}
+          columnDefs={colDefs}
+          rowHeight={50}
+          autoSizeStrategy={autoSizeStrategy}
         />
       </div>
-      {/* if showApprovalConfirm == true, then show the popup */}
+      {/* ...existing modal components rendered at bottom... */}
       {showApprovalConfirm && (
         <OrderApprovalConfirm
           open={true}
           onApprove={() => {
-            // "Approve" means cancel denial process; revert status.
-            if (pendingRow) {
-              pendingRow.params.node.setDataValue('status', pendingRow.prev);
-            }
+            // If user clicks "Approve", do nothing (or optionally update status to 'approved')
             setShowApprovalConfirm(false);
-            setPendingRow(null);
           }}
           onDeny={() => {
-            // Proceed to ask for reason.
+            // User clicked Deny, so move to ask for reason.
             setShowApprovalConfirm(false);
             setShowReasonForDenial(true);
           }}
         />
       )}
-      {/* if showReasonForDenial == true, then show the popup + input */}
       {showReasonForDenial && (
         <ReasonForDenial
           open={true}
           onSubmit={(reason) => {
-            // When submitted, update cell value to 'denied'.
-            if (pendingRow) {
-              pendingRow.params.node.setDataValue('status', 'denied');
-            }
+            // When the user submits a reason, we update the status cell to 'denied'
             setShowReasonForDenial(false);
-            setPendingRow(null);
-            // Optionally process "reason"
-          }}
-          onCancel={() => {
-            // If cancelled, revert the dropdown to its previous state.
-            if (pendingRow) {
-              pendingRow.params.node.setDataValue('status', pendingRow.prev);
-            }
-            setShowReasonForDenial(false);
-            setPendingRow(null);
+            // Optional: process "reason" (e.g. log or send to server)
           }}
         />
       )}
+      <ItemArrivedConfirm />
+      <ItemReadyConfirm />
+      <NewAdminConfirm />
+      <NewMonthlyBudget />
+      <OrderApprovalConfirm />
+      <OrderTrackingNumber />
+      <ReasonForDenial />
     </div>
   );
 }
