@@ -46,8 +46,8 @@ const StyledLink = styled.a`
   }
 `;
 
-const EditableCell = (params) => {
-  const [value, setValue] = useState(params.value);
+const EditableCell = (props) => {
+  const [value, setValue] = useState(props.value);
 
   const onChange = (event) => {
     setValue(event.target.value);
@@ -384,7 +384,7 @@ export default function OrderTable() {
           link: order.items.order_link,
           trackingNumber: order.tracking_number,
           requestDate: order.request_date,
-          specialization: 'specialization',
+          specialization: order.specialization,
           program: order.programs.program_title,
           therapistName: `${order.users.firstname} ${order.users.lastname}`,
           ppu: order.items.price_per_unit,
