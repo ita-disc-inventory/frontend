@@ -25,7 +25,7 @@ const TextContainer = styled.div`
 `;
 
 const FieldLabel = styled.h1`
-  font-size: 1.2rem;
+  font-size: 14px;
   color: #555;
   margin: 0;
   padding: 0;
@@ -33,7 +33,7 @@ const FieldLabel = styled.h1`
 `;
 
 const FieldValue = styled.div`
-  font-size: 1.4rem;
+  font-size: 16px;
   padding: 0.5rem;
   border: 1px solid #e0e0e0;
   margin-bottom: 0.5rem;
@@ -43,7 +43,7 @@ const FieldValue = styled.div`
   margin-right: auto;
 `;
 const FieldInput = styled.input`
-  font-size: 1.4rem;
+  font-size: 16px;
   padding: 0.5rem;
   border: 1px solid #000000;
   margin-bottom: 0.5rem;
