@@ -87,7 +87,7 @@ export default function Login() {
         </SubmitButton>
         <StyledLink to='/forgot-password'>Forgot Password?</StyledLink>
         <StyledLink to='/signup'>
-          Does not have an account? Sign up here!
+          Don't have an account? Sign up here!
         </StyledLink>
         <GoogleButton
           onClick={handleGoogleLogin}
