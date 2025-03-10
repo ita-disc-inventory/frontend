@@ -96,13 +96,13 @@ const orderNameRenderer = (params) => {
       }}
     >
       {/* Bolded item/product name */}
-      <span style={{ fontWeight: 'bold' }}>{params.value}</span>
+      <span style={{ fontWeight: 'bold' }}>{params.data.orderName}</span>
       <span
         style={{
           fontSize: '0.8em',
           color: 'gray',
           position: 'absolute',
-          top: '15px',
+          top: '20px',
         }}
       >
         {/* PPU and Quantity acting as 'subheaders' beneath item name */}
@@ -266,7 +266,7 @@ export default function OrderTable() {
   // New separate status cell renderer function:
   const statusCellRenderer = (params) => {
     const handleStatusChange = (newValue) => {
-      if (newValue === 'denied') {
+      if (newValue === 'denied' || newValue === 'approved') {
         // Save reference to row along with the previous status.
         setPendingRow({ params, prev: params.value });
         setShowApprovalConfirm(true);
@@ -385,7 +385,7 @@ export default function OrderTable() {
 
         const transformedData = data.map((order) => ({
           orderId: order.order_id,
-          orderName: order.items.item_name,
+          orderName: order.item_name,
           status: order.status,
           priorityLevel: order.priority_level,
           description: order.order_description,
@@ -434,7 +434,10 @@ export default function OrderTable() {
         <OrderApprovalConfirm
           open={true}
           onApprove={() => {
-            // If user clicks "Approve", do nothing (or optionally update status to 'approved')
+            // If user clicks "Approve", set the status to 'approved'
+            if (pendingRow && pendingRow.params) {
+              pendingRow.params.node.setDataValue('status', 'approved');
+            }
             setShowApprovalConfirm(false);
           }}
           onDeny={() => {
