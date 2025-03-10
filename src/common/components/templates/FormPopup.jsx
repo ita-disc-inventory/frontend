@@ -140,7 +140,7 @@ const StyledButton = styled.button`
 
   &.green {
     background-color: var(--green-4);
-    color: var(--green-11);
+    color: var (--green-11);
     outline-color: var(--green-7);
     &:hover {
       background-color: var(--green-5);
@@ -224,6 +224,8 @@ const IconButton = styled.button`
 `;
 
 export default function FormPopup({
+  open, // new controlled prop
+  onOpenChange, // required in controlled mode
   title = 'Form Popup', // title of the form
   description = 'Form Desc.', // form desc.
   children, // any additional DOM elts you would want to add to form
@@ -235,9 +237,63 @@ export default function FormPopup({
   buttonText = 'Open Form', // text that appears over form button --> click --> opens form
   submitColor = 'green',
   cancelColor = 'red',
+  cancelOnClick = null,
   buttonColor = 'blue',
   customForm = false, // if false, then caller must provide input fields. If true, then caller must provide another form
 }) {
+  // Controlled mode: if open is defined, do not render trigger button.
+  if (open !== undefined) {
+    return (
+      <Dialog.Root open={open} onOpenChange={onOpenChange}>
+        <Dialog.Portal>
+          <StyledOverlay /> {/* allows for 'dimmed' background */}
+          <StyledContent maxWidth={maxWidth}>
+            <StyledTitle>{title}</StyledTitle>
+            <StyledDescription>{description}</StyledDescription>
+            {/* if custom form is true, then caller must be providing their own form (since form nested in a form is NOT allowed) */}
+            {customForm && <div>{children}</div>}
+            {/* if custom form is false, then caller is expecting to use supplied form (not providing their own) */}
+            {!customForm && (
+              <form onSubmit={onSubmit}>
+                {children} {/* what will go in the form */}
+                {/* if defaultSubmit is NOT true, caller is expected to have another button to submit form */}
+                {defaultSubmit && (
+                  <div
+                    style={{
+                      display: 'flex',
+                      marginTop: 25,
+                      justifyContent: 'flex-end',
+                    }}
+                  >
+                    <Dialog.Close asChild>
+                      <div
+                        style={{
+                          display: 'flex',
+                          flexDirection: 'row-reverse',
+                          gap: '10px',
+                        }}
+                      >
+                        <StyledButton className={submitColor} type='submit'>
+                          {submitText}
+                        </StyledButton>
+                        <StyledButton
+                          className={cancelColor}
+                          onClick={cancelOnClick}
+                        >
+                          {cancelText}
+                        </StyledButton>
+                      </div>
+                    </Dialog.Close>
+                  </div>
+                )}
+              </form>
+            )}
+          </StyledContent>
+        </Dialog.Portal>
+      </Dialog.Root>
+    );
+  }
+  // Uncontrolled mode: render trigger button.
   return (
     <Dialog.Root>
       <Dialog.Trigger asChild>
@@ -300,6 +356,8 @@ export default function FormPopup({
 // the user must know that the form does, children because the form must include some content, and
 // onSubmit because the form must do something when it is completed
 FormPopup.propTypes = {
+  open: PropTypes.bool, // controlled mode open flag
+  onOpenChange: PropTypes.func, // controlled mode handler
   title: PropTypes.string.isRequired,
   description: PropTypes.string,
   children: PropTypes.node.isRequired,
@@ -308,6 +366,7 @@ FormPopup.propTypes = {
   defaultSubmit: PropTypes.bool,
   submitText: PropTypes.string,
   cancelText: PropTypes.string,
+  cancelOnClick: PropTypes.func,
   buttonText: PropTypes.string,
   submitColor: PropTypes.string,
   cancelColor: PropTypes.string,
@@ -315,13 +374,15 @@ FormPopup.propTypes = {
   customForm: PropTypes.bool,
 };
 
-// Reiteration of default values for the FormPopup component
 FormPopup.defaultProps = {
+  open: undefined,
+  onOpenChange: () => {},
   description: '',
   maxWidth: '500px',
   defaultSubmit: true,
   submitText: 'Submit',
   cancelText: 'Cancel',
+  cancelOnClick: null,
   buttonText: 'Open Form',
   submitColor: 'green',
   cancelColor: 'red',

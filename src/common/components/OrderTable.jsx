@@ -1,15 +1,15 @@
 import React, { useEffect, useMemo, useState } from 'react';
 
-
-
-import { MagnifyingGlassIcon, OpenInNewWindowIcon } from '@radix-ui/react-icons';
-import { AllCommunityModule, ModuleRegistry, provideGlobalGridOptions } from 'ag-grid-community';
+import { OpenInNewWindowIcon } from '@radix-ui/react-icons';
+import {
+  AllCommunityModule,
+  ModuleRegistry,
+  provideGlobalGridOptions,
+} from 'ag-grid-community';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
 import { AgGridReact } from 'ag-grid-react';
 import styled from 'styled-components';
-
-
 
 import ItemArrivedConfirm from 'common/components/admin_modals/ItemArrivedConfirm';
 import ItemReadyConfirm from 'common/components/admin_modals/ItemReadyConfirm';
@@ -19,58 +19,13 @@ import OrderApprovalConfirm from 'common/components/admin_modals/OrderApprovalCo
 import OrderTrackingNumber from 'common/components/admin_modals/OrderTrackingNumber';
 import ReasonForDenial from 'common/components/admin_modals/ReasonForDenial';
 
-
-
-import FilterDropdown from './FilterDropdown';
 import StatusDropdown from './StatusDropdown';
 import FormPopup from './templates/FormPopup';
-
-
-
-
 
 // Mark all grids as using legacy themes
 provideGlobalGridOptions({ theme: 'legacy' });
 
 ModuleRegistry.registerModules([AllCommunityModule]);
-
-const SearchContainer = styled.div`
-  display: flex;
-  width: 100%;
-  max-width: 24rem;
-  height: 40px;
-`;
-
-const SearchIcon = styled.div`
-  font-family: inherit;
-  border-radius: 100%;
-  height: 40px;
-  width: 40px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  position: absolute;
-  color: white;
-  background-color: inherit;
-  transition: all 0.3s ease;
-
-  svg {
-    height: 20px; // Set the height of the SVG
-    width: 20px; // Set the width of the SVG
-  }
-
-  svg > path {
-    fill: gray;
-  }
-`;
-
-const Input = styled.input`
-  width: 100%;
-  height: 100%;
-  padding: 10px 10px 10px 40px; /* extra left padding for the icon */
-  border: 1px solid #ccc;
-  border-radius: 4px;
-`;
 
 const StyledLink = styled.a`
   text-decoration: underline;
@@ -99,7 +54,7 @@ const EditableCell = (props) => {
   };
 
   const onBlur = async () => {
-    console.log(props.data);
+    //console.log(props.data);
     await fetch(
       `${process.env.REACT_APP_BACKEND_URL}/admin/tracking/${props.data.orderId}`,
       {
@@ -159,18 +114,18 @@ const orderNameRenderer = (params) => {
 
 // Responsible for formatting the 'Status' column
 // See StatusDropdown.jsx to see how status to color relationships work
-const statusRenderer = (params) => {
-  // need to implement logic for if status is being changed to 'Deny' or 'Pick up' or 'Arrived', as
-  // these should trigger a pop-up
-  return (
-    <StatusDropdown
-      value={params.value}
-      onStatusChange={(newValue) => {
-        params.node.setDataValue('status', newValue);
-      }}
-    />
-  );
-};
+// const statusRenderer = (params) => {
+//   // need to implement logic for if status is being changed to 'Deny' or 'Pick up' or 'Arrived', as
+//   // these should trigger a pop-up
+//   return (
+//     <StatusDropdown
+//       value={params.value}
+//       onStatusChange={(newValue) => {
+//         params.node.setDataValue('status', newValue);
+//       }}
+//     />
+//   );
+// };
 
 // Responsible for formatting & styling the 'Priority' column
 const priorityRenderer = (params) => {
@@ -278,6 +233,14 @@ function requestDateFormatter(params) {
   return `${month}/${day}/${year}`;
 }
 
+// Formats specialization
+function specializationFormatter(params) {
+  const specialization = params.value;
+  return specialization
+    ? specialization.charAt(0).toUpperCase() + specialization.slice(1)
+    : ''; // prevents error when specialization is null
+}
+
 // Changes program name to its respective abbreviation
 function programToAbbrev(params) {
   const program = params.value;
@@ -293,6 +256,31 @@ function programToAbbrev(params) {
 //    • Introduce custom interactive components (like dropdowns or custom tooltips)
 export default function OrderTable() {
   const [rowData, setRowData] = useState([]);
+  // Store the pending row with its previous status
+  const [pendingRow, setPendingRow] = useState(null);
+  const [showApprovalConfirm, setShowApprovalConfirm] = useState(false);
+  const [showReasonForDenial, setShowReasonForDenial] = useState(false);
+  // const [showItemArrived, setShowItemArrived] = useState(false); // if true, then 'Item Arrived?' Popup
+  // const [showItemPickUp, setShowItemPickUp] = useState(false); // if true, then 'Item Ready for Pickup?' Popup
+  // const [showNewBudget, setShowNewBudget] = useState(false); // if true, then 'Enter new budget' Popup
+  // New separate status cell renderer function:
+  const statusCellRenderer = (params) => {
+    const handleStatusChange = (newValue) => {
+      if (newValue === 'denied') {
+        // Save reference to row along with the previous status.
+        setPendingRow({ params, prev: params.value });
+        setShowApprovalConfirm(true);
+      } else {
+        params.node.setDataValue('status', newValue);
+      }
+    };
+    return (
+      <StatusDropdown
+        value={params.value}
+        onStatusChange={handleStatusChange}
+      />
+    );
+  };
   const updateTrackingNumber = (orderId, newTrackingNumber) => {
     setRowData((prevRowData) =>
       prevRowData.map((row) =>
@@ -315,7 +303,7 @@ export default function OrderTable() {
     {
       headerName: 'Status',
       field: 'status',
-      cellRenderer: statusRenderer,
+      cellRenderer: statusCellRenderer,
       filter: true,
     },
     {
@@ -332,7 +320,7 @@ export default function OrderTable() {
     {
       headerName: 'Price',
       field: 'price',
-      width: 110,
+      width: 140, // adjust width of price column
       valueFormatter: currencyFormatter,
       filter: true,
     },
@@ -352,7 +340,7 @@ export default function OrderTable() {
       cellEditor: EditableCell,
       cellEditorParams: {
         updateTrackingNumber,
-      }
+      },
     },
     {
       headerName: 'Request Date',
@@ -364,6 +352,7 @@ export default function OrderTable() {
       headerName: 'Specialization',
       field: 'specialization',
       filter: true,
+      valueFormatter: specializationFormatter,
     },
     {
       headerName: 'Program',
@@ -404,13 +393,12 @@ export default function OrderTable() {
           link: order.items.order_link,
           trackingNumber: order.tracking_number,
           requestDate: order.request_date,
-          specialization: 'specialization',
+          specialization: order.users.specialization,
           program: order.programs.program_title,
           therapistName: `${order.users.firstname} ${order.users.lastname}`,
           ppu: order.items.price_per_unit,
           quantity: order.quantity,
         }));
-        console.log(transformedData);
         setRowData(transformedData);
       });
   }, []);
@@ -431,36 +419,6 @@ export default function OrderTable() {
   // the component we are actually returning
   return (
     <div style={{ padding: '20px' }}>
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '12px',
-          marginBottom: '32px',
-          marginTop: '24px',
-        }}
-      >
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'flex-end',
-            gap: '20px',
-          }}
-        >
-          {/* Search Input for searching an order by name */}
-          <SearchContainer>
-            <SearchIcon>
-              <MagnifyingGlassIcon />
-            </SearchIcon>
-            <Input type='search' placeholder='Search an order...' />
-          </SearchContainer>
-          {/* Dropdown for selecting Filters */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-            <FilterDropdown />
-          </div>
-        </div>
-      </div>
       {/* The actual order table */}
       <div className='ag-theme-quartz' style={{ height: '500px' }}>
         <AgGridReact
@@ -471,6 +429,31 @@ export default function OrderTable() {
           autoSizeStrategy={autoSizeStrategy}
         />
       </div>
+      {/* ...existing modal components rendered at bottom... */}
+      {showApprovalConfirm && (
+        <OrderApprovalConfirm
+          open={true}
+          onApprove={() => {
+            // If user clicks "Approve", do nothing (or optionally update status to 'approved')
+            setShowApprovalConfirm(false);
+          }}
+          onDeny={() => {
+            // User clicked Deny, so move to ask for reason.
+            setShowApprovalConfirm(false);
+            setShowReasonForDenial(true);
+          }}
+        />
+      )}
+      {showReasonForDenial && (
+        <ReasonForDenial
+          open={true}
+          onSubmit={(reason) => {
+            // When the user submits a reason, we update the status cell to 'denied'
+            setShowReasonForDenial(false);
+            // Optional: process "reason" (e.g. log or send to server)
+          }}
+        />
+      )}
       <ItemArrivedConfirm />
       <ItemReadyConfirm />
       <NewAdminConfirm />
