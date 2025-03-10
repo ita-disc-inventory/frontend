@@ -54,17 +54,20 @@ const EditableCell = (params) => {
   };
 
   const onBlur = async () => {
-    console.log(params.data);
-    await fetch(`http://localhost:5050/admin/tracking/${params.data.orderId}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ tracking_number: value }),
-    });
-    params.api.stopEditing();
-    params.updateTrackingNumber(params.data.orderId, value);
-    setValue(params.value);
+    console.log(props.data);
+    await fetch(
+      `${process.env.REACT_APP_BACKEND_URL}/admin/tracking/${props.data.orderId}`,
+      {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ tracking_number: value }),
+      }
+    );
+    props.api.stopEditing();
+    props.updateTrackingNumber(props.data.orderId, value);
+    setValue(props.value);
   };
 
   return (

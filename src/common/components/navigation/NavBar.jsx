@@ -64,16 +64,12 @@ export default function NavBar() {
         </LogoPlaceholder>
       </LeftAligned>
       <>
-        {user ? ( // If user is logged in, show their name (clickable to Account Settings)
+        {user && ( // If user is logged in, show their name (clickable to Account Settings)
           <RightAligned onClick={handleNavigation}>
             <span id='userName_display'>
               {user.firstname} {user.lastname}
             </span>
           </RightAligned>
-        ) : (
-          <Button.Secondary onClick={() => navigate('/login')}>
-            Login
-          </Button.Secondary>
         )}
       </>
     </StyledNav>

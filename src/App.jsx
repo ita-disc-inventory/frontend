@@ -41,11 +41,8 @@ export default function App() {
             <Route element={<PublicOnlyRoute />}>
               <Route path='login' element={<Login />} />
               <Route path='signup' element={<SignUp />} />
-              <Route
-                path='forgot-password'
-                element={<RequestPasswordReset />}
-              />
             </Route>
+            <Route path='forgot-password' element={<RequestPasswordReset />} />
             <Route path='auth/callback' element={<AuthCallback />} />
             <Route path='auth/reset-password' element={<ResetPassword />} />
             <Route path='*' element={<NotFound />} />
