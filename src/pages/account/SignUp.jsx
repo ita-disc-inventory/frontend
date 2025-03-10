@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import styled from 'styled-components';
 
 import GoogleButton from 'common/components/GoogleButton';
 import { Form, FormTitle } from 'common/components/form/Form';
@@ -9,6 +10,17 @@ import SubmitButton from 'common/components/form/SubmitButton';
 import { useUser } from 'common/contexts/UserContext';
 
 import { StyledPage } from './styles';
+
+const StyledLink = styled(Link)`
+  color: #007bff;
+  text-decoration: none;
+  font-size: 0.9rem;
+  align-self: center;
+  margin-top: 10px;
+  &:hover {
+    text-decoration: underline;
+  }
+`;
 
 export default function SignUp() {
   const navigate = useNavigate();
@@ -141,6 +153,9 @@ export default function SignUp() {
         <SubmitButton onClick={() => {}} disabled={isLoading}>
           {isLoading ? 'Creating account...' : 'Sign Up'}
         </SubmitButton>
+        <StyledLink to='/login'>
+          Already have an account? Log in here!
+        </StyledLink>
         <GoogleButton
           onClick={handleGoogleSignup}
           isLoading={isLoading}

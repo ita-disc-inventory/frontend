@@ -66,6 +66,11 @@ const LogoutButton = styled.button`
 export default function AdminSettings() {
   const { user, logout } = useUser();
 
+  const navigate = useNavigate();
+  const handlePasswordChange = () => {
+    navigate('/forgot-password');
+  };
+
   return (
     <SettingsPage>
       <TextContainer>
@@ -80,7 +85,9 @@ export default function AdminSettings() {
         <FieldValue>{user.position_title}</FieldValue>
         <FieldLabel>Specialization</FieldLabel>
         <FieldValue>{user.specialization}</FieldValue>
-        <PasswordChangeForm />
+        <ChangePasswordButton onClick={handlePasswordChange}>
+          Change Password
+        </ChangePasswordButton>
         <LogoutButton onClick={logout}>Logout</LogoutButton>
       </TextContainer>
     </SettingsPage>

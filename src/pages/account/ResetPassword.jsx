@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 
-import { Dialog } from 'radix-ui';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
@@ -90,6 +89,7 @@ export default function ResetPassword() {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const { updatePassword } = useUser();
+  const { setUser } = useUser();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -186,6 +186,8 @@ export default function ResetPassword() {
     try {
       console.log('Attempting password reset with token');
       await updatePassword(password, access_token);
+      setUser(null);
+      localStorage.removeItem('authToken');
 
       navigate('/login', {
         state: {
@@ -233,19 +235,16 @@ export default function ResetPassword() {
         <Button type='submit' disabled={isLoading}>
           {isLoading ? 'Updating...' : 'Update Password'}
         </Button>
-        {/* Makes it so form closes when we press 'Cancel' -- Brock added this, no functionality
-            behind button is needed (For now...?) */}
-        <Dialog.Close asChild>
-          <Button
-            type='reset'
-            style={{
-              backgroundColor: 'rgb(255, 74, 74)',
-              marginTop: '-10px',
-            }}
-          >
-            Cancel
-          </Button>
-        </Dialog.Close>
+        <Button
+          type='reset'
+          style={{
+            backgroundColor: 'rgb(255, 74, 74)',
+            marginTop: '-10px',
+          }}
+        >
+          Cancel
+        </Button>
+
         {error && <ErrorMessage>{error}</ErrorMessage>}
       </Form>
     </Container>
