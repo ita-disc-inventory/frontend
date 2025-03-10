@@ -16,6 +16,7 @@ import ItemReadyConfirm from 'common/components/admin_modals/ItemReadyConfirm';
 import NewAdminConfirm from 'common/components/admin_modals/NewAdminConfirm';
 import NewMonthlyBudget from 'common/components/admin_modals/NewMonthlyBudget';
 import OrderApprovalConfirm from 'common/components/admin_modals/OrderApprovalConfirm';
+import OrderDenyConfirm from 'common/components/admin_modals/OrderDenyConfirm';
 import OrderTrackingNumber from 'common/components/admin_modals/OrderTrackingNumber';
 import ReasonForDenial from 'common/components/admin_modals/ReasonForDenial';
 
@@ -102,7 +103,7 @@ const orderNameRenderer = (params) => {
           fontSize: '0.8em',
           color: 'gray',
           position: 'absolute',
-          top: '20px',
+          top: '15px',
         }}
       >
         {/* PPU and Quantity acting as 'subheaders' beneath item name */}
@@ -165,7 +166,7 @@ const descriptionRenderer = (params) => {
     return desc;
   } else {
     return (
-      <div style={{ position: 'relative' }}>
+      <div style={{ position: 'relative', width: '120px', fontSize: '14px' }}>
         <FormPopup
           title={
             params.data['therapistName'] +
@@ -176,6 +177,7 @@ const descriptionRenderer = (params) => {
           defaultSubmit={false}
           buttonText={desc.slice(0, 10) + '...'}
           buttonColor='white'
+          styles={{ fontSize: '14px' }}
         >
           <div
             style={{
@@ -194,11 +196,11 @@ const descriptionRenderer = (params) => {
           style={{
             position: 'absolute',
             top: '4px',
-            left: '110px',
+            left: '100px',
             pointerEvents: 'none',
           }}
         >
-          <OpenInNewWindowIcon style={{ width: '13px', height: '13px' }} />
+          <OpenInNewWindowIcon style={{ width: '15px', height: '15px' }} />
         </div>
       </div>
     );
@@ -259,6 +261,7 @@ export default function OrderTable() {
   // Store the pending row with its previous status
   const [pendingRow, setPendingRow] = useState(null);
   const [showApprovalConfirm, setShowApprovalConfirm] = useState(false);
+  const [showDenyConfirm, setShowDenyConfirm] = useState(false);
   const [showReasonForDenial, setShowReasonForDenial] = useState(false);
   // const [showItemArrived, setShowItemArrived] = useState(false); // if true, then 'Item Arrived?' Popup
   // const [showItemPickUp, setShowItemPickUp] = useState(false); // if true, then 'Item Ready for Pickup?' Popup
@@ -266,10 +269,13 @@ export default function OrderTable() {
   // New separate status cell renderer function:
   const statusCellRenderer = (params) => {
     const handleStatusChange = (newValue) => {
-      if (newValue === 'denied' || newValue === 'approved') {
+      if (newValue === 'approved') {
         // Save reference to row along with the previous status.
         setPendingRow({ params, prev: params.value });
         setShowApprovalConfirm(true);
+      } else if (newValue === 'denied') {
+        setPendingRow({ params, prev: params.value });
+        setShowDenyConfirm(true);
       } else {
         params.node.setDataValue('status', newValue);
       }
@@ -298,7 +304,7 @@ export default function OrderTable() {
       field: 'orderName',
       cellRenderer: orderNameRenderer, // see comments before OrderTable() definition
       filter: true, // 'filter: true' activates the filter option at top of specified column (3 dashed horizontal lines)
-      cellStyle: { justifyContent: 'flex-start' },
+      cellStyle: { justifyContent: 'flex-start', alignItems: 'flex-start' },
     },
     {
       headerName: 'Status',
@@ -434,16 +440,73 @@ export default function OrderTable() {
         <OrderApprovalConfirm
           open={true}
           onApprove={() => {
-            // If user clicks "Approve", set the status to 'approved'
-            if (pendingRow && pendingRow.params) {
-              pendingRow.params.node.setDataValue('status', 'approved');
+            // On approval confirmation, update status to 'approved'
+            if (pendingRow) {
+              const updatedData = rowData.map((row) =>
+                row.orderId === pendingRow.params.data.orderId
+                  ? { ...row, status: 'approved' }
+                  : row
+              );
+              setRowData(updatedData);
+              pendingRow.params.api.refreshCells({
+                rowNodes: [pendingRow.params.node],
+              });
             }
             setShowApprovalConfirm(false);
+            setPendingRow(null);
           }}
-          onDeny={() => {
-            // User clicked Deny, so move to ask for reason.
+          onCancel={() => {
+            // If cancellation occurs, revert status to the previous value
+            if (pendingRow) {
+              const updatedData = rowData.map((row) =>
+                row.orderId === pendingRow.params.data.orderId
+                  ? { ...row, status: pendingRow.prev }
+                  : row
+              );
+              setRowData(updatedData);
+              pendingRow.params.api.refreshCells({
+                rowNodes: [pendingRow.params.node],
+              });
+            }
             setShowApprovalConfirm(false);
+            setPendingRow(null);
+          }}
+        />
+      )}
+      {showDenyConfirm && (
+        <OrderDenyConfirm
+          open={true}
+          onDeny={() => {
+            // On deny confirmation, update status to 'denied' and then show the reason popup
+            if (pendingRow) {
+              const updatedData = rowData.map((row) =>
+                row.orderId === pendingRow.params.data.orderId
+                  ? { ...row, status: 'denied' }
+                  : row
+              );
+              setRowData(updatedData);
+              pendingRow.params.api.refreshCells({
+                rowNodes: [pendingRow.params.node],
+              });
+            }
+            setShowDenyConfirm(false);
             setShowReasonForDenial(true);
+          }}
+          onCancel={() => {
+            // If cancellation occurs while denying, revert status to the previous value
+            if (pendingRow) {
+              const updatedData = rowData.map((row) =>
+                row.orderId === pendingRow.params.data.orderId
+                  ? { ...row, status: pendingRow.prev }
+                  : row
+              );
+              setRowData(updatedData);
+              pendingRow.params.api.refreshCells({
+                rowNodes: [pendingRow.params.node],
+              });
+            }
+            setShowDenyConfirm(false);
+            setPendingRow(null);
           }}
         />
       )}
@@ -451,9 +514,37 @@ export default function OrderTable() {
         <ReasonForDenial
           open={true}
           onSubmit={(reason) => {
-            // When the user submits a reason, we update the status cell to 'denied'
+            // When submitted, update the status cell to 'denied'
+            if (pendingRow) {
+              const updatedData = rowData.map((row) =>
+                row.orderId === pendingRow.params.data.orderId
+                  ? { ...row, status: 'denied' }
+                  : row
+              );
+              setRowData(updatedData);
+              pendingRow.params.api.refreshCells({
+                rowNodes: [pendingRow.params.node],
+              });
+            }
             setShowReasonForDenial(false);
-            // Optional: process "reason" (e.g. log or send to server)
+            setPendingRow(null);
+            // ...optional: process reason...
+          }}
+          onCancel={() => {
+            // Revert status to its previous value when user cancels
+            if (pendingRow) {
+              const updatedData = rowData.map((row) =>
+                row.orderId === pendingRow.params.data.orderId
+                  ? { ...row, status: pendingRow.prev }
+                  : row
+              );
+              setRowData(updatedData);
+              pendingRow.params.api.refreshCells({
+                rowNodes: [pendingRow.params.node],
+              });
+            }
+            setShowReasonForDenial(false);
+            setPendingRow(null);
           }}
         />
       )}

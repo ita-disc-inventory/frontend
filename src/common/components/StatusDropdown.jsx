@@ -32,11 +32,11 @@ export default function StatusDropdown({ value, onStatusChange }) {
 
   function determineBackgroundColor(status) {
     if (status === 'approved') {
-      backgroundColor = 'green';
+      backgroundColor = 'var(--status-approved-green)';
     } else if (status === 'pending') {
-      backgroundColor = 'yellow';
+      backgroundColor = 'var(--status-pending-yellow)';
     } else if (status === 'denied') {
-      backgroundColor = 'red';
+      backgroundColor = 'inherit';
     }
   }
 
@@ -48,7 +48,7 @@ export default function StatusDropdown({ value, onStatusChange }) {
 
   return (
     <Dropdown
-      styles={{ backgroundColor: backgroundColor }} // pass an object not a string
+      styles={{ backgroundColor: backgroundColor, border: '1px solid black' }} // pass an object not a string
       placeholder='Status...'
       onValueChange={handleStatusChange}
       value={status} // changed from defaultValue to value
