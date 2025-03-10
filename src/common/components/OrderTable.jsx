@@ -54,7 +54,7 @@ const EditableCell = (props) => {
   };
 
   const onBlur = async () => {
-    console.log(props.data);
+    //console.log(props.data);
     await fetch(
       `${process.env.REACT_APP_BACKEND_URL}/admin/tracking/${props.data.orderId}`,
       {
@@ -233,6 +233,14 @@ function requestDateFormatter(params) {
   return `${month}/${day}/${year}`;
 }
 
+// Formats specialization
+function specializationFormatter(params) {
+  const specialization = params.value;
+  return specialization
+    ? specialization.charAt(0).toUpperCase() + specialization.slice(1)
+    : ''; // prevents error when specialization is null
+}
+
 // Changes program name to its respective abbreviation
 function programToAbbrev(params) {
   const program = params.value;
@@ -344,6 +352,7 @@ export default function OrderTable() {
       headerName: 'Specialization',
       field: 'specialization',
       filter: true,
+      valueFormatter: specializationFormatter,
     },
     {
       headerName: 'Program',
@@ -384,13 +393,12 @@ export default function OrderTable() {
           link: order.items.order_link,
           trackingNumber: order.tracking_number,
           requestDate: order.request_date,
-          specialization: order.specialization,
+          specialization: order.users.specialization,
           program: order.programs.program_title,
           therapistName: `${order.users.firstname} ${order.users.lastname}`,
           ppu: order.items.price_per_unit,
           quantity: order.quantity,
         }));
-        console.log(transformedData);
         setRowData(transformedData);
       });
   }, []);
