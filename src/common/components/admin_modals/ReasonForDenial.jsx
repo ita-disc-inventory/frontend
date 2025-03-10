@@ -27,16 +27,25 @@ const TextAreaContainer = styled.div`
 `;
 
 export default function ReasonForDenial({
+  open,
+  onSubmit,
+  onCancel,
   textAreaPlaceholder = 'This order is being denied because...',
 }) {
   const [reasonForDenial, setReasonForDenial] = useState('');
-
   const handleReasonForDenialChange = (e) => setReasonForDenial(e.target.value);
   return (
     <FormPopup
+      open={open} // controlled mode using open prop
       title='Reason for Denial'
       description='Please enter the reason for denial'
-      buttonText='Open Denial Reasoning'
+      buttonText='Submit Reason'
+      onSubmit={() => {
+        if (onSubmit) onSubmit(reasonForDenial);
+      }}
+      cancelOnClick={() => {
+        if (onCancel) onCancel();
+      }}
     >
       <TextAreaContainer>
         <textarea
@@ -44,7 +53,6 @@ export default function ReasonForDenial({
           value={reasonForDenial}
           onChange={handleReasonForDenialChange}
           placeholder={textAreaPlaceholder}
-          required
         />
       </TextAreaContainer>
     </FormPopup>
@@ -53,8 +61,13 @@ export default function ReasonForDenial({
 
 ReasonForDenial.propTypes = {
   textAreaPlaceholder: PropTypes.string,
+  open: PropTypes.bool,
+  onSubmit: PropTypes.func,
+  onCancel: PropTypes.func,
 };
 
 ReasonForDenial.defaultProps = {
   textAreaPlaceholder: 'This order is being denied because...',
+  open: false,
+  onCancel: () => {},
 };

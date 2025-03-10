@@ -126,7 +126,7 @@ const StyledButton = styled.button`
 
   &.yellow {
     background-color: var(--yellow-4);
-    color: var(--yellow-11);
+    color: var (--yellow-11);
     outline-color: var(--yellow-7);
     &:hover {
       background-color: var(--yellow-5);
@@ -181,6 +181,8 @@ const IconButton = styled.button`
 `;
 
 export default function YNPopup({
+  open, // new controlled prop
+  onOpenChange, // required when in controlled mode
   yesText = 'Yes', // default text for the 'Yes/Confirm' button
   noText = 'No', // default text for the 'No/Deny' button
   noOnClick, // functionality for what happens when user clicks 'No'
@@ -192,10 +194,50 @@ export default function YNPopup({
   description = 'Popup Desc.', // default description for YNPopup
   buttonText = 'Open YNPopup', // text that appears over form button --> click --> opens form
 }) {
+  // Controlled mode: if open is defined, do not render trigger.
+  if (open !== undefined) {
+    return (
+      <Dialog.Root open={open} onOpenChange={onOpenChange}>
+        <Dialog.Portal>
+          <StyledOverlay />
+          <StyledContent>
+            <StyledTitle>{title}</StyledTitle>
+            <StyledDescription>{description}</StyledDescription>
+            <form>
+              <div
+                style={{
+                  display: 'flex',
+                  marginTop: 25,
+                  justifyContent: 'flex-end',
+                }}
+              >
+                <Dialog.Close asChild>
+                  <div
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'row-reverse',
+                      gap: '10px',
+                    }}
+                  >
+                    <StyledButton className={yesColor} onClick={yesOnClick}>
+                      {yesText}
+                    </StyledButton>
+                    <StyledButton className={noColor} onClick={noOnClick}>
+                      {noText}
+                    </StyledButton>
+                  </div>
+                </Dialog.Close>
+              </div>
+            </form>
+          </StyledContent>
+        </Dialog.Portal>
+      </Dialog.Root>
+    );
+  }
+  // Uncontrolled mode: render trigger button.
   return (
     <Dialog.Root>
       <Dialog.Trigger asChild>
-        {/* specify the button color here as a prop */}
         <StyledButton className={buttonColor}>{buttonText}</StyledButton>
       </Dialog.Trigger>
       <Dialog.Portal>
@@ -204,7 +246,6 @@ export default function YNPopup({
           <StyledTitle>{title}</StyledTitle>
           <StyledDescription>{description}</StyledDescription>
           <form>
-            {/* if defaultSubmit is NOT true, caller is expected to have another button to submit form */}
             <div
               style={{
                 display: 'flex',
@@ -212,7 +253,6 @@ export default function YNPopup({
                 justifyContent: 'flex-end',
               }}
             >
-              {/* Caller must provide + define functions for both buttons when clicked */}
               <Dialog.Close asChild>
                 <div
                   style={{
@@ -243,6 +283,8 @@ export default function YNPopup({
 }
 
 YNPopup.propTypes = {
+  open: PropTypes.bool, // added for controlled mode
+  onOpenChange: PropTypes.func, // added for controlled mode
   yesText: PropTypes.string,
   noText: PropTypes.string,
   noOnClick: PropTypes.func,

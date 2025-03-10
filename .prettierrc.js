@@ -6,7 +6,6 @@ module.exports = {
   printWidth: 80,
   jsxSingleQuote: true,
   proseWrap: 'always',
-  plugins: [require.resolve('@trivago/prettier-plugin-sort-imports')],
   importOrder: [
     '^react$',
     '<THIRD_PARTY_MODULES>',
