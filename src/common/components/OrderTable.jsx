@@ -532,6 +532,7 @@ export default function OrderTable() {
           }}
           onCancel={() => {
             // Revert status to its previous value when user cancels
+            // for updating
             if (pendingRow) {
               const updatedData = rowData.map((row) =>
                 row.orderId === pendingRow.params.data.orderId
