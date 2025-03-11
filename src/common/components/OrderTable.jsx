@@ -384,7 +384,7 @@ export default function OrderTable() {
     };
   }, []);
   useEffect(() => {
-    fetch('http://localhost:5050/orders/')
+    fetch(`${process.env.REACT_APP_BACKEND_URL}/orders/`)
       .then((result) => result.json())
       .then((data) => {
         // tranform each order of JSON into flat object for table
