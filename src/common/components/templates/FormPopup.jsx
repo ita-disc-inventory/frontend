@@ -23,11 +23,12 @@ const StyledOverlay = styled(Dialog.Overlay)`
   background-color: var(--black-a9);
   position: fixed;
   inset: 0;
+  z-index: 0;
   animation: overlayShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
 `;
 
 const StyledContent = styled(Dialog.Content)`
-  background-color: var(--secondary-lightgrey);
+  background-color: white;
   border-radius: 6px;
   box-shadow: var(--shadow-6);
   position: fixed;
@@ -240,6 +241,7 @@ export default function FormPopup({
   cancelOnClick = null,
   buttonColor = 'blue',
   customForm = false, // if false, then caller must provide input fields. If true, then caller must provide another form
+  styles = '', // styles for button that opens form
 }) {
   // Controlled mode: if open is defined, do not render trigger button.
   if (open !== undefined) {
@@ -298,7 +300,9 @@ export default function FormPopup({
     <Dialog.Root>
       <Dialog.Trigger asChild>
         {/* specify the button color here as a prop */}
-        <StyledButton className={buttonColor}>{buttonText}</StyledButton>
+        <StyledButton className={buttonColor} style={styles}>
+          {buttonText}
+        </StyledButton>
       </Dialog.Trigger>
       <Dialog.Portal>
         <StyledOverlay /> {/* allows for 'dimmed' background */}
@@ -372,6 +376,7 @@ FormPopup.propTypes = {
   cancelColor: PropTypes.string,
   buttonColor: PropTypes.string,
   customForm: PropTypes.bool,
+  styles: PropTypes.string,
 };
 
 FormPopup.defaultProps = {
@@ -388,4 +393,5 @@ FormPopup.defaultProps = {
   cancelColor: 'red',
   buttonColor: 'blue',
   customForm: false,
+  styles: '',
 };

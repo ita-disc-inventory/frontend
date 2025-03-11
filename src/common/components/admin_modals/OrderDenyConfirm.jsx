@@ -4,16 +4,18 @@ import PropTypes from 'prop-types';
 
 import YNPopup from 'common/components/templates/YNPopup';
 
-export default function OrderApprovalConfirm({ open, onApprove, onCancel }) {
+export default function OrderApprovalConfirm({ open, onDeny, onCancel }) {
   return (
     <YNPopup
       open={open} // controlled open prop
-      title='Order Approval Confirmation'
-      description='Approve this order?'
-      yesText='Approve'
+      title='Deny Approval Confirmation'
+      description='Deny this order?'
+      yesText='Deny'
+      yesColor='red'
+      noColor='blue'
       noText='Cancel'
       yesOnClick={() => {
-        if (onApprove) onApprove();
+        if (onDeny) onDeny();
       }}
       noOnClick={() => {
         if (onCancel) onCancel();
@@ -24,12 +26,12 @@ export default function OrderApprovalConfirm({ open, onApprove, onCancel }) {
 
 OrderApprovalConfirm.propTypes = {
   open: PropTypes.bool,
-  onApprove: PropTypes.func,
+  onDeny: PropTypes.func,
   onCancel: PropTypes.func,
 };
 
 OrderApprovalConfirm.defaultProps = {
   open: false,
-  onApprove: () => {},
+  onDeny: () => {},
   onCancel: () => {},
 };
