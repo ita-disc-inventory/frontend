@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 
 import { Title, Subtitle } from 'common/components/Text';
@@ -40,6 +40,17 @@ const FieldValue = styled.div`
   margin-right: auto;
 `;
 
+const FieldDropdown = styled.select`
+  font-size: 16px;
+  padding: 0.5rem;
+  border: 1px solid #000000;
+  margin-bottom: 0.5rem;
+  text-align: center;
+  width: 40%;
+  margin-left: auto;
+  margin-right: auto;
+`;
+
 const ChangePasswordButton = styled.button`
   color: #0069ff;
   border: none;
@@ -62,19 +73,64 @@ const LogoutButton = styled.button`
   margin-top: 1rem;
   align-self: center;
 `;
+const UpdateButton = styled.button`
+  background-color: rgb(21, 33, 244);
+  color: white;
+  border-radius: 25px;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  cursor: pointer;
+  font-size: 1.25rem;
+  margin-top: 1rem;
+  align-self: center;
+`;
 
 export default function AdminSettings() {
   const { user, logout } = useUser();
+  const [specialization, setSpecialization] = useState('');
+  const therapistMap = {
+    art: 'Art Therapy',
+    dance: 'Dance / Movement Therapy',
+    drama: 'Drama Therapy',
+    music: 'Music Therapy',
+  };
 
   const navigate = useNavigate();
   const handlePasswordChange = () => {
     navigate('/forgot-password');
   };
+  const handleUpdate = async () => {
+    if (user.position_title === 'therapist' && !specialization) {
+      alert('Please select a specialization');
+      return;
+    }
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/therapist/${user.id}/specialization`,
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ specialization }),
+        }
+      );
+      console.log(response);
+      if (response.ok) {
+        alert('Settings updated successfully');
+      } else {
+        alert('Failed to update settings');
+      }
+    } catch (error) {
+      console.error('Error updating settings:', error);
+    }
+  };
+  console.log(user.position_title);
 
   return (
     <SettingsPage>
       <TextContainer>
-        <Title>Admin Account Settings</Title>
+        <Title>Account Settings</Title>
         <FieldLabel>Full Name</FieldLabel>
         <FieldValue>
           {user.firstname} {user.lastname}
@@ -82,12 +138,40 @@ export default function AdminSettings() {
         <FieldLabel>Email</FieldLabel>
         <FieldValue>{user.email}</FieldValue>
         <FieldLabel>Role</FieldLabel>
-        <FieldValue>{user.position_title}</FieldValue>
+        {user.position_title === 'therapist' ? (
+          <FieldValue>Therapist</FieldValue>
+        ) : (
+          <FieldValue>Admin</FieldValue>
+        )}
         <FieldLabel>Specialization</FieldLabel>
-        <FieldValue>{user.specialization}</FieldValue>
+
+        {user.position_title === 'therapist' ? (
+          <FieldDropdown
+            title='Specialization'
+            name='specialization'
+            value={specialization}
+            onChange={(e) => setSpecialization(e.target.value)}
+            required
+          >
+            <option value='' disabled>
+              {therapistMap[user.specialization] || 'Select Specialization'}
+            </option>
+            <option value='art'>Art Therapy</option>
+            <option value='dance'>Dance / Movement Therapy</option>
+            <option value='drama'>Drama Therapy</option>
+            <option value='Music'>Music Therapy</option>
+          </FieldDropdown>
+        ) : user.specialization === 'standard_admin' ? (
+          <FieldValue>Standard Admin</FieldValue>
+        ) : (
+          <FieldValue>Super Admin</FieldValue>
+        )}
         <ChangePasswordButton onClick={handlePasswordChange}>
           Change Password
         </ChangePasswordButton>
+        {user.position_title === 'therapist' && (
+          <UpdateButton onClick={handleUpdate}>Update Settings</UpdateButton>
+        )}
         <LogoutButton onClick={logout}>Logout</LogoutButton>
       </TextContainer>
     </SettingsPage>
