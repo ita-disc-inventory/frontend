@@ -5,6 +5,7 @@ import { Title, Subtitle } from 'common/components/Text';
 import { useUser } from 'common/contexts/UserContext';
 import { useNavigate } from 'react-router-dom';
 import PasswordChangeForm from 'common/components/PasswordChangeForm';
+import PropTypes from 'prop-types';
 
 const SettingsPage = styled.div`
   flex: 1 0 0;
@@ -84,10 +85,49 @@ const UpdateButton = styled.button`
   margin-top: 1rem;
   align-self: center;
 `;
+const CheckboxContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 10px; /* Add some space between the checkboxes */
+`;
+
+const CheckboxGroup = ({ options, selectedOptions, onChange }) => {
+  const handleCheckboxChange = (event) => {
+    const { value, checked } = event.target;
+    if (checked) {
+      onChange([...selectedOptions, value]);
+    } else {
+      onChange(selectedOptions.filter((option) => option !== value));
+    }
+  };
+
+  return (
+    <CheckboxContainer>
+      {Object.keys(options).map((option) => (
+        <label key={option}>
+          <input
+            type='checkbox'
+            value={option}
+            checked={selectedOptions.includes(option)}
+            onChange={handleCheckboxChange}
+          />
+          {options[option]}
+        </label>
+      ))}
+    </CheckboxContainer>
+  );
+};
+CheckboxGroup.propTypes = {
+  options: PropTypes.objectOf(PropTypes.string).isRequired,
+  selectedOptions: PropTypes.arrayOf(PropTypes.string).isRequired,
+  onChange: PropTypes.func.isRequired,
+};
 
 export default function AdminSettings() {
   const { user, logout } = useUser();
-  const [specialization, setSpecialization] = useState('');
+  const [specializations, setSpecializations] = useState(
+    user.specialization || []
+  );
   const therapistMap = {
     art: 'Art Therapy',
     dance: 'Dance / Movement Therapy',
@@ -100,7 +140,7 @@ export default function AdminSettings() {
     navigate('/forgot-password');
   };
   const handleUpdate = async () => {
-    if (user.position_title === 'therapist' && !specialization) {
+    if (user.position_title === 'therapist' && specializations.length === 0) {
       alert('Please select a specialization');
       return;
     }
@@ -112,7 +152,7 @@ export default function AdminSettings() {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ specialization }),
+          body: JSON.stringify({ specialization: specializations }),
         }
       );
       console.log(response);
@@ -121,6 +161,8 @@ export default function AdminSettings() {
       } else {
         alert('Failed to update settings');
       }
+
+      navigate('/'); // Redirect to the admin page after successful update
     } catch (error) {
       console.error('Error updating settings:', error);
     }
@@ -146,25 +188,17 @@ export default function AdminSettings() {
         <FieldLabel>Specialization</FieldLabel>
 
         {user.position_title === 'therapist' ? (
-          <FieldDropdown
-            title='Specialization'
-            name='specialization'
-            value={specialization}
-            onChange={(e) => setSpecialization(e.target.value)}
-            required
-          >
-            <option value='' disabled>
-              {therapistMap[user.specialization] || 'Select Specialization'}
-            </option>
-            <option value='art'>Art Therapy</option>
-            <option value='dance'>Dance / Movement Therapy</option>
-            <option value='drama'>Drama Therapy</option>
-            <option value='Music'>Music Therapy</option>
-          </FieldDropdown>
-        ) : user.specialization === 'standard_admin' ? (
+          <CheckboxGroup
+            options={therapistMap}
+            selectedOptions={specializations}
+            onChange={setSpecializations}
+          />
+        ) : user.specialization[0] === 'standard_admin' ? (
           <FieldValue>Standard Admin</FieldValue>
-        ) : (
+        ) : user.specialization[0] === 'super_admin' ? (
           <FieldValue>Super Admin</FieldValue>
+        ) : (
+          <FieldValue>{''}</FieldValue>
         )}
         <ChangePasswordButton onClick={handlePasswordChange}>
           Change Password
