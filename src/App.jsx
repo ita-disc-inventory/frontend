@@ -18,7 +18,7 @@ import AdminSettings from 'pages/admin/AdminSettings';
 import Home from 'pages/home/Home';
 import NotFound from 'pages/not-found/NotFound';
 import TherapistHome from 'pages/therapist/TherapistHome';
-import TherapistSettings from 'pages/therapist/TherapistSettings';
+// import TherapistSettings from 'pages/therapist/TherapistSettings';
 
 import './App.css';
 
