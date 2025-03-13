@@ -1,31 +1,23 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 
-import { Link, useNavigate } from "react-router-dom";
-import styled from "styled-components";
+import { Link, useNavigate } from 'react-router-dom';
+import styled from 'styled-components';
 
-import ItemArrivedConfirm from "common/components/Admin_Modals/ItemArrivedConfirm";
-import ItemReadyConfirm from "common/components/Admin_Modals/ItemReadyConfirm";
-import NewAdminConfirm from "common/components/Admin_Modals/NewAdminConfirm";
-import NewMonthlyBudget from "common/components/Admin_Modals/NewMonthlyBudget";
-import OrderApprovalConfirm from "common/components/Admin_Modals/OrderApprovalConfirm";
-import OrderTrackingNumber from "common/components/Admin_Modals/OrderTrackingNumber";
-import ReasonForDenial from "common/components/Admin_Modals/ReasonForDenial";
-import GoogleButton from "common/components/GoogleButton";
-import LogoutConfirm from "common/components/Therapist_Modals/Logout_Confirmation";
-import { Form, FormTitle } from "common/components/form/Form";
-import { Input } from "common/components/form/Input";
-import SubmitButton from "common/components/form/SubmitButton";
-import { RedSpan } from "common/components/form/styles";
-import { useUser } from "common/contexts/UserContext";
-import { StyledPage } from "./styles";
+import GoogleButton from 'common/components/GoogleButton';
+import { Form, FormTitle } from 'common/components/form/Form';
+import { Input } from 'common/components/form/Input';
+import SubmitButton from 'common/components/form/SubmitButton';
+import { RedSpan } from 'common/components/form/styles';
+import { useUser } from 'common/contexts/UserContext';
+
+import { StyledPage } from './styles';
 
 const StyledLink = styled(Link)`
   color: #007bff;
   text-decoration: none;
   font-size: 0.9rem;
-  margin-top: -10px;
-  align-self: flex-end;
-
+  align-self: center;
+  margin-top: 10px;
   &:hover {
     text-decoration: underline;
   }
@@ -34,29 +26,29 @@ const StyledLink = styled(Link)`
 export default function Login() {
   const navigate = useNavigate();
   const { login, googleAuth } = useUser();
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
   const [formState, setFormState] = useState({
-    email: "",
-    password: "",
+    email: '',
+    password: '',
   });
 
   const handleChange = (e) => {
     setFormState({ ...formState, [e.target.name]: e.target.value });
-    setError("");
+    setError('');
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    setError("");
+    setError('');
 
     try {
       await login(formState.email, formState.password);
-      navigate("/", { replace: true });
+      navigate('/', { replace: true });
     } catch (error) {
-      setError(error.message || "Failed to login. Please try again.");
+      setError(error.message || 'Failed to login. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -76,38 +68,32 @@ export default function Login() {
         <FormTitle>Log In</FormTitle>
         {error && <RedSpan>{error}</RedSpan>}
         <Input.Text
-          title="Email"
-          name="email"
-          placeholder="jsmith or j@example.com"
+          title='Email'
+          name='email'
+          placeholder='jsmith or j@example.com'
           value={formState.email}
           onChange={handleChange}
           required
         />
         <Input.Password
-          title="Password"
-          name="password"
+          title='Password'
+          name='password'
           value={formState.password}
           onChange={handleChange}
           required
         />
-        <StyledLink to="/forgot-password">Forgot Password?</StyledLink>
         <SubmitButton disabled={isLoading}>
-          {isLoading ? "Logging in..." : "Log In"}
+          {isLoading ? 'Logging in...' : 'Log In'}
         </SubmitButton>
+        <StyledLink to='/forgot-password'>Forgot Password?</StyledLink>
+        <StyledLink to='/signup'>
+          Don't have an account? Sign up here!
+        </StyledLink>
         <GoogleButton
           onClick={handleGoogleLogin}
           isLoading={isLoading}
-          text="Sign in with Google"
+          text='Sign in with Google'
         />
-        <OrderApprovalConfirm />
-        <LogoutConfirm />
-        <ItemArrivedConfirm />
-        <ItemReadyConfirm />
-        <NewAdminConfirm />
-        <br />
-        <ReasonForDenial />
-        <NewMonthlyBudget />
-        <OrderTrackingNumber />
       </Form>
     </StyledPage>
   );

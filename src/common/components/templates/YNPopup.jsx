@@ -1,16 +1,20 @@
 // YNPopup === Yes/No Popup -- used for simple Confirm/Deny actions
-import React from "react";
+import React from 'react';
 
 // CSS files used below for coloring
-import "@radix-ui/colors/black-alpha.css";
-import "@radix-ui/colors/green.css";
-import "@radix-ui/colors/mauve.css";
-import "@radix-ui/colors/red.css";
-import "@radix-ui/colors/violet.css";
-import { Cross2Icon } from "@radix-ui/react-icons";
-import PropTypes from "prop-types";
-import { Dialog } from "radix-ui";
-import styled, { keyframes } from "styled-components";
+import '@radix-ui/colors/black-alpha.css';
+import '@radix-ui/colors/blue.css';
+import '@radix-ui/colors/gray.css';
+import '@radix-ui/colors/green.css';
+import '@radix-ui/colors/mauve.css';
+import '@radix-ui/colors/orange.css';
+import '@radix-ui/colors/red.css';
+import '@radix-ui/colors/violet.css';
+import '@radix-ui/colors/yellow.css';
+import { Cross2Icon } from '@radix-ui/react-icons';
+import PropTypes from 'prop-types';
+import { Dialog } from 'radix-ui';
+import styled, { keyframes } from 'styled-components';
 
 // Keyframes for open/close animations
 const overlayShow = keyframes`
@@ -68,8 +72,7 @@ const StyledTitle = styled(Dialog.Title)`
 
 const StyledDescription = styled(Dialog.Description)`
   margin-bottom: 20px;
-  margin-top: 10px;
-  color: black;
+  color: var(--mauve-11);
   font-size: 15px;
   line-height: 1.5;
 `;
@@ -94,20 +97,6 @@ const StyledButton = styled.button`
     outline: 0;
   }
 
-  &:focus-visible {
-    outline: 2px solid var(--violet-6);
-    outline-offset: 1px;
-  }
-
-  &.violet {
-    background-color: var(--violet-4);
-    color: var(--violet-12);
-    outline-color: var(--violet-6);
-    &:hover {
-      background-color: var(--mauve-3);
-    }
-  }
-
   &.red {
     background-color: var(--red-4);
     color: var(--red-11);
@@ -117,21 +106,39 @@ const StyledButton = styled.button`
     }
   }
 
-  &.mauve {
-    background-color: var(--mauve-4);
-    color: var(--mauve-11);
-    outline-color: var(--mauve-7);
-    &:hover {
-      background-color: var(--mauve-5);
-    }
-  }
-
   &.green {
     background-color: var(--green-4);
     color: var(--green-11);
     outline-color: var(--green-7);
     &:hover {
       background-color: var(--green-5);
+    }
+  }
+
+  &.blue {
+    background-color: var(--blue-4);
+    color: var(--blue-11);
+    outline-color: var(--blue-7);
+    &:hover {
+      background-color: var(--blue-5);
+    }
+  }
+
+  &.yellow {
+    background-color: var(--yellow-4);
+    color: var (--yellow-11);
+    outline-color: var(--yellow-7);
+    &:hover {
+      background-color: var(--yellow-5);
+    }
+  }
+
+  &.gray {
+    background-color: var(--gray-4);
+    color: var(--gray-11);
+    outline-color: var(--gray-7);
+    &:hover {
+      background-color: var(--gray-5);
     }
   }
 `;
@@ -174,20 +181,64 @@ const IconButton = styled.button`
 `;
 
 export default function YNPopup({
-  yesText = "Yes", // default text for the 'Yes/Confirm' button
-  noText = "No", // default text for the 'No/Deny' button
+  open, // new controlled prop
+  onOpenChange, // required when in controlled mode
+  yesText = 'Yes', // default text for the 'Yes/Confirm' button
+  noText = 'No', // default text for the 'No/Deny' button
   noOnClick, // functionality for what happens when user clicks 'No'
   yesOnClick, // functionality for what happens when user clicks 'Yes'
-  yesColor = "mauve", // default color styling for 'Yes' button
-  noColor = "red", // default color styling for 'No' button
-  title = "Popup Title", // default Title text for YNPopup
-  description = "Popup Desc.", // default description for YNPopup
-  buttonText = "Open YNPopup", // text that appears over form button --> click --> opens form
+  yesColor = 'green', // default color styling for 'Yes' button
+  noColor = 'red', // default color styling for 'No' button
+  buttonColor = 'blue', // default color for button that opens popup
+  title = 'Popup Title', // default Title text for YNPopup
+  description = 'Popup Desc.', // default description for YNPopup
+  buttonText = 'Open YNPopup', // text that appears over form button --> click --> opens form
 }) {
+  // Controlled mode: if open is defined, do not render trigger.
+  if (open !== undefined) {
+    return (
+      <Dialog.Root open={open} onOpenChange={onOpenChange}>
+        <Dialog.Portal>
+          <StyledOverlay />
+          <StyledContent>
+            <StyledTitle>{title}</StyledTitle>
+            <StyledDescription>{description}</StyledDescription>
+            <form>
+              <div
+                style={{
+                  display: 'flex',
+                  marginTop: 25,
+                  justifyContent: 'flex-end',
+                }}
+              >
+                <Dialog.Close asChild>
+                  <div
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'row-reverse',
+                      gap: '10px',
+                    }}
+                  >
+                    <StyledButton className={yesColor} onClick={yesOnClick}>
+                      {yesText}
+                    </StyledButton>
+                    <StyledButton className={noColor} onClick={noOnClick}>
+                      {noText}
+                    </StyledButton>
+                  </div>
+                </Dialog.Close>
+              </div>
+            </form>
+          </StyledContent>
+        </Dialog.Portal>
+      </Dialog.Root>
+    );
+  }
+  // Uncontrolled mode: render trigger button.
   return (
     <Dialog.Root>
       <Dialog.Trigger asChild>
-        <StyledButton className="violet">{buttonText}</StyledButton>
+        <StyledButton className={buttonColor}>{buttonText}</StyledButton>
       </Dialog.Trigger>
       <Dialog.Portal>
         <StyledOverlay />
@@ -195,21 +246,19 @@ export default function YNPopup({
           <StyledTitle>{title}</StyledTitle>
           <StyledDescription>{description}</StyledDescription>
           <form>
-            {/* if defaultSubmit is NOT true, caller is expected to have another button to submit form */}
             <div
               style={{
-                display: "flex",
+                display: 'flex',
                 marginTop: 25,
-                justifyContent: "flex-end",
+                justifyContent: 'flex-end',
               }}
             >
-              {/* Caller must provide + define functions for both buttons when clicked */}
               <Dialog.Close asChild>
                 <div
                   style={{
-                    display: "flex",
-                    flexDirection: "row-reverse",
-                    gap: "10px",
+                    display: 'flex',
+                    flexDirection: 'row-reverse',
+                    gap: '10px',
                   }}
                 >
                   <StyledButton className={yesColor} onClick={yesOnClick}>
@@ -223,7 +272,7 @@ export default function YNPopup({
             </div>
           </form>
           <Dialog.Close asChild>
-            <IconButton aria-label="Close">
+            <IconButton aria-label='Close'>
               <Cross2Icon />
             </IconButton>
           </Dialog.Close>
@@ -234,23 +283,27 @@ export default function YNPopup({
 }
 
 YNPopup.propTypes = {
+  open: PropTypes.bool, // added for controlled mode
+  onOpenChange: PropTypes.func, // added for controlled mode
   yesText: PropTypes.string,
   noText: PropTypes.string,
   noOnClick: PropTypes.func,
   yesOnClick: PropTypes.func,
   yesColor: PropTypes.string,
   noColor: PropTypes.string,
+  buttonColor: PropTypes.string,
   title: PropTypes.string,
   description: PropTypes.string,
   buttonText: PropTypes.string,
 };
 
 YNPopup.defaultProps = {
-  yesText: "Yes",
-  noText: "No",
-  yesColor: "green",
-  noColor: "red",
-  title: "Popup Title",
-  description: "Popup Desc.",
-  buttonText: "Open YNPopup",
+  yesText: 'Yes',
+  noText: 'No',
+  yesColor: 'green',
+  noColor: 'red',
+  buttonColor: 'blue',
+  title: 'Popup Title',
+  description: 'Popup Desc.',
+  buttonText: 'Open YNPopup',
 };

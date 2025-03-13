@@ -1,12 +1,12 @@
-import React, { useContext } from "react";
-import { useNavigate } from "react-router-dom";
-import styled from "styled-components";
+import React, { useContext } from 'react';
 
-import { Button } from "common/components/Button";
+import { useNavigate } from 'react-router-dom';
+import styled from 'styled-components';
 
-import { Subtitle, Title } from "common/components/Text";
-import UsersList from "common/components/Users/UsersList";
-import { UserContext } from "common/contexts/UserContext";
+import { Button } from 'common/components/Button';
+import { Subtitle, Title } from 'common/components/Text';
+import UsersList from 'common/components/Users/UsersList';
+import { UserContext } from 'common/contexts/UserContext';
 
 const TextContainer = styled.div`
   display: flex;
@@ -39,18 +39,17 @@ export default function Home() {
     <HomePage>
       <TextContainer>
         <Title>Home Page</Title>
-        <Subtitle>Welcome, {user?.firstname || "User"}!</Subtitle>
+        <Subtitle>Welcome, {user?.firstname || 'User'}!</Subtitle>
       </TextContainer>
 
       <ButtonContainer>
-        <Button.Primary onClick={() => navigate("/admin")}>
+        <Button.Primary onClick={() => navigate('/admin')}>
           Admin
         </Button.Primary>
-        <Button.Primary onClick={() => navigate("/therapist")}>
+        <Button.Primary onClick={() => navigate('/therapist')}>
           Therapist
         </Button.Primary>
       </ButtonContainer>
-
       <UsersList />
     </HomePage>
   );

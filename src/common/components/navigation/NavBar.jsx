@@ -1,17 +1,17 @@
-import React, { useState } from 'react';
+import React from 'react';
 
+import 'App.css';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { Button } from 'common/components/Button';
 import { useUser } from 'common/contexts/UserContext';
 
-import LogoutModal from './LogoutModal';
-
 const StyledNav = styled.nav`
   display: flex;
-  gap: 10px;
-  padding: 10px 20px;
+  background-color: #d9d9d920;
+  height: 60px;
+  width: 100%;
   font-size: 20px;
 `;
 
@@ -19,6 +19,12 @@ const LeftAligned = styled.div`
   flex: 1;
   display: flex;
   gap: 10px;
+`;
+const RightAligned = styled.div`
+  display: flex;
+  align-items: center;
+  height: 100%;
+  padding-right: 20px;
 `;
 
 const LogoPlaceholder = styled(Button.Invisible)`
@@ -29,50 +35,45 @@ const LogoPlaceholder = styled(Button.Invisible)`
 `;
 
 export default function NavBar() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
-  const { user, logout } = useUser();
+  const { user } = useUser();
 
-  const handleLogoutClick = () => {
-    setIsModalOpen(true);
-  };
-
-  const handleModalClose = () => {
-    setIsModalOpen(false);
-  };
-
-  const handleLogoutConfirm = async () => {
-    try {
-      await logout();
-      setIsModalOpen(false);
-      navigate('/', { replace: true });
-    } catch (error) {
-      console.error('Logout error:', error);
+  //if log in, show account seeting, if not, show log in. no setup.
+  const handleNavigation = () => {
+    if (!user) {
+      navigate('/login');
+      return;
+    }
+    console.log(user.position_title);
+    if (user.position_title === 'admin') {
+      navigate('/admin/settings');
+    } else {
+      navigate('therapist/settings');
     }
   };
 
   return (
     <StyledNav>
       <LeftAligned>
-        <LogoPlaceholder onClick={() => navigate('/')}>[LOGO]</LogoPlaceholder>
+        <LogoPlaceholder onClick={() => navigate('/')}>
+          <img
+            id='ITAlogo'
+            src={`${process.env.PUBLIC_URL}/ITAlogo.png`}
+            alt='ITA Logo'
+          />
+        </LogoPlaceholder>
       </LeftAligned>
-      {user ? (
-        <Button.Secondary onClick={handleLogoutClick}>Log Out</Button.Secondary>
-      ) : (
-        <>
-          <Button.Primary onClick={() => navigate('/signup')}>
-            Sign Up
-          </Button.Primary>
-          <Button.Secondary onClick={() => navigate('/login')}>
-            Login
-          </Button.Secondary>
-        </>
-      )}
-      <LogoutModal
-        isOpen={isModalOpen}
-        onClose={handleModalClose}
-        onLogout={handleLogoutConfirm}
-      />
+      <>
+        {user && ( // If user is logged in, show their name (clickable to Account Settings)
+          <RightAligned onClick={handleNavigation}>
+            <span id='userName_display'>
+              {user.firstname} {user.lastname}
+            </span>
+          </RightAligned>
+        )}
+      </>
     </StyledNav>
   );
 }
+//user.position === 'admin'
+//user.position == 'therapist'

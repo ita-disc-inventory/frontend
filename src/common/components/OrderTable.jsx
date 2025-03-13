@@ -1,276 +1,561 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from 'react';
 
-import { Button } from "primereact/button";
-import { Column } from "primereact/column";
-import { DataTable } from "primereact/datatable";
-import { Tag } from "primereact/tag";
+import { OpenInNewWindowIcon } from '@radix-ui/react-icons';
+import {
+  AllCommunityModule,
+  ModuleRegistry,
+  provideGlobalGridOptions,
+} from 'ag-grid-community';
+import 'ag-grid-community/styles/ag-grid.css';
+import 'ag-grid-community/styles/ag-theme-quartz.css';
+import { AgGridReact } from 'ag-grid-react';
+import styled from 'styled-components';
 
-export default function InventoryTable() {
-  const [items, setItems] = useState([]);
+import ItemArrivedConfirm from 'common/components/admin_modals/ItemArrivedConfirm';
+import ItemReadyConfirm from 'common/components/admin_modals/ItemReadyConfirm';
+import NewAdminConfirm from 'common/components/admin_modals/NewAdminConfirm';
+import NewMonthlyBudget from 'common/components/admin_modals/NewMonthlyBudget';
+import OrderApprovalConfirm from 'common/components/admin_modals/OrderApprovalConfirm';
+import OrderDenyConfirm from 'common/components/admin_modals/OrderDenyConfirm';
+import OrderTrackingNumber from 'common/components/admin_modals/OrderTrackingNumber';
+import ReasonForDenial from 'common/components/admin_modals/ReasonForDenial';
 
-  // Mock data – in real usage, you might fetch from an API
-  useEffect(() => {
-    // Example data closely matching your screenshot
-    const mockData = [
-      {
-        orderName: "Drum Pads",
-        reasonForBuying: "Description",
-        price: 50,
-        itemLink: "https://example.com/drum-pads",
-        status: "Approved",
-        priorityLevel: "< 2 weeks",
-        trackingNumber: "xxx-xxx-xxx-xxxx",
-        requestDate: "10/20/2025",
-        specialization: "Music",
-        program: "Private Therapy",
-        therapistName: "John Doe",
-      },
-      {
-        orderName: "Crayola Markers variety pack (24 pack)",
-        reasonForBuying: "Description",
-        price: 10,
-        itemLink: "https://example.com/crayola-markers",
-        status: "Denied",
-        priorityLevel: "< 2 weeks",
-        trackingNumber: "xxx-xxx-xxx-xxxx",
-        requestDate: "10/20/2025",
-        specialization: "Art",
-        program: "CXC",
-        therapistName: "Jeffrey Lee",
-      },
-      {
-        orderName: "Guitar",
-        reasonForBuying: "Description",
-        price: 90,
-        itemLink: "https://example.com/guitar",
-        status: "Denied",
-        priorityLevel: "Regular",
-        trackingNumber: "xxx-xxx-xxx-xxxx",
-        requestDate: "01/10/2025",
-        specialization: "Music",
-        program: "Community Partner",
-        therapistName: "Jane Doe",
-      },
-      {
-        orderName: "Piano",
-        reasonForBuying: "Hat", // Not sure if "Hat" was a placeholder in your screenshot
-        price: 140,
-        itemLink: "https://example.com/piano",
-        status: "Purchased",
-        priorityLevel: "< 2 weeks",
-        trackingNumber: "xxx-xxx-xxx-xxxx",
-        requestDate: "02/15/2025",
-        specialization: "Art",
-        program: "CXC",
-        therapistName: "Carl X CK",
-      },
-      {
-        orderName: "Diapers",
-        reasonForBuying: "Description",
-        price: 15,
-        itemLink: "https://example.com/diapers",
-        status: "Purchased",
-        priorityLevel: "Regular",
-        trackingNumber: "xxx-xxx-xxx-xxxx",
-        requestDate: "03/01/2025",
-        specialization: "Music",
-        program: "Private Therapy",
-        therapistName: "Branden Grena",
-      },
-      {
-        orderName: "Pencils",
-        reasonForBuying: "Description",
-        price: 15,
-        itemLink: "https://example.com/pencils",
-        status: "Denied",
-        priorityLevel: "Regular",
-        trackingNumber: "xxx-xxx-xxx-xxxx",
-        requestDate: "01/01/2025",
-        specialization: "Art",
-        program: "CXC",
-        therapistName: "Billie Eilish",
-      },
-      {
-        orderName: "Foam Slime",
-        reasonForBuying: "Description",
-        price: 45,
-        itemLink: "https://example.com/foam-slime",
-        status: "Denied",
-        priorityLevel: "Regular",
-        trackingNumber: "xxx-xxx-xxx-xxxx",
-        requestDate: "01/02/2025",
-        specialization: "Music",
-        program: "Community Partner",
-        therapistName: "John Doe",
-      },
-      {
-        orderName: "Clown-themed Ballet Shoes",
-        reasonForBuying: "Description",
-        price: 1000,
-        itemLink: "https://example.com/clown-ballet-shoes",
-        status: "Purchased",
-        priorityLevel: "< 2 weeks",
-        trackingNumber: "xxx-xxx-xxx-xxxx",
-        requestDate: "09/12/2025",
-        specialization: "Art",
-        program: "CXC",
-        therapistName: "Jeffrey Lee",
-      },
-      {
-        orderName: "Macbook Pro",
-        reasonForBuying: "Description",
-        price: 1500,
-        itemLink: "https://example.com/macbook-pro",
-        status: "Approved",
-        priorityLevel: "Ready to Go",
-        trackingNumber: "xxx-xxx-xxx-xxxx",
-        requestDate: "01/02/2025",
-        specialization: "Music",
-        program: "Private Therapy",
-        therapistName: "Billie Eilish",
-      },
-    ];
-    setItems(mockData);
-  }, []);
+import StatusDropdown from './StatusDropdown';
+import FormPopup from './templates/FormPopup';
 
-  // Format currency for Price column
-  const formatCurrency = (value) => {
-    return value.toLocaleString("en-US", {
-      style: "currency",
-      currency: "USD",
-    });
+// Mark all grids as using legacy themes
+provideGlobalGridOptions({ theme: 'legacy' });
+
+ModuleRegistry.registerModules([AllCommunityModule]);
+
+const StyledLink = styled.a`
+  text-decoration: underline;
+  &:link {
+    color: blue;
+  }
+
+  &:visited {
+    color: blue;
+  }
+
+  &:hover {
+    color: darkblue;
+  }
+
+  &:active {
+    color: purple;
+  }
+`;
+
+const EditableCell = (props) => {
+  const [value, setValue] = useState(props.value);
+
+  const onChange = (event) => {
+    setValue(event.target.value);
   };
 
-  // Body templates
-  const priceBodyTemplate = (rowData) => {
-    return formatCurrency(rowData.price);
-  };
-
-  const linkBodyTemplate = (rowData) => {
-    return (
-      <a href={rowData.itemLink} target="_blank" rel="noreferrer">
-        Link
-      </a>
+  const onBlur = async () => {
+    //console.log(props.data);
+    await fetch(
+      `${process.env.REACT_APP_BACKEND_URL}/admin/tracking/${props.data.orderId}`,
+      {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ tracking_number: value }),
+      }
     );
+    props.api.stopEditing();
+    props.updateTrackingNumber(props.data.orderId, value);
+    setValue(props.value);
   };
-
-  const statusBodyTemplate = (rowData) => {
-    return (
-      <Tag
-        value={rowData.status}
-        severity={getStatusSeverity(rowData.status)}
-      />
-    );
-  };
-
-  // Customize tag colors based on status
-  const getStatusSeverity = (status) => {
-    switch (status) {
-      case "Approved":
-      case "Ready to Go":
-        return "success";
-      case "Denied":
-        return "danger";
-      case "Purchased":
-        return "info";
-      default:
-        return null;
-    }
-  };
-
-  // Priority tag (like "< 2 weeks" or "Ready to Go")
-  const priorityBodyTemplate = (rowData) => {
-    return (
-      <Tag
-        value={rowData.priorityLevel}
-        severity={getPrioritySeverity(rowData.priorityLevel)}
-      />
-    );
-  };
-
-  // Customize tag colors based on priority
-  const getPrioritySeverity = (priority) => {
-    if (priority === "< 2 weeks") return "warning";
-    if (priority === "Ready to Go") return "success";
-    // default or 'Regular'
-    return null;
-  };
-
-  const header = (
-    <div className="flex flex-wrap align-items-center justify-content-between gap-2">
-      <span className="text-xl text-900 font-bold">Inventory Items</span>
-      <Button icon="pi pi-refresh" rounded raised />
-    </div>
-  );
-
-  const footer = `In total there are ${items ? items.length : 0} items.`;
 
   return (
-    <div className="card">
-      <DataTable
-        value={items}
-        header={header}
-        footer={footer}
-        tableStyle={{ minWidth: "60rem" }}
-        responsiveLayout="scroll"
+    <input
+      type='text'
+      value={value}
+      onChange={onChange}
+      onBlur={onBlur}
+      style={{ width: '100%' }}
+    />
+  );
+};
+
+// Responsible for formatting values under 'Order Name' column.
+const orderNameRenderer = (params) => {
+  return (
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        overflowX: 'scroll',
+        scrollbarWidth: 'none',
+        msOverflowStyle: 'none',
+        textOverflow: 'ellipsis',
+      }}
+    >
+      {/* Bolded item/product name */}
+      <span style={{ fontWeight: 'bold' }}>{params.data.orderName}</span>
+      <span
+        style={{
+          fontSize: '0.8em',
+          color: 'gray',
+          position: 'absolute',
+          top: '15px',
+        }}
       >
-        <Column
-          field="orderName"
-          header="Order Name"
-          style={{ width: "15rem" }}
-        ></Column>
-        <Column
-          field="reasonForBuying"
-          header="Reason for Buying"
-          style={{ width: "10rem" }}
-        ></Column>
-        <Column
-          field="price"
-          header="Price"
-          body={priceBodyTemplate}
-          style={{ width: "8rem" }}
-        ></Column>
-        <Column
-          header="Item Link"
-          body={linkBodyTemplate}
-          style={{ width: "8rem" }}
-        ></Column>
-        <Column
-          header="Status"
-          body={statusBodyTemplate}
-          style={{ width: "8rem" }}
-        ></Column>
-        <Column
-          header="Priority Level"
-          body={priorityBodyTemplate}
-          style={{ width: "10rem" }}
-        ></Column>
-        <Column
-          field="trackingNumber"
-          header="Tracking Number"
-          style={{ width: "12rem" }}
-        ></Column>
-        <Column
-          field="requestDate"
-          header="Request Date"
-          style={{ width: "10rem" }}
-        ></Column>
-        <Column
-          field="specialization"
-          header="Specialization"
-          style={{ width: "10rem" }}
-        ></Column>
-        <Column
-          field="program"
-          header="Program"
-          style={{ width: "10rem" }}
-        ></Column>
-        <Column
-          field="therapistName"
-          header="Therapist Name"
-          style={{ width: "12rem" }}
-        ></Column>
-      </DataTable>
+        {/* PPU and Quantity acting as 'subheaders' beneath item name */}
+        Price per unit: ${params.data.ppu} — Qty: {params.data.quantity}
+      </span>
+    </div>
+  );
+};
+
+// Responsible for formatting the 'Status' column
+// See StatusDropdown.jsx to see how status to color relationships work
+// const statusRenderer = (params) => {
+//   // need to implement logic for if status is being changed to 'Deny' or 'Pick up' or 'Arrived', as
+//   // these should trigger a pop-up
+//   return (
+//     <StatusDropdown
+//       value={params.value}
+//       onStatusChange={(newValue) => {
+//         params.node.setDataValue('status', newValue);
+//       }}
+//     />
+//   );
+// };
+
+// Responsible for formatting & styling the 'Priority' column
+const priorityRenderer = (params) => {
+  const priority = params.value;
+  const isUrgent = priority === 'regular' ? false : true;
+  // if priority is regular, then do not apply additional styles
+  return (
+    <div style={{ display: 'flex' }}>
+      <span
+        style={{
+          backgroundColor: isUrgent ? 'orange' : 'inherit',
+          width: '100px',
+          height: '35px',
+          borderRadius: isUrgent ? '4px' : 'inherit',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        {
+          isUrgent
+            ? priority
+            : String(priority[0]).toUpperCase() +
+              String(priority).slice(1) /* first letter == uppercase */
+        }
+      </span>
+    </div>
+  );
+};
+
+// Responsible for formatting the 'Description' column
+// Regardless of text length, user is able to click on the description and
+// open a pop-up that shows the full description
+const descriptionRenderer = (params) => {
+  const desc = params.value;
+  if (desc.length < 9) {
+    return desc;
+  } else {
+    return (
+      <div style={{ position: 'relative', width: '120px', fontSize: '14px' }}>
+        <FormPopup
+          title={
+            params.data['therapistName'] +
+            "'s Reason for Buying " +
+            params.data['orderName']
+          }
+          description=''
+          defaultSubmit={false}
+          buttonText={desc.slice(0, 10) + '...'}
+          buttonColor='white'
+          styles={{ fontSize: '14px' }}
+        >
+          <div
+            style={{
+              padding: '10px',
+              border: '1px solid #ccc',
+              borderRadius: '4px',
+              outline: 'none',
+              whiteSpace: 'normal',
+              overflowWrap: 'break-word',
+            }}
+          >
+            {desc}
+          </div>
+        </FormPopup>
+        <div
+          style={{
+            position: 'absolute',
+            top: '4px',
+            left: '100px',
+            pointerEvents: 'none',
+          }}
+        >
+          <OpenInNewWindowIcon style={{ width: '15px', height: '15px' }} />
+        </div>
+      </div>
+    );
+  }
+};
+
+// Responsible for formatting the 'Link' column
+const linkRenderer = (params) => {
+  return (
+    <span>
+      {/* Use basic StyledLink component (defined at top of doc) for styling.
+      Link remains blue after visiting, subject to change in future. */}
+      <StyledLink href={params.value} target='_blank' rel='noreferrer'>
+        Link
+      </StyledLink>
+    </span>
+  );
+};
+
+// Responsible for formatting the 'Tracking Number' column
+// Tracking number should only show up if the status of respective row is NOT 'pending', or 'denied'
+
+// Responsible for formatting the 'price' column
+function currencyFormatter(params) {
+  // if price value is not null, return formatted price to column
+  return params.value == null ? '' : '$' + params.value.toLocaleString();
+}
+
+// Changes date format from YYYY-MM-DD to MM/DD/YYYY for easier readability
+function requestDateFormatter(params) {
+  const [year, month, day] = params.value.split('-');
+  return `${month}/${day}/${year}`;
+}
+
+// Formats specialization
+function specializationFormatter(params) {
+  const specialization = params.value;
+  return specialization
+    ? specialization.charAt(0).toUpperCase() + specialization.slice(1)
+    : ''; // prevents error when specialization is null
+}
+
+// Changes program name to its respective abbreviation
+function programToAbbrev(params) {
+  const program = params.value;
+  if (program === 'private') return 'PT';
+  if (program === 'community') return 'CP';
+  if (program === 'creative') return 'CKC';
+  if (program === 'school') return 'SP';
+}
+
+// Use a cellRenderer when we want to:
+//    • Render a clickable button or icon that performs an action
+//    • Display formatted HTML (such as embedding an image or hyperlink)
+//    • Introduce custom interactive components (like dropdowns or custom tooltips)
+export default function OrderTable() {
+  const [rowData, setRowData] = useState([]);
+  // Store the pending row with its previous status
+  const [pendingRow, setPendingRow] = useState(null);
+  const [showApprovalConfirm, setShowApprovalConfirm] = useState(false);
+  const [showDenyConfirm, setShowDenyConfirm] = useState(false);
+  const [showReasonForDenial, setShowReasonForDenial] = useState(false);
+  // const [showItemArrived, setShowItemArrived] = useState(false); // if true, then 'Item Arrived?' Popup
+  // const [showItemPickUp, setShowItemPickUp] = useState(false); // if true, then 'Item Ready for Pickup?' Popup
+  // const [showNewBudget, setShowNewBudget] = useState(false); // if true, then 'Enter new budget' Popup
+  // New separate status cell renderer function:
+  const statusCellRenderer = (params) => {
+    const handleStatusChange = (newValue) => {
+      if (newValue === 'approved') {
+        // Save reference to row along with the previous status.
+        setPendingRow({ params, prev: params.value });
+        setShowApprovalConfirm(true);
+      } else if (newValue === 'denied') {
+        setPendingRow({ params, prev: params.value });
+        setShowDenyConfirm(true);
+      } else {
+        params.node.setDataValue('status', newValue);
+      }
+    };
+    return (
+      <StatusDropdown
+        value={params.value}
+        onStatusChange={handleStatusChange}
+      />
+    );
+  };
+  const updateTrackingNumber = (orderId, newTrackingNumber) => {
+    setRowData((prevRowData) =>
+      prevRowData.map((row) =>
+        row.orderId === orderId
+          ? { ...row, trackingNumber: newTrackingNumber }
+          : row
+      )
+    );
+  };
+
+  // all column names and respective settings
+  const [colDefs] = useState([
+    {
+      headerName: 'Order Name',
+      field: 'orderName',
+      cellRenderer: orderNameRenderer, // see comments before OrderTable() definition
+      filter: true, // 'filter: true' activates the filter option at top of specified column (3 dashed horizontal lines)
+      cellStyle: { justifyContent: 'flex-start', alignItems: 'flex-start' },
+    },
+    {
+      headerName: 'Status',
+      field: 'status',
+      cellRenderer: statusCellRenderer,
+      filter: true,
+    },
+    {
+      headerName: 'Priority',
+      field: 'priorityLevel',
+      width: 150,
+      cellRenderer: priorityRenderer,
+    },
+    {
+      headerName: 'Description',
+      field: 'description',
+      cellRenderer: descriptionRenderer,
+    },
+    {
+      headerName: 'Price',
+      field: 'price',
+      width: 140, // adjust width of price column
+      valueFormatter: currencyFormatter,
+      filter: true,
+    },
+    {
+      headerName: 'Link',
+      field: 'link',
+      width: 65,
+      cellRenderer: linkRenderer,
+    },
+    {
+      headerName: 'Tracking Number',
+      field: 'trackingNumber',
+      editable: (params) => {
+        // Specify your conditions here
+        return params.data.status == 'approved';
+      },
+      cellEditor: EditableCell,
+      cellEditorParams: {
+        updateTrackingNumber,
+      },
+    },
+    {
+      headerName: 'Request Date',
+      field: 'requestDate',
+      valueFormatter: requestDateFormatter,
+      filter: true,
+    },
+    {
+      headerName: 'Specialization',
+      field: 'specialization',
+      filter: true,
+      valueFormatter: specializationFormatter,
+    },
+    {
+      headerName: 'Program',
+      field: 'program',
+      valueFormatter: programToAbbrev,
+      width: 110,
+    },
+    {
+      headerName: 'Therapist Name',
+      field: 'therapistName',
+    },
+  ]);
+  // Default column definitions for table; columns cannot be resized, instead they fit to width
+  const defaultColDef = useMemo(() => {
+    return {
+      resizable: false, // 'resizable: false' means user cannot resize columns, as cols are meant to fit to width
+      suppressMovable: true, // 'suppressMovable: true' means the user cannot move columns around
+      cellStyle: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+      },
+    };
+  }, []);
+  useEffect(() => {
+    fetch('http://localhost:5050/orders/')
+      .then((result) => result.json())
+      .then((data) => {
+        // tranform each order of JSON into flat object for table
+
+        const transformedData = data.map((order) => ({
+          orderId: order.order_id,
+          orderName: order.item_name,
+          status: order.status,
+          priorityLevel: order.priority_level,
+          description: order.order_description,
+          price: order.total_cost,
+          link: order.items.order_link,
+          trackingNumber: order.tracking_number,
+          requestDate: order.request_date,
+          specialization: order.users.specialization,
+          program: order.programs.program_title,
+          therapistName: `${order.users.firstname} ${order.users.lastname}`,
+          ppu: order.items.price_per_unit,
+          quantity: order.quantity,
+        }));
+        setRowData(transformedData);
+      });
+  }, []);
+  // makes columns fit to width of the grid, no overflow/scrolling
+  const autoSizeStrategy = useMemo(() => {
+    return {
+      type: 'fitGridWidth',
+      defaultMinWidth: 65,
+      columnLimits: [
+        // can specify minimum widths for certain columns
+        {
+          colId: 'orderName',
+          minWidth: 185,
+        },
+      ],
+    };
+  }, []);
+  // the component we are actually returning
+  return (
+    <div style={{ padding: '20px' }}>
+      {/* The actual order table */}
+      <div className='ag-theme-quartz' style={{ height: '500px' }}>
+        <AgGridReact
+          rowData={rowData}
+          defaultColDef={defaultColDef}
+          columnDefs={colDefs}
+          rowHeight={50}
+          autoSizeStrategy={autoSizeStrategy}
+        />
+      </div>
+      {/* ...existing modal components rendered at bottom... */}
+      {showApprovalConfirm && (
+        <OrderApprovalConfirm
+          open={true}
+          onApprove={() => {
+            // On approval confirmation, update status to 'approved'
+            if (pendingRow) {
+              const updatedData = rowData.map((row) =>
+                row.orderId === pendingRow.params.data.orderId
+                  ? { ...row, status: 'approved' }
+                  : row
+              );
+              setRowData(updatedData);
+              pendingRow.params.api.refreshCells({
+                rowNodes: [pendingRow.params.node],
+              });
+            }
+            setShowApprovalConfirm(false);
+            setPendingRow(null);
+          }}
+          onCancel={() => {
+            // If cancellation occurs, revert status to the previous value
+            if (pendingRow) {
+              const updatedData = rowData.map((row) =>
+                row.orderId === pendingRow.params.data.orderId
+                  ? { ...row, status: pendingRow.prev }
+                  : row
+              );
+              setRowData(updatedData);
+              pendingRow.params.api.refreshCells({
+                rowNodes: [pendingRow.params.node],
+              });
+            }
+            setShowApprovalConfirm(false);
+            setPendingRow(null);
+          }}
+        />
+      )}
+      {showDenyConfirm && (
+        <OrderDenyConfirm
+          open={true}
+          onDeny={() => {
+            // On deny confirmation, update status to 'denied' and then show the reason popup
+            if (pendingRow) {
+              const updatedData = rowData.map((row) =>
+                row.orderId === pendingRow.params.data.orderId
+                  ? { ...row, status: 'denied' }
+                  : row
+              );
+              setRowData(updatedData);
+              pendingRow.params.api.refreshCells({
+                rowNodes: [pendingRow.params.node],
+              });
+            }
+            setShowDenyConfirm(false);
+            setShowReasonForDenial(true);
+          }}
+          onCancel={() => {
+            // If cancellation occurs while denying, revert status to the previous value
+            if (pendingRow) {
+              const updatedData = rowData.map((row) =>
+                row.orderId === pendingRow.params.data.orderId
+                  ? { ...row, status: pendingRow.prev }
+                  : row
+              );
+              setRowData(updatedData);
+              pendingRow.params.api.refreshCells({
+                rowNodes: [pendingRow.params.node],
+              });
+            }
+            setShowDenyConfirm(false);
+            setPendingRow(null);
+          }}
+        />
+      )}
+      {showReasonForDenial && (
+        <ReasonForDenial
+          open={true}
+          onSubmit={(reason) => {
+            // When submitted, update the status cell to 'denied'
+            if (pendingRow) {
+              const updatedData = rowData.map((row) =>
+                row.orderId === pendingRow.params.data.orderId
+                  ? { ...row, status: 'denied' }
+                  : row
+              );
+              setRowData(updatedData);
+              pendingRow.params.api.refreshCells({
+                rowNodes: [pendingRow.params.node],
+              });
+            }
+            setShowReasonForDenial(false);
+            setPendingRow(null);
+            // ...optional: process reason...
+          }}
+          onCancel={() => {
+            // Revert status to its previous value when user cancels
+            // for updati
+            if (pendingRow) {
+              const updatedData = rowData.map((row) =>
+                row.orderId === pendingRow.params.data.orderId
+                  ? { ...row, status: pendingRow.prev }
+                  : row
+              );
+              setRowData(updatedData);
+              pendingRow.params.api.refreshCells({
+                rowNodes: [pendingRow.params.node],
+              });
+            }
+            setShowReasonForDenial(false);
+            setPendingRow(null);
+          }}
+        />
+      )}
+      <ItemArrivedConfirm />
+      <ItemReadyConfirm />
+      <NewAdminConfirm />
+      <NewMonthlyBudget />
+      <OrderApprovalConfirm />
+      <OrderTrackingNumber />
+      <ReasonForDenial />
     </div>
   );
 }

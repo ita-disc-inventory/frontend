@@ -30,25 +30,22 @@ export default function App() {
           <Route path="/" element={<NavLayout />}>
             <Route element={<PrivateRoute />}>
               <Route index element={<Home />} />
-              <Route path="admin" element={<AdminHome />} />
-              <Route path="admin/settings" element={<AdminSettings />} />
-              <Route path="therapist" element={<TherapistHome />} />
+              <Route path='admin' element={<AdminHome />} />
+              <Route path='admin/settings' element={<AdminSettings />} />
+              <Route path='therapist' element={<TherapistHome />} />
               <Route
-                path="therapist/settings"
+                path='therapist/settings'
                 element={<TherapistSettings />}
               />
             </Route>
             <Route element={<PublicOnlyRoute />}>
-              <Route path="login" element={<Login />} />
-              <Route path="signup" element={<SignUp />} />
-              <Route
-                path="forgot-password"
-                element={<RequestPasswordReset />}
-              />
+              <Route path='login' element={<Login />} />
+              <Route path='signup' element={<SignUp />} />
             </Route>
-            <Route path="auth/callback" element={<AuthCallback />} />
-            <Route path="auth/reset-password" element={<ResetPassword />} />
-            <Route path="*" element={<NotFound />} />
+            <Route path='forgot-password' element={<RequestPasswordReset />} />
+            <Route path='auth/callback' element={<AuthCallback />} />
+            <Route path='auth/reset-password' element={<ResetPassword />} />
+            <Route path='*' element={<NotFound />} />
           </Route>
         </Routes>
       </BrowserRouter>
