@@ -12,6 +12,7 @@ export default function OrderApprovalConfirm({ open, onApprove, onCancel }) {
       description='Approve this order?'
       yesText='Approve'
       noText='Cancel'
+      no
       yesOnClick={() => {
         if (onApprove) onApprove();
       }}

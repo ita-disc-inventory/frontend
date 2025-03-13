@@ -1,10 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import { Title, Subtitle } from 'common/components/Text';
+import { Title } from 'common/components/Text';
 import { useUser } from 'common/contexts/UserContext';
 import { useNavigate } from 'react-router-dom';
-import PasswordChangeForm from 'common/components/PasswordChangeForm';
 
 const SettingsPage = styled.div`
   flex: 1 0 0;
