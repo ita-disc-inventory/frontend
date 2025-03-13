@@ -237,9 +237,15 @@ function requestDateFormatter(params) {
 
 // Formats specialization
 function specializationFormatter(params) {
-  const specialization = params.value;
-  return specialization
-    ? specialization.charAt(0).toUpperCase() + specialization.slice(1)
+  const specializations = params.value;
+  // specializations is a list now
+  return specializations.length > 0
+    ? specializations
+        .map(
+          (specialization) =>
+            specialization.charAt(0).toUpperCase() + specialization.slice(1)
+        )
+        .join(', ')
     : ''; // prevents error when specialization is null
 }
 
@@ -341,7 +347,7 @@ export default function OrderTable() {
       field: 'trackingNumber',
       editable: (params) => {
         // Specify your conditions here
-        return params.data.status == 'approved';
+        return params.data.status === 'approved';
       },
       cellEditor: EditableCell,
       cellEditorParams: {
