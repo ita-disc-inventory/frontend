@@ -236,8 +236,10 @@ function requestDateFormatter(params) {
 }
 
 // Formats specialization
+// params.value is type JSON with multiple specialties, so just returning first one
+// in JSON for now --> figure out solution later? display multiple?
 function specializationFormatter(params) {
-  const specialization = params.value;
+  const specialization = params.value[0];
   return specialization
     ? specialization.charAt(0).toUpperCase() + specialization.slice(1)
     : ''; // prevents error when specialization is null
@@ -340,8 +342,8 @@ export default function OrderTable() {
       headerName: 'Tracking Number',
       field: 'trackingNumber',
       editable: (params) => {
-        // Specify your conditions here
-        return params.data.status == 'approved';
+        // changed to '===' from '=='
+        return params.data.status === 'approved';
       },
       cellEditor: EditableCell,
       cellEditorParams: {
@@ -440,8 +442,20 @@ export default function OrderTable() {
       {showApprovalConfirm && (
         <OrderApprovalConfirm
           open={true}
-          onApprove={() => {
-            // On approval confirmation, update status to 'approved'
+          onApprove={async () => {
+            // BEGIN NEW CODE: add API call to update order status to 'approved'
+            await fetch(
+              `${process.env.REACT_APP_BACKEND_URL}/admin/approve/${pendingRow.params.data.orderId}`,
+              {
+                method: 'PUT',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                // if needed, include additional data in the body
+              }
+            );
+            // END NEW CODE
+            // ...existing code to update local state...
             if (pendingRow) {
               const updatedData = rowData.map((row) =>
                 row.orderId === pendingRow.params.data.orderId
@@ -457,7 +471,7 @@ export default function OrderTable() {
             setPendingRow(null);
           }}
           onCancel={() => {
-            // If cancellation occurs, revert status to the previous value
+            // remain unchanged for cancellation logic
             if (pendingRow) {
               const updatedData = rowData.map((row) =>
                 row.orderId === pendingRow.params.data.orderId
@@ -477,8 +491,23 @@ export default function OrderTable() {
       {showDenyConfirm && (
         <OrderDenyConfirm
           open={true}
-          onDeny={() => {
-            // On deny confirmation, update status to 'denied' and then show the reason popup
+          onDeny={async () => {
+            // BEGIN NEW CODE: add API call to update order status to 'denied'
+            await fetch(
+              `${process.env.REACT_APP_BACKEND_URL}/admin/deny/${pendingRow.params.data.orderId}`,
+              {
+                method: 'PUT',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                // pass the denial reason from the popup if available:
+                body: JSON.stringify({
+                  reason_for_denial: 'User provided reason' // replace with actual data from ReasonForDenial popup if needed
+                })
+              }
+            );
+            // END NEW CODE
+            // ...existing code to update local state...
             if (pendingRow) {
               const updatedData = rowData.map((row) =>
                 row.orderId === pendingRow.params.data.orderId
@@ -494,7 +523,7 @@ export default function OrderTable() {
             setShowReasonForDenial(true);
           }}
           onCancel={() => {
-            // If cancellation occurs while denying, revert status to the previous value
+            // remain unchanged for cancellation logic
             if (pendingRow) {
               const updatedData = rowData.map((row) =>
                 row.orderId === pendingRow.params.data.orderId
