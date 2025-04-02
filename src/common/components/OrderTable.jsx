@@ -342,7 +342,7 @@ export default function OrderTable() {
       headerName: 'Tracking Number',
       field: 'trackingNumber',
       editable: (params) => {
-        // changed to '===' from '=='
+        // Specify your conditions here
         return params.data.status === 'approved';
       },
       cellEditor: EditableCell,
@@ -386,7 +386,7 @@ export default function OrderTable() {
     };
   }, []);
   useEffect(() => {
-    fetch('http://localhost:5050/orders/')
+    fetch(`${process.env.REACT_APP_BACKEND_URL}/orders/`)
       .then((result) => result.json())
       .then((data) => {
         // Check if data is an array

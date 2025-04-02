@@ -18,7 +18,7 @@ import AdminSettings from 'pages/admin/AdminSettings';
 import Home from 'pages/home/Home';
 import NotFound from 'pages/not-found/NotFound';
 import TherapistHome from 'pages/therapist/TherapistHome';
-import TherapistSettings from 'pages/therapist/TherapistSettings';
+// import TherapistSettings from 'pages/therapist/TherapistSettings';
 
 import './App.css';
 
@@ -33,10 +33,7 @@ export default function App() {
               <Route path='admin' element={<AdminHome />} />
               <Route path='admin/settings' element={<AdminSettings />} />
               <Route path='therapist' element={<TherapistHome />} />
-              <Route
-                path='therapist/settings'
-                element={<TherapistSettings />}
-              />
+              <Route path='therapist/settings' element={<AdminSettings />} />
             </Route>
             <Route element={<PublicOnlyRoute />}>
               <Route path='login' element={<Login />} />
