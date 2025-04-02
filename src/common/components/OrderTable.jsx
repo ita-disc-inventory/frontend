@@ -389,8 +389,14 @@ export default function OrderTable() {
     fetch('http://localhost:5050/orders/')
       .then((result) => result.json())
       .then((data) => {
-        // tranform each order of JSON into flat object for table
+        // Check if data is an array
+        if (!Array.isArray(data)) {
+          console.error('Expected array but received:', typeof data);
+          setRowData([]);
+          return;
+        }
 
+        // transform each order of JSON into flat object for table
         const transformedData = data.map((order) => ({
           orderId: order.order_id,
           orderName: order.item_name,
@@ -408,6 +414,10 @@ export default function OrderTable() {
           quantity: order.quantity,
         }));
         setRowData(transformedData);
+      })
+      .catch((error) => {
+        console.error('Error fetching orders:', error);
+        setRowData([]);
       });
   }, []);
   // makes columns fit to width of the grid, no overflow/scrolling
@@ -437,13 +447,14 @@ export default function OrderTable() {
           autoSizeStrategy={autoSizeStrategy}
         />
       </div>
-      {/* ...existing modal components rendered at bottom... */}
       {/* IMPLEMENT API CALLS TO UPDATE THE BACKEND!!!!!!!!!!!!!A;LDFJADLKFJAS;DLKF */}
+      {/* Appears when user is changing the status from something else to 'Approved' */}
       {showApprovalConfirm && (
         <OrderApprovalConfirm
           open={true}
+          // If user clicks 'Confirm' for switching status to 'Approved,' then the backend is updated via
+          // the 'fetch()' call
           onApprove={async () => {
-            // BEGIN NEW CODE: add API call to update order status to 'approved'
             await fetch(
               `${process.env.REACT_APP_BACKEND_URL}/admin/approve/${pendingRow.params.data.orderId}`,
               {
@@ -451,11 +462,8 @@ export default function OrderTable() {
                 headers: {
                   'Content-Type': 'application/json',
                 },
-                // if needed, include additional data in the body
               }
             );
-            // END NEW CODE
-            // ...existing code to update local state...
             if (pendingRow) {
               const updatedData = rowData.map((row) =>
                 row.orderId === pendingRow.params.data.orderId
@@ -470,6 +478,8 @@ export default function OrderTable() {
             setShowApprovalConfirm(false);
             setPendingRow(null);
           }}
+          // User decides to cancel the process of switching status to 'Approved,' so backend
+          // is NOT updated and reverts to previous status
           onCancel={() => {
             // remain unchanged for cancellation logic
             if (pendingRow) {
@@ -488,26 +498,16 @@ export default function OrderTable() {
           }}
         />
       )}
+      {/* Appears when user is changing the status from something else to 'Denied' */}
       {showDenyConfirm && (
         <OrderDenyConfirm
           open={true}
-          onDeny={async () => {
-            // BEGIN NEW CODE: add API call to update order status to 'denied'
-            await fetch(
-              `${process.env.REACT_APP_BACKEND_URL}/admin/deny/${pendingRow.params.data.orderId}`,
-              {
-                method: 'PUT',
-                headers: {
-                  'Content-Type': 'application/json',
-                },
-                // pass the denial reason from the popup if available:
-                body: JSON.stringify({
-                  reason_for_denial: 'User provided reason' // replace with actual data from ReasonForDenial popup if needed
-                })
-              }
-            );
-            // END NEW CODE
-            // ...existing code to update local state...
+          // If user clicks 'Deny' for switching status to 'Denied,' then popup appears to confirm
+          // the user really wants to deny it
+          // ISSUE IS THAT THE BACKEND UPDATES IMMEDIATELY AND DOES NOT ENTER THE REASON FOR DENIAL WINDOW
+          // BEFORE UPDATING BACKEND
+          onDeny={() => {
+            // on deny confirmation, switch status to 'Denied' on frontend and show the reason for popup window
             if (pendingRow) {
               const updatedData = rowData.map((row) =>
                 row.orderId === pendingRow.params.data.orderId
@@ -543,8 +543,22 @@ export default function OrderTable() {
       {showReasonForDenial && (
         <ReasonForDenial
           open={true}
-          onSubmit={(reason) => {
-            // When submitted, update the status cell to 'denied'
+          // When user submits reason for denial, the backend is updated to reflect new 'Denied' order
+          onSubmit={async (reason) => {
+            // When submitted, update the status cell to 'Denied' to backend
+            await fetch(
+              `${process.env.REACT_APP_BACKEND_URL}/admin/deny/${pendingRow.params.data.orderId}`,
+              {
+                method: 'PUT',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                // pass the denial reason from the popup if available:
+                body: JSON.stringify({
+                  reason_for_denial: `${reason}`,
+                }),
+              }
+            );
             if (pendingRow) {
               const updatedData = rowData.map((row) =>
                 row.orderId === pendingRow.params.data.orderId
@@ -558,11 +572,11 @@ export default function OrderTable() {
             }
             setShowReasonForDenial(false);
             setPendingRow(null);
-            // ...optional: process reason...
           }}
+          // If user decides to cancel process of switching status to 'Denied,' then the
+          // backend is NOT updated and reverts to previous status
           onCancel={() => {
             // Revert status to its previous value when user cancels
-            // for updati
             if (pendingRow) {
               const updatedData = rowData.map((row) =>
                 row.orderId === pendingRow.params.data.orderId
