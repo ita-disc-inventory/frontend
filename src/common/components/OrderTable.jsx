@@ -464,6 +464,7 @@ export default function OrderTable() {
                 },
               }
             );
+            // maybe backend code must be updated for this to work?
             // Since this order is approved, set reason for denial to null (in case this order used to be denied)
             // await fetch(
             //   `${process.env.REACT_APP_BACKEND_URL}/admin/deny/${pendingRow.params.data.orderId}`,
