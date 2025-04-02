@@ -464,6 +464,19 @@ export default function OrderTable() {
                 },
               }
             );
+            // Since this order is approved, set reason for denial to null (in case this order used to be denied)
+            // await fetch(
+            //   `${process.env.REACT_APP_BACKEND_URL}/admin/deny/${pendingRow.params.data.orderId}`,
+            //   {
+            //     method: 'PUT',
+            //     headers: {
+            //       'Content-Type': 'applications/json',
+            //     },
+            //     body: JSON.stringify({
+            //       reason_for_denial: null,
+            //     }),
+            //   }
+            // );
             if (pendingRow) {
               const updatedData = rowData.map((row) =>
                 row.orderId === pendingRow.params.data.orderId
