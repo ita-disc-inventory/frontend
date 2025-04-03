@@ -14,7 +14,7 @@ import RequestPasswordReset from 'pages/account/RequestPasswordReset';
 import ResetPassword from 'pages/account/ResetPassword';
 import SignUp from 'pages/account/SignUp';
 import AdminHome from 'pages/admin/AdminHome';
-import AdminSettings from 'pages/admin/AdminSettings';
+import SettingsPage from 'pages/settings/SettingsPage';
 import Home from 'pages/home/Home';
 import NotFound from 'pages/not-found/NotFound';
 import TherapistHome from 'pages/therapist/TherapistHome';
@@ -31,9 +31,8 @@ export default function App() {
             <Route element={<PrivateRoute />}>
               <Route index element={<Home />} />
               <Route path='admin' element={<AdminHome />} />
-              <Route path='admin/settings' element={<AdminSettings />} />
+              <Route path='/settings' element={<SettingsPage />} />
               <Route path='therapist' element={<TherapistHome />} />
-              <Route path='therapist/settings' element={<AdminSettings />} />
             </Route>
             <Route element={<PublicOnlyRoute />}>
               <Route path='login' element={<Login />} />
