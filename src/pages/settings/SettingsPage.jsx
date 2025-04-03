@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { Title } from 'common/components/Text';
+import { Title, Subtitle } from 'common/components/Text';
 import { useUser } from 'common/contexts/UserContext';
 import { useNavigate } from 'react-router-dom';
 import PasswordChangeForm from 'common/components/PasswordChangeForm';
@@ -91,59 +91,50 @@ const CheckboxContainer = styled.div`
   gap: 10px; /* Add some space between the checkboxes */
 `;
 
-const CheckboxGroup = ({ options, selectedOptions, onChange }) => {
-  const handleCheckboxChange = (event) => {
-    const { value, checked } = event.target;
-    if (checked) {
-      onChange([...selectedOptions, value]);
-    } else {
-      onChange(selectedOptions.filter((option) => option !== value));
-    }
+const SingleSelectDropdown = ({ options, selectedOption, onChange }) => {
+  const handleChange = (event) => {
+    onChange(event.target.value);
   };
 
   return (
-    <CheckboxContainer>
+    <FieldDropdown value={selectedOption} onChange={handleChange}>
+      <option value='' disabled>
+        Select an option
+      </option>
       {Object.keys(options).map((option) => (
-        <label key={option}>
-          <input
-            type='checkbox'
-            value={option}
-            checked={selectedOptions.includes(option)}
-            onChange={handleCheckboxChange}
-          />
+        <option key={option} value={option}>
           {options[option]}
-        </label>
+        </option>
       ))}
-    </CheckboxContainer>
+    </FieldDropdown>
   );
 };
-CheckboxGroup.propTypes = {
+SingleSelectDropdown.propTypes = {
   options: PropTypes.objectOf(PropTypes.string).isRequired,
-  selectedOptions: PropTypes.arrayOf(PropTypes.string).isRequired,
+  selectedOption: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
 };
 
-export default function Settings() {
+export default function AdminSettings() {
   const { user, logout } = useUser();
-  const [specializations, setSpecializations] = useState(
-    user.specialization || []
-  );
+  const [specialization, setSpecialization] = useState('');
   const therapistMap = {
     art: 'Art Therapy',
     dance: 'Dance / Movement Therapy',
     drama: 'Drama Therapy',
     music: 'Music Therapy',
   };
+  useEffect(() => {
+    if (user && user.specialization) {
+      setSpecialization(user.specialization);
+    }
+  }, [user]);
 
   const navigate = useNavigate();
   const handlePasswordChange = () => {
     navigate('/forgot-password');
   };
   const handleUpdate = async () => {
-    if (user.position_title === 'therapist' && specializations.length === 0) {
-      alert('Please select a specialization');
-      return;
-    }
     try {
       const response = await fetch(
         `${process.env.REACT_APP_BACKEND_URL}/therapist/${user.id}/specialization`,
@@ -152,7 +143,7 @@ export default function Settings() {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ specialization: specializations }),
+          body: JSON.stringify({ specialization: specialization }),
         }
       );
       console.log(response);
@@ -161,6 +152,7 @@ export default function Settings() {
       } else {
         alert('Failed to update settings');
       }
+      setSpecialization('');
 
       navigate('/'); // Redirect to the admin page after successful update
     } catch (error) {
@@ -188,14 +180,14 @@ export default function Settings() {
         <FieldLabel>Specialization</FieldLabel>
 
         {user.position_title === 'therapist' ? (
-          <CheckboxGroup
+          <SingleSelectDropdown
             options={therapistMap}
-            selectedOptions={specializations}
-            onChange={setSpecializations}
+            selectedOption={specialization}
+            onChange={setSpecialization}
           />
-        ) : user.specialization[0] === 'standard_admin' ? (
+        ) : user.specialization === 'standard_admin' ? (
           <FieldValue>Standard Admin</FieldValue>
-        ) : user.specialization[0] === 'super_admin' ? (
+        ) : user.specialization === 'super_admin' ? (
           <FieldValue>Super Admin</FieldValue>
         ) : (
           <FieldValue>{''}</FieldValue>
