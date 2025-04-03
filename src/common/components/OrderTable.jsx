@@ -238,9 +238,11 @@ function requestDateFormatter(params) {
 // Formats specialization
 function specializationFormatter(params) {
   const specialization = params.value;
-  return specialization
-    ? specialization.charAt(0).toUpperCase() + specialization.slice(1)
-    : ''; // prevents error when specialization is null
+  // Check if specialization exists and is a string
+  if (specialization && typeof specialization === 'string') {
+    return specialization.charAt(0).toUpperCase() + specialization.slice(1);
+  }
+  return ''; // Return empty string for null, undefined, or non-string values
 }
 
 // Changes program name to its respective abbreviation
