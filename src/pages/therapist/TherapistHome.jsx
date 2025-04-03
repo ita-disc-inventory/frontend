@@ -37,7 +37,7 @@ export default function TherapistHome() {
       </TextContainer>
 
       <ButtonContainer>
-        <Button.Primary onClick={() => navigate('/therapist/settings')}>
+        <Button.Primary onClick={() => navigate('/settings')}>
           Therapist Account Settings
         </Button.Primary>
       </ButtonContainer>

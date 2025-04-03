@@ -38,7 +38,7 @@ export default function AdminHome() {
       </TextContainer>
 
       <ButtonContainer>
-        <Button.Primary onClick={() => navigate('/admin/settings')}>
+        <Button.Primary onClick={() => navigate('/settings')}>
           Admin Account Settings
         </Button.Primary>
       </ButtonContainer>
