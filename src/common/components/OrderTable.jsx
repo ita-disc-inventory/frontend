@@ -250,7 +250,7 @@ export default function OrderTable() {
   const [showApprovalConfirm, setShowApprovalConfirm] = useState(false);
   const [showDenyConfirm, setShowDenyConfirm] = useState(false);
   const [showReasonForDenial, setShowReasonForDenial] = useState(false);
-  // const [showItemArrived, setShowItemArrived] = useState(false); // if true, then 'Item Arrived?' Popup
+  const [showItemArrived, setShowItemArrived] = useState(false); // if true, then 'Item Arrived?' Popup
   // const [showItemPickUp, setShowItemPickUp] = useState(false); // if true, then 'Item Ready for Pickup?' Popup
   // const [showNewBudget, setShowNewBudget] = useState(false); // if true, then 'Enter new budget' Popup
   // New separate status cell renderer function:
@@ -263,6 +263,9 @@ export default function OrderTable() {
       } else if (newValue === 'denied') {
         setPendingRow({ params, prev: params.value });
         setShowDenyConfirm(true);
+      } else if (newValue === 'arrived') {
+        setPendingRow({ params, prev: params.value });
+        setShowItemArrived(true);
       } else {
         params.node.setDataValue('status', newValue);
       }
@@ -574,6 +577,55 @@ export default function OrderTable() {
               });
             }
             setShowReasonForDenial(false);
+            setPendingRow(null);
+          }}
+        />
+      )}
+      {/* Appears when user is switching status to 'Arrived' */}
+      {showItemArrived && (
+        <ItemArrivedConfirm
+          open={true}
+          // When user submits confirms that the order has arrived, update the backend
+          onConfirm={async () => {
+            await fetch(
+              `${process.env.REACT_APP_BACKEND_URL}/admin/arrived/${pendingRow.params.data.orderId}`,
+              {
+                method: 'PUT',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+              }
+            );
+            if (pendingRow) {
+              const updatedData = rowData.map((row) =>
+                row.orderId === pendingRow.params.data.orderId
+                  ? { ...row, status: 'denied' }
+                  : row
+              );
+              setRowData(updatedData);
+              pendingRow.params.api.refreshCells({
+                rowNodes: [pendingRow.params.node],
+              });
+            }
+            setShowItemArrived(false);
+            setPendingRow(null);
+          }}
+          // If user decides to cancel process of switching status to 'Arrived,' then the
+          // backend is NOT updated and reverts to previous status
+          onCancel={() => {
+            // Revert status to its previous value when user cancels
+            if (pendingRow) {
+              const updatedData = rowData.map((row) =>
+                row.orderId === pendingRow.params.data.orderId
+                  ? { ...row, status: pendingRow.prev }
+                  : row
+              );
+              setRowData(updatedData);
+              pendingRow.params.api.refreshCells({
+                rowNodes: [pendingRow.params.node],
+              });
+            }
+            setShowItemArrived(false);
             setPendingRow(null);
           }}
         />
