@@ -236,13 +236,13 @@ function requestDateFormatter(params) {
 }
 
 // Formats specialization
+// params.value is type JSON with multiple specialties, so just returning first one
+// in JSON for now --> figure out solution later? display multiple?
 function specializationFormatter(params) {
-  const specialization = params.value;
-  // Check if specialization exists and is a string
-  if (specialization && typeof specialization === 'string') {
-    return specialization.charAt(0).toUpperCase() + specialization.slice(1);
-  }
-  return ''; // Return empty string for null, undefined, or non-string values
+  const specialization = params.value[0];
+  return specialization
+    ? specialization.charAt(0).toUpperCase() + specialization.slice(1)
+    : ''; // prevents error when specialization is null
 }
 
 // Changes program name to its respective abbreviation
@@ -389,8 +389,14 @@ export default function OrderTable() {
     fetch(`${process.env.REACT_APP_BACKEND_URL}/orders/`)
       .then((result) => result.json())
       .then((data) => {
-        // tranform each order of JSON into flat object for table
+        // Check if data is an array
+        if (!Array.isArray(data)) {
+          console.error('Expected array but received:', typeof data);
+          setRowData([]);
+          return;
+        }
 
+        // transform each order of JSON into flat object for table
         const transformedData = data.map((order) => ({
           orderId: order.order_id,
           orderName: order.item_name,
@@ -408,6 +414,10 @@ export default function OrderTable() {
           quantity: order.quantity,
         }));
         setRowData(transformedData);
+      })
+      .catch((error) => {
+        console.error('Error fetching orders:', error);
+        setRowData([]);
       });
   }, []);
   // makes columns fit to width of the grid, no overflow/scrolling
@@ -437,12 +447,37 @@ export default function OrderTable() {
           autoSizeStrategy={autoSizeStrategy}
         />
       </div>
-      {/* ...existing modal components rendered at bottom... */}
+      {/* IMPLEMENT API CALLS TO UPDATE THE BACKEND!!!!!!!!!!!!!A;LDFJADLKFJAS;DLKF */}
+      {/* Appears when user is changing the status from something else to 'Approved' */}
       {showApprovalConfirm && (
         <OrderApprovalConfirm
           open={true}
-          onApprove={() => {
-            // On approval confirmation, update status to 'approved'
+          // If user clicks 'Confirm' for switching status to 'Approved,' then the backend is updated via
+          // the 'fetch()' call
+          onApprove={async () => {
+            await fetch(
+              `${process.env.REACT_APP_BACKEND_URL}/admin/approve/${pendingRow.params.data.orderId}`,
+              {
+                method: 'PUT',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+              }
+            );
+            // maybe backend code must be updated for this to work?
+            // Since this order is approved, set reason for denial to null (in case this order used to be denied)
+            // await fetch(
+            //   `${process.env.REACT_APP_BACKEND_URL}/admin/deny/${pendingRow.params.data.orderId}`,
+            //   {
+            //     method: 'PUT',
+            //     headers: {
+            //       'Content-Type': 'applications/json',
+            //     },
+            //     body: JSON.stringify({
+            //       reason_for_denial: null,
+            //     }),
+            //   }
+            // );
             if (pendingRow) {
               const updatedData = rowData.map((row) =>
                 row.orderId === pendingRow.params.data.orderId
@@ -457,8 +492,10 @@ export default function OrderTable() {
             setShowApprovalConfirm(false);
             setPendingRow(null);
           }}
+          // User decides to cancel the process of switching status to 'Approved,' so backend
+          // is NOT updated and reverts to previous status
           onCancel={() => {
-            // If cancellation occurs, revert status to the previous value
+            // remain unchanged for cancellation logic
             if (pendingRow) {
               const updatedData = rowData.map((row) =>
                 row.orderId === pendingRow.params.data.orderId
@@ -475,11 +512,16 @@ export default function OrderTable() {
           }}
         />
       )}
+      {/* Appears when user is changing the status from something else to 'Denied' */}
       {showDenyConfirm && (
         <OrderDenyConfirm
           open={true}
+          // If user clicks 'Deny' for switching status to 'Denied,' then popup appears to confirm
+          // the user really wants to deny it
+          // ISSUE IS THAT THE BACKEND UPDATES IMMEDIATELY AND DOES NOT ENTER THE REASON FOR DENIAL WINDOW
+          // BEFORE UPDATING BACKEND
           onDeny={() => {
-            // On deny confirmation, update status to 'denied' and then show the reason popup
+            // on deny confirmation, switch status to 'Denied' on frontend and show the reason for popup window
             if (pendingRow) {
               const updatedData = rowData.map((row) =>
                 row.orderId === pendingRow.params.data.orderId
@@ -495,7 +537,7 @@ export default function OrderTable() {
             setShowReasonForDenial(true);
           }}
           onCancel={() => {
-            // If cancellation occurs while denying, revert status to the previous value
+            // remain unchanged for cancellation logic
             if (pendingRow) {
               const updatedData = rowData.map((row) =>
                 row.orderId === pendingRow.params.data.orderId
@@ -515,8 +557,22 @@ export default function OrderTable() {
       {showReasonForDenial && (
         <ReasonForDenial
           open={true}
-          onSubmit={(reason) => {
-            // When submitted, update the status cell to 'denied'
+          // When user submits reason for denial, the backend is updated to reflect new 'Denied' order
+          onSubmit={async (reason) => {
+            // When submitted, update the status cell to 'Denied' to backend
+            await fetch(
+              `${process.env.REACT_APP_BACKEND_URL}/admin/deny/${pendingRow.params.data.orderId}`,
+              {
+                method: 'PUT',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                // pass the denial reason from the popup if available:
+                body: JSON.stringify({
+                  reason_for_denial: `${reason}`,
+                }),
+              }
+            );
             if (pendingRow) {
               const updatedData = rowData.map((row) =>
                 row.orderId === pendingRow.params.data.orderId
@@ -530,11 +586,11 @@ export default function OrderTable() {
             }
             setShowReasonForDenial(false);
             setPendingRow(null);
-            // ...optional: process reason...
           }}
+          // If user decides to cancel process of switching status to 'Denied,' then the
+          // backend is NOT updated and reverts to previous status
           onCancel={() => {
             // Revert status to its previous value when user cancels
-            // for updati
             if (pendingRow) {
               const updatedData = rowData.map((row) =>
                 row.orderId === pendingRow.params.data.orderId
