@@ -113,21 +113,6 @@ const orderNameRenderer = (params) => {
   );
 };
 
-// Responsible for formatting the 'Status' column
-// See StatusDropdown.jsx to see how status to color relationships work
-// const statusRenderer = (params) => {
-//   // need to implement logic for if status is being changed to 'Deny' or 'Pick up' or 'Arrived', as
-//   // these should trigger a pop-up
-//   return (
-//     <StatusDropdown
-//       value={params.value}
-//       onStatusChange={(newValue) => {
-//         params.node.setDataValue('status', newValue);
-//       }}
-//     />
-//   );
-// };
-
 // Responsible for formatting & styling the 'Priority' column
 const priorityRenderer = (params) => {
   const priority = params.value;
@@ -239,7 +224,7 @@ function requestDateFormatter(params) {
 // params.value is type JSON with multiple specialties, so just returning first one
 // in JSON for now --> figure out solution later? display multiple?
 function specializationFormatter(params) {
-  const specialization = params.value[0];
+  const specialization = params.value;
   return specialization
     ? specialization.charAt(0).toUpperCase() + specialization.slice(1)
     : ''; // prevents error when specialization is null
@@ -447,7 +432,6 @@ export default function OrderTable() {
           autoSizeStrategy={autoSizeStrategy}
         />
       </div>
-      {/* IMPLEMENT API CALLS TO UPDATE THE BACKEND!!!!!!!!!!!!!A;LDFJADLKFJAS;DLKF */}
       {/* Appears when user is changing the status from something else to 'Approved' */}
       {showApprovalConfirm && (
         <OrderApprovalConfirm
@@ -464,20 +448,6 @@ export default function OrderTable() {
                 },
               }
             );
-            // maybe backend code must be updated for this to work?
-            // Since this order is approved, set reason for denial to null (in case this order used to be denied)
-            // await fetch(
-            //   `${process.env.REACT_APP_BACKEND_URL}/admin/deny/${pendingRow.params.data.orderId}`,
-            //   {
-            //     method: 'PUT',
-            //     headers: {
-            //       'Content-Type': 'applications/json',
-            //     },
-            //     body: JSON.stringify({
-            //       reason_for_denial: null,
-            //     }),
-            //   }
-            // );
             if (pendingRow) {
               const updatedData = rowData.map((row) =>
                 row.orderId === pendingRow.params.data.orderId
@@ -554,6 +524,7 @@ export default function OrderTable() {
           }}
         />
       )}
+      {/* Reason for denial popup */}
       {showReasonForDenial && (
         <ReasonForDenial
           open={true}
