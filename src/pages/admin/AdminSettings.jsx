@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 
-import { Title, Subtitle } from 'common/components/Text';
+import { Title } from 'common/components/Text';
 import { useUser } from 'common/contexts/UserContext';
 import { useNavigate } from 'react-router-dom';
 import PasswordChangeForm from 'common/components/PasswordChangeForm';
