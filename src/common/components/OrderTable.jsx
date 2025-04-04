@@ -239,7 +239,7 @@ function requestDateFormatter(params) {
 // params.value is type JSON with multiple specialties, so just returning first one
 // in JSON for now --> figure out solution later? display multiple?
 function specializationFormatter(params) {
-  const specialization = params.value[0];
+  const specialization = params.value;
   return specialization
     ? specialization.charAt(0).toUpperCase() + specialization.slice(1)
     : ''; // prevents error when specialization is null
