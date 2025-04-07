@@ -39,41 +39,6 @@ const StyledLink = styled.a`
   }
 `;
 
-const EditableCell = (props) => {
-  const [value, setValue] = useState(props.value);
-
-  const onChange = (event) => {
-    setValue(event.target.value);
-  };
-
-  const onBlur = async () => {
-    //console.log(props.data);
-    await fetch(
-      `${process.env.REACT_APP_BACKEND_URL}/admin/tracking/${props.data.orderId}`,
-      {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ tracking_number: value }),
-      }
-    );
-    props.api.stopEditing();
-    props.updateTrackingNumber(props.data.orderId, value);
-    setValue(props.value);
-  };
-
-  return (
-    <input
-      type='text'
-      value={value}
-      onChange={onChange}
-      onBlur={onBlur}
-      style={{ width: '100%' }}
-    />
-  );
-};
-
 // Responsible for formatting values under 'Order Name' column.
 const orderNameRenderer = (params) => {
   return (
@@ -277,15 +242,6 @@ export default function OrderTable() {
       />
     );
   };
-  const updateTrackingNumber = (orderId, newTrackingNumber) => {
-    setRowData((prevRowData) =>
-      prevRowData.map((row) =>
-        row.orderId === orderId
-          ? { ...row, trackingNumber: newTrackingNumber }
-          : row
-      )
-    );
-  };
 
   // all column names and respective settings
   const [colDefs] = useState([
@@ -329,14 +285,7 @@ export default function OrderTable() {
     {
       headerName: 'Tracking Number',
       field: 'trackingNumber',
-      editable: (params) => {
-        // Specify your conditions here
-        return params.data.status === 'approved';
-      },
-      cellEditor: EditableCell,
-      cellEditorParams: {
-        updateTrackingNumber,
-      },
+      editable: false,
     },
     {
       headerName: 'Request Date',
