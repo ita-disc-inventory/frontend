@@ -8,7 +8,6 @@ import Dropdown, {
   StyledSelectItem,
   StyledSeparator,
 } from 'common/components/templates/Dropdown';
-import { AdminStatuses } from 'common/utils/AdminStatuses';
 
 // Accept props for a controlled component
 // Order of function calls when user changes the value of the dropdown:
@@ -56,21 +55,12 @@ export default function StatusDropdown({ value, onStatusChange }) {
       value={status} // changed from defaultValue to value
       $forstatus={true}
     >
-      {AdminStatuses.map((groupOrSeparator, i) => {
-        if (groupOrSeparator.separator) {
-          return <StyledSeparator key={`sep-${i}`} />;
-        }
-        return (
-          <Select.Group key={`group-${i}`}>
-            <StyledLabel>{groupOrSeparator.label}</StyledLabel>
-            {groupOrSeparator.items.map((item) => (
-              <StyledSelectItem value={item.value} key={item.value}>
-                {item.label}
-              </StyledSelectItem>
-            ))}
-          </Select.Group>
-        );
-      })}
+      <Select.Group>
+        <StyledLabel>Status Option</StyledLabel>
+        <StyledSelectItem value={value}>{value}</StyledSelectItem>
+        <StyledSeparator />
+        <StyledSelectItem value='cancel'>Cancel</StyledSelectItem>
+      </Select.Group>
     </Dropdown>
   );
 }
