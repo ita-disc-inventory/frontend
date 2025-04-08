@@ -14,6 +14,7 @@ import styled from 'styled-components';
 import CancelOrderDropdown from './CancelOrderDropdown';
 import FormPopup from './templates/FormPopup';
 import CancelOrder from './therapist_modals/CancelOrder';
+import CancelOrderButton from './CancelOrderButton';
 
 // Mark all grids as using legacy themes
 provideGlobalGridOptions({ theme: 'legacy' });
@@ -308,6 +309,11 @@ export default function OrderTable() {
     {
       headerName: 'Therapist Name',
       field: 'therapistName',
+    },
+    {
+      field: 'button',
+      headerName: 'Button',
+      cellRenderer: CancelOrderButton,
     },
   ]);
   // Default column definitions for table; columns cannot be resized, instead they fit to width
