@@ -227,20 +227,40 @@ export default function OrderTable() {
   // const [showNewBudget, setShowNewBudget] = useState(false); // if true, then 'Enter new budget' Popup
   // New separate status cell renderer function:
   const statusCellRenderer = (params) => {
-    const handleStatusChange = (newValue) => {
-      if (newValue === 'cancel') {
-        // Save reference to row along with the previous status.
-        setPendingRow({ params, prev: params.value });
-        setShowCancelConfirm(true);
-      } else {
-        params.node.setDataValue('status', newValue);
-      }
-    };
+    let status = params.value;
+    let backgroundColor = 'green'; // default background color
+    if (status === 'approved') {
+      backgroundColor = 'var(--status-approved-green)';
+    } else if (status === 'pending') {
+      backgroundColor = 'var(--status-pending-yellow)';
+    } else if (status === 'denied') {
+      backgroundColor = 'inherit';
+    } else if (status === 'cancel') {
+      backgroundColor = 'var(--status-cancel-red)';
+    }
+
     return (
-      <CancelOrderDropdown
-        value={params.value}
-        onStatusChange={handleStatusChange}
-      />
+      <div
+        style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          borderRadius: '4px',
+          padding: '0px 10px',
+          fontSize: '13px',
+          lineHeight: '1',
+          height: '35px',
+          width: '100px',
+          backgroundColor: backgroundColor,
+          color: 'black',
+          border: '1px #ccc solid',
+          textAlign: 'center',
+          fontWeight: '500',
+          textTransform: 'capitalize',
+        }}
+      >
+        {status}
+      </div>
     );
   };
 
