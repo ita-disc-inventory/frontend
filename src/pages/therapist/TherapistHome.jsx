@@ -5,6 +5,7 @@ import styled from 'styled-components';
 
 import { Button } from 'common/components/Button';
 import { Subtitle, Title } from 'common/components/Text';
+import OrderTable from 'common/components/OrderTableTherapist';
 
 const TherapistHomePage = styled.div`
   flex: 1 0 0;
@@ -41,6 +42,7 @@ export default function TherapistHome() {
           Therapist Account Settings
         </Button.Primary>
       </ButtonContainer>
+      <OrderTable />
     </TherapistHomePage>
   );
 }
