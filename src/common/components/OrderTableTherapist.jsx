@@ -11,7 +11,6 @@ import 'ag-grid-community/styles/ag-theme-quartz.css';
 import { AgGridReact } from 'ag-grid-react';
 import styled from 'styled-components';
 
-import CancelOrderDropdown from './CancelOrderDropdown';
 import FormPopup from './templates/FormPopup';
 import CancelOrder from './therapist_modals/CancelOrder';
 import CancelOrderButton from './CancelOrderButton';
@@ -264,6 +263,21 @@ export default function OrderTable() {
     );
   };
 
+  const CancelOrderRenderer = (params) => {
+    return (
+      <CancelOrderButton
+        onClick={() => {
+          // Set the pending row and its previous status
+          setPendingRow({
+            params,
+            prev: params.value,
+          });
+          setShowCancelConfirm(true);
+        }}
+      />
+    );
+  };
+
   // all column names and respective settings
   const [colDefs] = useState([
     {
@@ -333,7 +347,7 @@ export default function OrderTable() {
     {
       field: 'button',
       headerName: 'Button',
-      cellRenderer: CancelOrderButton,
+      cellRenderer: CancelOrderRenderer,
     },
   ]);
   // Default column definitions for table; columns cannot be resized, instead they fit to width

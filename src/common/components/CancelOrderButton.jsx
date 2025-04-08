@@ -1,9 +1,9 @@
 import React from 'react';
 
-export default function CancelOrderButton() {
+export default function CancelOrderButton({ onClick }) {
   return (
     <button
-      onClick={() => window.alert('Button Clicked!')}
+      onClick={onClick}
       style={{
         backgroundColor: '#ff4d4f',
         color: 'white',
