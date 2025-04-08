@@ -384,7 +384,31 @@ export default function OrderTable() {
           autoSizeStrategy={autoSizeStrategy}
         />
       </div>
-      {showCancelConfirm && <CancelOrder />}
+      {showCancelConfirm && (
+        <CancelOrder
+          open={true}
+          onConfirm={() => {
+            setShowCancelConfirm(false);
+            setPendingRow(null);
+          }}
+          onCancel={() => {
+            // Revert the status to its previous value
+            if (pendingRow) {
+              const updatedData = rowData.map((row) =>
+                row.orderId === pendingRow.params.data.orderId
+                  ? { ...row, status: pendingRow.prev }
+                  : row
+              );
+              setRowData(updatedData);
+              pendingRow.params.api.refreshCells({
+                rowNodes: [pendingRow.params.node],
+              });
+            }
+            setShowCancelConfirm(false);
+            setPendingRow(null);
+          }}
+        />
+      )}
     </div>
   );
 }
