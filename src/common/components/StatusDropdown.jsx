@@ -37,6 +37,12 @@ export default function StatusDropdown({ value, onStatusChange }) {
       backgroundColor = 'var(--status-pending-yellow)';
     } else if (status === 'denied') {
       backgroundColor = 'inherit';
+    } else if (status === 'arrived') {
+      // item arrived
+      backgroundColor = 'var(--status-arrived-blue)';
+    } else if (status === 'ready' || status === 'picked up') {
+      // read for pick up
+      backgroundColor = 'orange';
     }
   }
 
