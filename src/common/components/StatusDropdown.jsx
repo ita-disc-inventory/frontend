@@ -39,6 +39,12 @@ export default function StatusDropdown({ value, onStatusChange }) {
       backgroundColor = 'inherit';
     } else if (status === 'cancel') {
       backgroundColor = 'var(--status-cancel-red)';
+    } else if (status === 'arrived') {
+      // item arrived
+      backgroundColor = 'var(--status-arrived-blue)';
+    } else if (status === 'ready' || status === 'picked up') {
+      // read for pick up
+      backgroundColor = 'orange';
     }
   }
 
