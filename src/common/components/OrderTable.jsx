@@ -651,7 +651,7 @@ export default function OrderTable() {
             if (pendingRow) {
               const updatedData = rowData.map((row) =>
                 row.orderId === pendingRow.params.data.orderId
-                  ? { ...row, status: 'denied' }
+                  ? { ...row, status: 'cancelled' }
                   : row
               );
               setRowData(updatedData);

@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-
+import { useUser } from 'common/contexts/UserContext'; // Import the user context
 import { OpenInNewWindowIcon } from '@radix-ui/react-icons';
 import {
   AllCommunityModule,
@@ -220,6 +220,7 @@ export default function OrderTable() {
   // Store the pending row with its previous status
   const [pendingRow, setPendingRow] = useState(null);
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
+  const { user } = useUser();
 
   // const [showItemArrived, setShowItemArrived] = useState(false); // if true, then 'Item Arrived?' Popup
   // const [showItemPickUp, setShowItemPickUp] = useState(false); // if true, then 'Item Ready for Pickup?' Popup
@@ -234,7 +235,7 @@ export default function OrderTable() {
       backgroundColor = 'var(--status-pending-yellow)';
     } else if (status === 'denied') {
       backgroundColor = 'inherit';
-    } else if (status === 'cancel') {
+    } else if (status === 'cancelled') {
       backgroundColor = 'var(--status-cancel-red)';
     }
 
@@ -264,18 +265,24 @@ export default function OrderTable() {
   };
 
   const CancelOrderRenderer = (params) => {
-    return (
-      <CancelOrderButton
-        onClick={() => {
-          // Set the pending row and its previous status
-          setPendingRow({
-            params,
-            prev: params.value,
-          });
-          setShowCancelConfirm(true);
-        }}
-      />
-    );
+    // Only show cancel button if the order belongs to the current user
+    console.log('params.data:', params.data);
+    console.log('user.id:', user.id);
+    if (params.data.requestor_id === user.id) {
+      return (
+        <CancelOrderButton
+          onClick={() => {
+            setPendingRow({
+              params,
+              prev: params.data.status,
+            });
+            setShowCancelConfirm(true);
+          }}
+        />
+      );
+    }
+    // Return empty div if the order doesn't belong to the user
+    return <div></div>;
   };
 
   // all column names and respective settings
@@ -389,6 +396,7 @@ export default function OrderTable() {
           therapistName: `${order.users.firstname} ${order.users.lastname}`,
           ppu: order.items.price_per_unit,
           quantity: order.quantity,
+          requestor_id: order.requestor_id,
         }));
         setRowData(transformedData);
       })
@@ -427,7 +435,34 @@ export default function OrderTable() {
       {showCancelConfirm && (
         <CancelOrder
           open={true}
-          onConfirm={() => {
+          onConfirm={async () => {
+            // Fix 2: Add API call to backend
+            try {
+              await fetch(
+                `${process.env.REACT_APP_BACKEND_URL}/therapist/order/${pendingRow.params.data.orderId}`,
+                {
+                  method: 'DELETE',
+                  headers: {
+                    'Content-Type': 'application/json',
+                  },
+                }
+              );
+
+              // Fix 3: Update row data with new 'cancel' status
+              if (pendingRow) {
+                const updatedData = rowData.map((row) =>
+                  row.orderId === pendingRow.params.data.orderId
+                    ? { ...row, status: 'cancel' }
+                    : row
+                );
+                setRowData(updatedData);
+                pendingRow.params.api.refreshCells({
+                  rowNodes: [pendingRow.params.node],
+                });
+              }
+            } catch (error) {
+              console.error('Error cancelling order:', error);
+            }
             setShowCancelConfirm(false);
             setPendingRow(null);
           }}
