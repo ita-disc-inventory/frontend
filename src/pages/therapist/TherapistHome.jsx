@@ -6,6 +6,7 @@ import styled from 'styled-components';
 import { Button } from 'common/components/Button';
 import { Subtitle, Title } from 'common/components/Text';
 import OrderTable from 'common/components/OrderTableTherapist';
+import NewOrderForm from 'common/components/NewOrderForm';
 
 const TherapistHomePage = styled.div`
   flex: 1 0 0;
@@ -21,6 +22,12 @@ const TextContainer = styled.div`
   flex-direction: column;
   gap: 20px;
   margin-bottom: 2rem;
+`;
+
+const FormDiv = styled.div`
+  display: flex;
+  justify-content: flex-start;
+  padding: 2rem;
 `;
 
 const ButtonContainer = styled.div`
@@ -42,6 +49,9 @@ export default function TherapistHome() {
           Therapist Account Settings
         </Button.Primary>
       </ButtonContainer>
+      <FormDiv>
+        <NewOrderForm />
+      </FormDiv>
       <OrderTable />
     </TherapistHomePage>
   );

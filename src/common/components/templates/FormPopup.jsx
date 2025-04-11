@@ -267,25 +267,26 @@ export default function FormPopup({
                       justifyContent: 'flex-end',
                     }}
                   >
-                    <Dialog.Close asChild>
-                      <div
-                        style={{
-                          display: 'flex',
-                          flexDirection: 'row-reverse',
-                          gap: '10px',
-                        }}
-                      >
-                        <StyledButton className={submitColor} type='submit'>
-                          {submitText}
-                        </StyledButton>
+                    <div
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'row-reverse',
+                        gap: '10px',
+                      }}
+                    >
+                      <StyledButton className={submitColor} type='submit'>
+                        {submitText}
+                      </StyledButton>
+                      <Dialog.Close asChild>
                         <StyledButton
                           className={cancelColor}
                           onClick={cancelOnClick}
+                          type='button'
                         >
                           {cancelText}
                         </StyledButton>
-                      </div>
-                    </Dialog.Close>
+                      </Dialog.Close>
+                    </div>
                   </div>
                 )}
               </form>
@@ -324,22 +325,22 @@ export default function FormPopup({
                     justifyContent: 'flex-end',
                   }}
                 >
-                  <Dialog.Close asChild>
-                    <div
-                      style={{
-                        display: 'flex',
-                        flexDirection: 'row-reverse',
-                        gap: '10px',
-                      }}
-                    >
-                      <StyledButton className={submitColor} type='submit'>
-                        {submitText}
-                      </StyledButton>
-                      <StyledButton className={cancelColor} type='submit'>
+                  <div
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'row-reverse',
+                      gap: '10px',
+                    }}
+                  >
+                    <StyledButton className={submitColor} type='submit'>
+                      {submitText}
+                    </StyledButton>
+                    <Dialog.Close asChild>
+                      <StyledButton className={cancelColor} type='button'>
                         {cancelText}
                       </StyledButton>
-                    </div>
-                  </Dialog.Close>
+                    </Dialog.Close>
+                  </div>
                 </div>
               )}
             </form>
