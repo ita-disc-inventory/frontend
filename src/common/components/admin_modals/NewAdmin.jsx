@@ -1,8 +1,61 @@
-import FormPopup from 'common/components/templates/FormPopup';
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+import { Dialog } from 'radix-ui';
+import styled from 'styled-components';
+import FormPopup from 'common/components/templates/FormPopup';
 
-export default function AdminFormPopup({ open, onCancel, onConfirm }) {
+const StyledButton = styled.button`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  padding: 0 15px;
+  font-size: 15px;
+  line-height: 1;
+  font-weight: 500;
+  height: 35px;
+  user-select: none;
+  background-color: var(--green-4);
+  color: var(--green-11);
+  outline-color: var(--green-7);
+  &:hover {
+    background-color: var(--green-5);
+  }
+`;
+
+const InputField = styled.input`
+  width: 100%;
+  border-radius: 4px;
+  padding: 10px;
+  font-size: 15px;
+  line-height: 1.5;
+  color: black;
+  border: solid 2px var(--text);
+  height: 40px;
+  margin-bottom: 20px;
+`;
+
+const SelectField = styled.select`
+  width: 100%;
+  border-radius: 4px;
+  padding: 10px;
+  font-size: 15px;
+  line-height: 1.5;
+  color: black;
+  border: solid 2px var(--text);
+  height: 40px;
+  margin-bottom: 20px;
+  background-color: white;
+`;
+
+const Label = styled.label`
+  display: block;
+  font-size: 15px;
+  color: black;
+  margin-bottom: 10px;
+`;
+
+export default function NewAdmin({ open, onCancel, onConfirm }) {
   const [role, setRole] = useState('admin');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -20,49 +73,68 @@ export default function AdminFormPopup({ open, onCancel, onConfirm }) {
       }}
       title='Admin Access'
       description='Please choose a role and provide your credentials'
-      onSubmit={handleSubmit}
-      submitText='Save'
-      cancelText='Close'
-      cancelOnClick={onCancel}
+      customForm={true}
     >
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-        <label>
-          Role:
-          <select
-            value={role}
-            onChange={(e) => setRole(e.target.value)}
-            required
-          >
-            <option value='admin'>Admin</option>
-            <option value='super_admin'>Super Admin</option>
-          </select>
-        </label>
+      <Label>
+        Role:
+        <span style={{ color: 'red' }}>*</span>
+      </Label>
+      <SelectField
+        value={role}
+        onChange={(e) => setRole(e.target.value)}
+        required
+      >
+        <option value='admin'>Admin</option>
+        <option value='super_admin'>Super Admin</option>
+      </SelectField>
 
-        <label>
-          Email:
-          <input
-            type='email'
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-        </label>
+      <Label>
+        Email:
+        <span style={{ color: 'red' }}>*</span>
+      </Label>
+      <InputField
+        type='email'
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        placeholder='admin@example.com'
+        required
+      />
 
-        <label>
-          Password:
-          <input
-            type='password'
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </label>
+      <Label>
+        Password:
+        <span style={{ color: 'red' }}>*</span>
+      </Label>
+      <InputField
+        type='password'
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        placeholder='Enter secure password'
+        required
+      />
+
+      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+        <StyledButton
+          type='button'
+          onClick={onCancel}
+          style={{
+            backgroundColor: 'var(--red-4)',
+            color: 'var(--red-11)',
+          }}
+        >
+          Cancel
+        </StyledButton>
+
+        <Dialog.Close asChild>
+          <StyledButton type='submit' onClick={handleSubmit}>
+            Create Admin
+          </StyledButton>
+        </Dialog.Close>
       </div>
     </FormPopup>
   );
 }
 
-AdminFormPopup.propTypes = {
+NewAdmin.propTypes = {
   open: PropTypes.bool.isRequired,
   onCancel: PropTypes.func.isRequired,
   onConfirm: PropTypes.func.isRequired,
