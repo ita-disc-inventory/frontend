@@ -38,6 +38,12 @@ export default function NewMonthlyBudget() {
     }
   };
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // Submit the budget value to the server or perform any action needed
+    console.log('New Monthly Budget:', budget);
+  };
+
   return (
     <FormPopup
       title='New Monthly Budget'
@@ -74,7 +80,9 @@ export default function NewMonthlyBudget() {
       />
       <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
         <Dialog.Close asChild>
-          <StyledButton type='submit'>Submit</StyledButton>
+          <StyledButton type='submit' onClick={handleSubmit}>
+            Submit
+          </StyledButton>
         </Dialog.Close>
       </div>
     </FormPopup>
