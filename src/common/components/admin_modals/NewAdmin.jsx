@@ -56,13 +56,25 @@ const Label = styled.label`
 `;
 
 export default function NewAdmin({ open, onCancel, onConfirm }) {
-  const [role, setRole] = useState('admin');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [username, setUsername] = useState('');
+  const [firstname, setFirstname] = useState('');
+  const [lastname, setLastname] = useState('');
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onConfirm({ role, email, password });
+    let specialization = 'standard_admin';
+    let position = 'admin';
+    onConfirm({
+      email,
+      password,
+      username,
+      firstname,
+      lastname,
+      specialization,
+      position,
+    });
   };
 
   return (
@@ -75,19 +87,6 @@ export default function NewAdmin({ open, onCancel, onConfirm }) {
       description='Please choose a role and provide your credentials'
       customForm={true}
     >
-      <Label>
-        Role:
-        <span style={{ color: 'red' }}>*</span>
-      </Label>
-      <SelectField
-        value={role}
-        onChange={(e) => setRole(e.target.value)}
-        required
-      >
-        <option value='admin'>Admin</option>
-        <option value='super_admin'>Super Admin</option>
-      </SelectField>
-
       <Label>
         Email:
         <span style={{ color: 'red' }}>*</span>
@@ -109,6 +108,40 @@ export default function NewAdmin({ open, onCancel, onConfirm }) {
         value={password}
         onChange={(e) => setPassword(e.target.value)}
         placeholder='Enter secure password'
+        required
+      />
+
+      <Label>
+        Username:
+        <span style={{ color: 'red' }}>*</span>
+      </Label>
+      <InputField
+        type='text'
+        value={username}
+        onChange={(e) => setUsername(e.target.value)}
+        placeholder='Enter username'
+        required
+      />
+      <Label>
+        First Name:
+        <span style={{ color: 'red' }}>*</span>
+      </Label>
+      <InputField
+        type='text'
+        value={firstname}
+        onChange={(e) => setFirstname(e.target.value)}
+        placeholder='Enter first name'
+        required
+      />
+      <Label>
+        Last Name:
+        <span style={{ color: 'red' }}>*</span>
+      </Label>
+      <InputField
+        type='text'
+        value={lastname}
+        onChange={(e) => setLastname(e.target.value)}
+        placeholder='Enter last name'
         required
       />
 

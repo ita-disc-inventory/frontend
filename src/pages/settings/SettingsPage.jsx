@@ -6,7 +6,7 @@ import { useUser } from 'common/contexts/UserContext';
 import { useNavigate } from 'react-router-dom';
 import PasswordChangeForm from 'common/components/PasswordChangeForm';
 import PropTypes from 'prop-types';
-import NewAdminConfirm from 'common/components/admin_modals/NewAdmin';
+import NewAdmin from 'common/components/admin_modals/NewAdmin';
 
 const SettingsPage = styled.div`
   flex: 1 0 0;
@@ -226,13 +226,37 @@ export default function AdminSettings() {
       </TextContainer>
       {/* Render the NewAdminConfirm popup */}
       {showNewAdminPopup && (
-        <NewAdminConfirm
+        <NewAdmin
           open={true}
           onCancel={handleCloseNewAdminPopup} // Close the popup when the user clicks "Close"
-          onConfirm={(adminDetails) => {
-            console.log('New admin details:', adminDetails);
-            // Add logic to handle the submission of new admin details
-            setshowNewAdminPopup(false); // Close the popup after submission
+          onConfirm={async (adminData) => {
+            try {
+              const response = await fetch(
+                `${process.env.REACT_APP_BACKEND_URL}/auth/signup`,
+                {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify(adminData),
+                  credentials: 'include',
+                }
+              );
+
+              if (response.ok) {
+                alert('Admin created successfully');
+              } else {
+                const errorData = await response.json();
+                alert(
+                  `Failed to create admin: ${errorData.error || 'Unknown error'}`
+                );
+              }
+            } catch (error) {
+              console.error('Error creating admin:', error);
+            } finally {
+              // Close the popup after the operation
+              handleCloseNewAdminPopup();
+            }
           }}
         />
       )}
