@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-
+import { useUser } from 'common/contexts/UserContext'; // Import the user context
 import { OpenInNewWindowIcon } from '@radix-ui/react-icons';
 import {
   AllCommunityModule,
@@ -11,9 +11,9 @@ import 'ag-grid-community/styles/ag-theme-quartz.css';
 import { AgGridReact } from 'ag-grid-react';
 import styled from 'styled-components';
 
-import CancelOrderDropdown from './CancelOrderDropdown';
 import FormPopup from './templates/FormPopup';
 import CancelOrder from './therapist_modals/CancelOrder';
+import CancelOrderButton from './CancelOrderButton';
 
 // Mark all grids as using legacy themes
 provideGlobalGridOptions({ theme: 'legacy' });
@@ -220,27 +220,69 @@ export default function OrderTable() {
   // Store the pending row with its previous status
   const [pendingRow, setPendingRow] = useState(null);
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
+  const { user } = useUser();
 
   // const [showItemArrived, setShowItemArrived] = useState(false); // if true, then 'Item Arrived?' Popup
   // const [showItemPickUp, setShowItemPickUp] = useState(false); // if true, then 'Item Ready for Pickup?' Popup
   // const [showNewBudget, setShowNewBudget] = useState(false); // if true, then 'Enter new budget' Popup
   // New separate status cell renderer function:
   const statusCellRenderer = (params) => {
-    const handleStatusChange = (newValue) => {
-      if (newValue === 'cancel') {
-        // Save reference to row along with the previous status.
-        setPendingRow({ params, prev: params.value });
-        setShowCancelConfirm(true);
-      } else {
-        params.node.setDataValue('status', newValue);
-      }
-    };
+    let status = params.value;
+    let backgroundColor = 'green'; // default background color
+    if (status === 'approved') {
+      backgroundColor = 'var(--status-approved-green)';
+    } else if (status === 'pending') {
+      backgroundColor = 'var(--status-pending-yellow)';
+    } else if (status === 'denied') {
+      backgroundColor = 'inherit';
+    } else if (status === 'cancelled') {
+      backgroundColor = 'var(--status-cancel-red)';
+    }
+
     return (
-      <CancelOrderDropdown
-        value={params.value}
-        onStatusChange={handleStatusChange}
-      />
+      <div
+        style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          borderRadius: '4px',
+          padding: '0px 10px',
+          fontSize: '13px',
+          lineHeight: '1',
+          height: '35px',
+          width: '100px',
+          backgroundColor: backgroundColor,
+          color: 'black',
+          border: '1px #ccc solid',
+          textAlign: 'center',
+          fontWeight: '500',
+          textTransform: 'capitalize',
+        }}
+      >
+        {status}
+      </div>
     );
+  };
+
+  const CancelOrderRenderer = (params) => {
+    // Only show cancel button if the order belongs to the current user
+    console.log('params.data:', params.data);
+    console.log('user.id:', user.id);
+    if (params.data.requestor_id === user.id) {
+      return (
+        <CancelOrderButton
+          onClick={() => {
+            setPendingRow({
+              params,
+              prev: params.data.status,
+            });
+            setShowCancelConfirm(true);
+          }}
+        />
+      );
+    }
+    // Return empty div if the order doesn't belong to the user
+    return <div></div>;
   };
 
   // all column names and respective settings
@@ -309,6 +351,11 @@ export default function OrderTable() {
       headerName: 'Therapist Name',
       field: 'therapistName',
     },
+    {
+      field: 'button',
+      headerName: 'Button',
+      cellRenderer: CancelOrderRenderer,
+    },
   ]);
   // Default column definitions for table; columns cannot be resized, instead they fit to width
   const defaultColDef = useMemo(() => {
@@ -349,6 +396,7 @@ export default function OrderTable() {
           therapistName: `${order.users.firstname} ${order.users.lastname}`,
           ppu: order.items.price_per_unit,
           quantity: order.quantity,
+          requestor_id: order.requestor_id,
         }));
         setRowData(transformedData);
       })
@@ -387,7 +435,34 @@ export default function OrderTable() {
       {showCancelConfirm && (
         <CancelOrder
           open={true}
-          onConfirm={() => {
+          onConfirm={async () => {
+            // Fix 2: Add API call to backend
+            try {
+              await fetch(
+                `${process.env.REACT_APP_BACKEND_URL}/therapist/order/${pendingRow.params.data.orderId}`,
+                {
+                  method: 'DELETE',
+                  headers: {
+                    'Content-Type': 'application/json',
+                  },
+                }
+              );
+
+              // Fix 3: Update row data with new 'cancel' status
+              if (pendingRow) {
+                const updatedData = rowData.map((row) =>
+                  row.orderId === pendingRow.params.data.orderId
+                    ? { ...row, status: 'cancel' }
+                    : row
+                );
+                setRowData(updatedData);
+                pendingRow.params.api.refreshCells({
+                  rowNodes: [pendingRow.params.node],
+                });
+              }
+            } catch (error) {
+              console.error('Error cancelling order:', error);
+            }
             setShowCancelConfirm(false);
             setPendingRow(null);
           }}
