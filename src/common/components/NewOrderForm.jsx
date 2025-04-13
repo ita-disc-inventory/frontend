@@ -6,6 +6,12 @@ import { CustomInput } from './form/CustomInput';
 import FormPopup from './templates/FormPopup';
 import BudgetDropdown from './BudgetDropdown';
 import PriorityDropdown from './PriorityDropdown';
+import {
+  getProgramNameById,
+  getProgramIdByName,
+} from 'common/utils/ProgramMapping';
+import { useUser } from 'common/contexts/UserContext';
+import { useOrders } from 'common/contexts/OrderContext';
 
 const FormContainer = styled.div`
   display: flex;
@@ -64,10 +70,13 @@ export default function NewOrderForm() {
   const [PPU, setPPU] = useState('');
   const [reasonForBuying, setReasonForBuying] = useState('');
   const [formErrors, setFormErrors] = useState({});
+  const { user } = useUser();
+  const { refreshOrders } = useOrders();
 
   const handleProgramChange = (selectedProgram) => {
-    if (selectedProgram && selectedProgram.value) {
-      setProgram(selectedProgram.value);
+    if (selectedProgram) {
+      const programName = getProgramNameById(selectedProgram);
+      setProgram(programName);
       // Clear any previous error for program
       setFormErrors((prev) => ({ ...prev, program: '' }));
     }
@@ -151,7 +160,7 @@ export default function NewOrderForm() {
     return Object.keys(errors).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     // Validate form before submission
@@ -160,18 +169,44 @@ export default function NewOrderForm() {
       return false; // Prevent form submission
     }
 
-    // Proceed with form submission
-    console.log('Form submitted with data:', {
-      program,
-      itemName,
-      quantity,
-      link,
-      priorityLevel,
-      PPU,
-      reasonForBuying,
-    });
+    const reqDate = new Date().toISOString().split('T')[0].replace(/-/g, '-');
+    const total = Math.round(quantity * PPU * 100) / 100;
+    const progId = getProgramIdByName(program);
+    const userId = user.id;
 
-    // Add your API call or other submission logic here
+    const response = await fetch(
+      `${process.env.REACT_APP_BACKEND_URL}/therapist/order`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          order_link: link,
+          price_per_unit: PPU,
+          item_name: itemName,
+          request_date: reqDate,
+          priority_level: priorityLevel,
+          quantity: quantity,
+          total_cost: total,
+          program_id: progId,
+          requestor_id: userId,
+          order_description: reasonForBuying,
+        }),
+      }
+    );
+
+    if (!response.ok) {
+      console.error('Error with form submission.');
+      return false;
+    }
+
+    // Refresh the orders table
+    refreshOrders();
+
+    // Close the dialog by finding and clicking the close button
+    document.querySelector('button[aria-label="Close"]')?.click();
+
     return true; // Allow form submission
   };
 

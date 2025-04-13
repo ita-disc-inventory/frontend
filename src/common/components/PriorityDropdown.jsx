@@ -42,7 +42,7 @@ const PriorityOptions = [
       },
       {
         label: '< 2 weeks',
-        value: 'urgent',
+        value: '< 2 weeks',
       },
     ],
   },
