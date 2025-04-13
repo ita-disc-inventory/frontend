@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useUser } from 'common/contexts/UserContext'; // Import the user context
+import { useOrders } from 'common/contexts/OrderContext'; // Import the order context
 import { OpenInNewWindowIcon } from '@radix-ui/react-icons';
 import {
   AllCommunityModule,
@@ -221,6 +222,7 @@ export default function OrderTable() {
   const [pendingRow, setPendingRow] = useState(null);
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
   const { user } = useUser();
+  const { orderVersion } = useOrders(); // Get orderVersion from context
 
   // const [showItemArrived, setShowItemArrived] = useState(false); // if true, then 'Item Arrived?' Popup
   // const [showItemPickUp, setShowItemPickUp] = useState(false); // if true, then 'Item Ready for Pickup?' Popup
@@ -370,6 +372,7 @@ export default function OrderTable() {
     };
   }, []);
   useEffect(() => {
+    // Fetch orders data whenever orderVersion changes
     fetch(`${process.env.REACT_APP_BACKEND_URL}/orders/`)
       .then((result) => result.json())
       .then((data) => {
@@ -383,7 +386,7 @@ export default function OrderTable() {
         // transform each order of JSON into flat object for table
         const transformedData = data.map((order) => ({
           orderId: order.order_id,
-          orderName: order.item_name,
+          orderName: order.items.item_name,
           status: order.status,
           priorityLevel: order.priority_level,
           description: order.order_description,
@@ -404,7 +407,7 @@ export default function OrderTable() {
         console.error('Error fetching orders:', error);
         setRowData([]);
       });
-  }, []);
+  }, [orderVersion]); // Add orderVersion as a dependency
   // makes columns fit to width of the grid, no overflow/scrolling
   const autoSizeStrategy = useMemo(() => {
     return {

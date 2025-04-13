@@ -12,12 +12,10 @@ import { AgGridReact } from 'ag-grid-react';
 import styled from 'styled-components';
 
 import ItemArrivedConfirm from 'common/components/admin_modals/ItemArrivedConfirm';
+import ItemPendingConfirm from './admin_modals/ItemPendingConfirm';
 import ItemReadyConfirm from 'common/components/admin_modals/ItemReadyConfirm';
-import NewAdminConfirm from 'common/components/admin_modals/NewAdminConfirm';
-import NewMonthlyBudget from 'common/components/admin_modals/NewMonthlyBudget';
 import OrderApprovalConfirm from 'common/components/admin_modals/OrderApprovalConfirm';
 import OrderDenyConfirm from 'common/components/admin_modals/OrderDenyConfirm';
-import OrderTrackingNumber from 'common/components/admin_modals/OrderTrackingNumber';
 import ReasonForDenial from 'common/components/admin_modals/ReasonForDenial';
 
 import StatusDropdown from './StatusDropdown';
@@ -252,6 +250,7 @@ export default function OrderTable() {
   const [showReasonForDenial, setShowReasonForDenial] = useState(false);
   const [showItemArrived, setShowItemArrived] = useState(false); // if true, then 'Item Arrived?' Popup
   const [showItemPickUp, setShowItemPickUp] = useState(false); // if true, then 'Item Ready for Pickup?' Popup
+  const [showItemPending, setShowItemPending] = useState(false);
   // const [showNewBudget, setShowNewBudget] = useState(false); // if true, then 'Enter new budget' Popup
   // New separate status cell renderer function:
   const statusCellRenderer = (params) => {
@@ -269,6 +268,9 @@ export default function OrderTable() {
       } else if (newValue === 'ready') {
         setPendingRow({ params, prev: params.value });
         setShowItemPickUp(true);
+      } else if (newValue === 'pending') {
+        setPendingRow({ params, prev: params.value });
+        setShowItemPending(true);
       } else {
         params.node.setDataValue('status', newValue);
       }
@@ -390,7 +392,7 @@ export default function OrderTable() {
         // transform each order of JSON into flat object for table
         const transformedData = data.map((order) => ({
           orderId: order.order_id,
-          orderName: order.item_name,
+          orderName: order.items.item_name,
           status: order.status,
           priorityLevel: order.priority_level,
           description: order.order_description,
@@ -682,13 +684,55 @@ export default function OrderTable() {
           }}
         />
       )}
-      <ItemArrivedConfirm />
-      <ItemReadyConfirm />
-      <NewAdminConfirm />
-      <NewMonthlyBudget />
-      <OrderApprovalConfirm />
-      <OrderTrackingNumber />
-      <ReasonForDenial />
+      {/* Appears when user is switching status to 'Review' */}
+      {showItemPending && (
+        <ItemPendingConfirm
+          open={true}
+          // When user submits confirms that the order has arrived, update the backend
+          onConfirm={async () => {
+            await fetch(
+              `${process.env.REACT_APP_BACKEND_URL}/admin/revert/${pendingRow.params.data.orderId}`,
+              {
+                method: 'PUT',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+              }
+            );
+            if (pendingRow) {
+              const updatedData = rowData.map((row) =>
+                row.orderId === pendingRow.params.data.orderId
+                  ? { ...row, status: 'cancelled' }
+                  : row
+              );
+              setRowData(updatedData);
+              pendingRow.params.api.refreshCells({
+                rowNodes: [pendingRow.params.node],
+              });
+            }
+            setShowItemPending(false);
+            setPendingRow(null);
+          }}
+          // If user decides to cancel process of switching status to 'Arrived,' then the
+          // backend is NOT updated and reverts to previous status
+          onCancel={() => {
+            // Revert status to its previous value when user cancels
+            if (pendingRow) {
+              const updatedData = rowData.map((row) =>
+                row.orderId === pendingRow.params.data.orderId
+                  ? { ...row, status: pendingRow.prev }
+                  : row
+              );
+              setRowData(updatedData);
+              pendingRow.params.api.refreshCells({
+                rowNodes: [pendingRow.params.node],
+              });
+            }
+            setShowItemPending(false);
+            setPendingRow(null);
+          }}
+        />
+      )}
     </div>
   );
 }

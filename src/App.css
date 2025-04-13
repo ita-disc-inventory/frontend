@@ -50,6 +50,15 @@
   color: var(--text);
 }
 
+.program-budget {
+  font-family: 'Inter', sans-serif !important;
+  color: var(--text);
+}
+
+.fbODAS > span {
+  font-size: 1rem;
+}
+
 /* makes column labels in center */
 .ag-header-cell-label {
   justify-content: center;

@@ -102,7 +102,7 @@ const CheckboxContainer = styled.div`
   gap: 10px; /* Add some space between the checkboxes */
 `;
 
-const SingleSelectDropdown = ({ options, selectedOption, onChange }) => {
+export const SingleSelectDropdown = ({ options, selectedOption, onChange }) => {
   const handleChange = (event) => {
     onChange(event.target.value);
   };

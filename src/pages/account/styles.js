@@ -12,6 +12,10 @@ export const StyledForm = styled.form`
   margin-top: 40px;
 `;
 
+export const InputTitle = styled.span`
+  margin-right: 2px;
+  text-align: left;
+`;
 export const StyledInput = styled.input`
   font-size: 1rem;
   padding: 8px;

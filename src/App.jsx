@@ -6,6 +6,7 @@ import {
   PrivateRoute,
   PublicOnlyRoute,
 } from 'common/components/routes/ProtectedRoutes';
+import { OrderProvider } from 'common/contexts/OrderContext';
 import { UserProvider } from 'common/contexts/UserContext';
 import NavLayout from 'common/layouts/NavLayout';
 import AuthCallback from 'pages/account/AuthCallback';
@@ -25,26 +26,28 @@ import './App.css';
 export default function App() {
   return (
     <UserProvider>
-      <BrowserRouter>
-        <Routes>
-          <Route path='/' element={<NavLayout />}>
-            <Route element={<PrivateRoute />}>
-              <Route index element={<Home />} />
-              <Route path='admin' element={<AdminHome />} />
-              <Route path='/settings' element={<SettingsPage />} />
-              <Route path='therapist' element={<TherapistHome />} />
+      <OrderProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route path='/' element={<NavLayout />}>
+              <Route element={<PrivateRoute />}>
+                <Route index element={<Home />} />
+                <Route path='admin' element={<AdminHome />} />
+                <Route path='/settings' element={<SettingsPage />} />
+                <Route path='therapist' element={<TherapistHome />} />
+              </Route>
+              <Route element={<PublicOnlyRoute />}>
+                <Route path='login' element={<Login />} />
+                <Route path='signup' element={<SignUp />} />
+              </Route>
+              <Route path='forgot-password' element={<RequestPasswordReset />} />
+              <Route path='auth/callback' element={<AuthCallback />} />
+              <Route path='auth/reset-password' element={<ResetPassword />} />
+              <Route path='*' element={<NotFound />} />
             </Route>
-            <Route element={<PublicOnlyRoute />}>
-              <Route path='login' element={<Login />} />
-              <Route path='signup' element={<SignUp />} />
-            </Route>
-            <Route path='forgot-password' element={<RequestPasswordReset />} />
-            <Route path='auth/callback' element={<AuthCallback />} />
-            <Route path='auth/reset-password' element={<ResetPassword />} />
-            <Route path='*' element={<NotFound />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
+          </Routes>
+        </BrowserRouter>
+      </OrderProvider>
     </UserProvider>
   );
 }
