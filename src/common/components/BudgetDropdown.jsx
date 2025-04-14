@@ -65,7 +65,6 @@ export default function BudgetDropdown({ value, onProgramChange, required }) {
   // Fetch budget when program changes
   useEffect(() => {
     const fetchBudget = async () => {
-      console.log('useEffect');
       if (!program) {
         setBudget(null);
         return;
@@ -105,7 +104,6 @@ export default function BudgetDropdown({ value, onProgramChange, required }) {
   const handleProgramChange = (newValue) => {
     setProgram(newValue);
     setUserSelected(true);
-    console.log('new program is', newValue);
     if (onProgramChange) onProgramChange(newValue);
   };
 
