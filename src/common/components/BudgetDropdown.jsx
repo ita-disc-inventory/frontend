@@ -53,11 +53,14 @@ export default function BudgetDropdown({ value, onProgramChange, required }) {
   const [budget, setBudget] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [userSelected, setUserSelected] = useState(false);
 
-  // Keep internal state in sync with passed value
+  // Keep internal state in sync with passed value only when value changes and user hasn't manually selected
   useEffect(() => {
-    setProgram(value || '');
-  }, [value]);
+    if (!userSelected && value !== program) {
+      setProgram(value || '');
+    }
+  }, [value, program, userSelected]);
 
   // Fetch budget when program changes
   useEffect(() => {
@@ -100,6 +103,7 @@ export default function BudgetDropdown({ value, onProgramChange, required }) {
 
   const handleProgramChange = (newValue) => {
     setProgram(newValue);
+    setUserSelected(true);
     if (onProgramChange) onProgramChange(newValue);
   };
 
