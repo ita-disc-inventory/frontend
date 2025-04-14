@@ -270,7 +270,6 @@ export default function OrderTable() {
   // New separate status cell renderer function:
   const statusCellRenderer = (params) => {
     const handleStatusChange = (newValue) => {
-      console.log('changing status');
       const validChange = checkValidStatusChange(params, newValue);
       // Check if this status change is 'allowed'
       // If not, show toast to notify user that they cannot do it
