@@ -268,8 +268,6 @@ export default function OrderTable() {
 
   const CancelOrderRenderer = (params) => {
     // Only show cancel button if the order belongs to the current user
-    console.log('params.data:', params.data);
-    console.log('user.id:', user.id);
     if (params.data.requestor_id === user.id) {
       return (
         <CancelOrderButton

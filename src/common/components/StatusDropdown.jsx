@@ -29,8 +29,8 @@ export default function StatusDropdown({ value, onStatusChange }) {
     const validChange = checkValidStatusChange(newValue);
     if (validChange) {
       setStatus(newValue);
-      if (onStatusChange) onStatusChange(newValue);
     }
+    if (onStatusChange) onStatusChange(newValue);
   };
 
   const checkValidStatusChange = (newValue) => {
@@ -42,7 +42,7 @@ export default function StatusDropdown({ value, onStatusChange }) {
     } else if (currStatus === 'denied') {
       if (newValue === 'pending') return true;
     } else if (currStatus === 'arrived') {
-      if (newValue === 'ready') return true;
+      if (newValue === 'ready' || newValue === 'approved') return true;
     }
     return false;
   };

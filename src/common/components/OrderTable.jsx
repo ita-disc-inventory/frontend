@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import StatusChangeToast from './StatusChangeToast';
 
 import { OpenInNewWindowIcon } from '@radix-ui/react-icons';
 import {
@@ -53,7 +54,6 @@ const EditableCell = (props) => {
   };
 
   const onBlur = async () => {
-    //console.log(props.data);
     await fetch(
       `${process.env.REACT_APP_BACKEND_URL}/admin/tracking/${props.data.orderId}`,
       {
@@ -265,12 +265,25 @@ export default function OrderTable() {
   const [showItemArrived, setShowItemArrived] = useState(false); // if true, then 'Item Arrived?' Popup
   const [showItemPickUp, setShowItemPickUp] = useState(false); // if true, then 'Item Ready for Pickup?' Popup
   const [showItemPending, setShowItemPending] = useState(false);
-  // const [showNewBudget, setShowNewBudget] = useState(false); // if true, then 'Enter new budget' Popup
+  const [showToast, setShowToast] = useState(false);
+  const [toastMsg, setToastMsg] = useState('');
   // New separate status cell renderer function:
   const statusCellRenderer = (params) => {
     const handleStatusChange = (newValue) => {
+      console.log('changing status');
       const validChange = checkValidStatusChange(params, newValue);
-      if (!validChange) return;
+      // Check if this status change is 'allowed'
+      // If not, show toast to notify user that they cannot do it
+      if (!validChange) {
+        const currStatus =
+          params.data.status.charAt(0).toUpperCase() +
+          params.data.status.slice(1);
+        const newStatus = newValue.charAt(0).toUpperCase() + newValue.slice(1);
+        const msg = `Cannot change status from "${currStatus}" to "${newStatus}". Please select a valid status.`;
+        setToastMsg(msg);
+        setShowToast(true);
+        return;
+      }
       if (newValue === 'approved') {
         // Save reference to row along with the previous status.
         setPendingRow({ params, prev: params.value });
@@ -462,6 +475,13 @@ export default function OrderTable() {
           autoSizeStrategy={autoSizeStrategy}
         />
       </div>
+      {/* Toast for when user does invalid status transition */}
+      <StatusChangeToast
+        open={showToast}
+        setOpen={setShowToast}
+        title='Invalid Status Change'
+        description={toastMsg}
+      />
       {/* Appears when user is changing the status from something else to 'Approved' */}
       {showApprovalConfirm && (
         <OrderApprovalConfirm
@@ -486,7 +506,6 @@ export default function OrderTable() {
                   : row
               );
               setRowData(updatedData);
-              console.log('updated data', updatedData);
               pendingRow.params.api.refreshCells({
                 rowNodes: [pendingRow.params.node],
               });
