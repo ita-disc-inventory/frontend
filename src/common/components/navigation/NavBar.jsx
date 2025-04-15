@@ -25,6 +25,7 @@ const RightAligned = styled.div`
   align-items: center;
   height: 100%;
   padding-right: 20px;
+  cursor: pointer;
 `;
 
 const LogoPlaceholder = styled(Button.Invisible)`
@@ -45,11 +46,7 @@ export default function NavBar() {
       return;
     }
     console.log(user.position_title);
-    if (user.position_title === 'admin') {
-      navigate('/admin/settings');
-    } else {
-      navigate('therapist/settings');
-    }
+    navigate('/settings');
   };
 
   return (
