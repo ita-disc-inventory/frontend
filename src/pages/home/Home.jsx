@@ -43,15 +43,12 @@ export default function Home() {
       </TextContainer>
 
       <ButtonContainer>
-        {user.role === 'admin' ? (
-          <Button.Primary onClick={() => navigate('/admin')}>
-            Admin
-          </Button.Primary>
-        ) : (
-          <Button.Primary onClick={() => navigate('/therapist')}>
-            Therapist
-          </Button.Primary>
-        )}
+        <Button.Primary onClick={() => navigate('/admin')}>
+          Admin
+        </Button.Primary>
+        <Button.Primary onClick={() => navigate('/therapist')}>
+          Therapist
+        </Button.Primary>
       </ButtonContainer>
       <UsersList />
     </HomePage>
