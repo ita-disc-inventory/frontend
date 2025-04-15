@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import FormPopup from 'common/components/templates/FormPopup';
 import PropTypes from 'prop-types';
 import { Dialog } from 'radix-ui';
+import React, { useState } from 'react';
 import styled from 'styled-components';
-import FormPopup from 'common/components/templates/FormPopup';
 
 const StyledButton = styled.button`
   display: inline-flex;
@@ -83,10 +83,33 @@ export default function NewAdmin({ open, onCancel, onConfirm }) {
       onOpenChange={(isOpen) => {
         if (!isOpen) onCancel();
       }}
-      title='Admin Access'
+      title='Add New Admin'
       description='Please choose a role and provide your credentials'
       customForm={true}
     >
+      <Label>
+        First Name:
+        <span style={{ color: 'red' }}>*</span>
+      </Label>
+      <InputField
+        type='text'
+        value={firstname}
+        onChange={(e) => setFirstname(e.target.value)}
+        placeholder='Enter first name'
+        required
+      />
+      <Label>
+        Last Name:
+        <span style={{ color: 'red' }}>*</span>
+      </Label>
+      <InputField
+        type='text'
+        value={lastname}
+        onChange={(e) => setLastname(e.target.value)}
+        placeholder='Enter last name'
+        required
+      />
+
       <Label>
         Email:
         <span style={{ color: 'red' }}>*</span>
@@ -108,40 +131,6 @@ export default function NewAdmin({ open, onCancel, onConfirm }) {
         value={password}
         onChange={(e) => setPassword(e.target.value)}
         placeholder='Enter secure password'
-        required
-      />
-
-      <Label>
-        Username:
-        <span style={{ color: 'red' }}>*</span>
-      </Label>
-      <InputField
-        type='text'
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
-        placeholder='Enter username'
-        required
-      />
-      <Label>
-        First Name:
-        <span style={{ color: 'red' }}>*</span>
-      </Label>
-      <InputField
-        type='text'
-        value={firstname}
-        onChange={(e) => setFirstname(e.target.value)}
-        placeholder='Enter first name'
-        required
-      />
-      <Label>
-        Last Name:
-        <span style={{ color: 'red' }}>*</span>
-      </Label>
-      <InputField
-        type='text'
-        value={lastname}
-        onChange={(e) => setLastname(e.target.value)}
-        placeholder='Enter last name'
         required
       />
 
