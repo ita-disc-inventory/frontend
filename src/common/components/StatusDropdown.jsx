@@ -26,8 +26,25 @@ export default function StatusDropdown({ value, onStatusChange }) {
   }, [value]);
 
   const handleStatusChange = (newValue) => {
-    setStatus(newValue);
+    const validChange = checkValidStatusChange(newValue);
+    if (validChange) {
+      setStatus(newValue);
+    }
     if (onStatusChange) onStatusChange(newValue);
+  };
+
+  const checkValidStatusChange = (newValue) => {
+    const currStatus = status;
+    if (currStatus === 'pending') {
+      if (newValue === 'approved' || newValue === 'denied') return true;
+    } else if (currStatus === 'approved') {
+      if (newValue === 'pending' || newValue === 'arrived') return true;
+    } else if (currStatus === 'denied') {
+      if (newValue === 'pending') return true;
+    } else if (currStatus === 'arrived') {
+      if (newValue === 'ready' || newValue === 'approved') return true;
+    }
+    return false;
   };
 
   function determineBackgroundColor(status) {
