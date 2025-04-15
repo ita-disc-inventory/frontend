@@ -127,7 +127,7 @@ SingleSelectDropdown.propTypes = {
 };
 
 export default function AdminSettings() {
-  const { user, logout } = useUser();
+  const { user, setUser, logout } = useUser();
   const [specialization, setSpecialization] = useState('');
   const [showNewAdminPopup, setshowNewAdminPopup] = useState(false);
   const therapistMap = {
@@ -170,15 +170,18 @@ export default function AdminSettings() {
         alert('Settings updated successfully');
       } else {
         alert('Failed to update settings');
+        return;
       }
+      const updatedUser = { ...user, specialization: specialization };
+      setUser(updatedUser); // Assuming `setUser` is available from `useUser()`
+
       setSpecialization('');
 
-      navigate('/'); // Redirect to the admin page after successful update
+      navigate(`/${user.position_title}`); // Redirect to the admin page after successful update
     } catch (error) {
       console.error('Error updating settings:', error);
     }
   };
-  console.log(user.position_title);
 
   return (
     <SettingsPage>
