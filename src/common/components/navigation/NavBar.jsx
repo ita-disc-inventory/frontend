@@ -41,11 +41,6 @@ export default function NavBar() {
 
   //if log in, show account seeting, if not, show log in. no setup.
   const handleNavigation = () => {
-    if (!user) {
-      navigate('/login');
-      return;
-    }
-    console.log(user.position_title);
     navigate('/settings');
   };
 
@@ -61,10 +56,17 @@ export default function NavBar() {
         </LogoPlaceholder>
       </LeftAligned>
       <>
-        {user && ( // If user is logged in, show their name (clickable to Account Settings)
-          <RightAligned onClick={handleNavigation}>
+        {user && ( // If user is logged in, show their name and settings icon
+          <RightAligned>
             <span id='userName_display'>
               {user.firstname} {user.lastname}
+            </span>
+            <span style={{marginLeft: '10px', cursor: 'pointer'}} onClick={handleNavigation}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <circle cx="12" cy="12" r="8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M19.4 15H22.4M19.4 9H22.4M4.6 15H1.6M4.6 9H1.6M15 19.4V22.4M9 19.4V22.4M15 4.6V1.6M9 4.6V1.6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
             </span>
           </RightAligned>
         )}
