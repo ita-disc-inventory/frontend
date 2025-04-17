@@ -3,13 +3,13 @@ import PropTypes from 'prop-types';
 
 import YNPopup from 'common/components/templates/YNPopup';
 
-export default function ItemReadyConfirm({ open, onCancel, onConfirm }) {
+export default function ItemPendingConfirm({ open, onCancel, onConfirm }) {
   return (
     <YNPopup
       open={open}
-      title='Item Ready Confirmation'
-      description='Item ready for pick up?'
-      buttonText='Item Ready Confirmation'
+      title='Item Review Confirmation'
+      description="Change item's status to pending?"
+      buttonText='Item Review Confirmation'
       yesText='Confirm'
       noText='Cancel'
       yesOnClick={() => {
@@ -22,13 +22,13 @@ export default function ItemReadyConfirm({ open, onCancel, onConfirm }) {
   );
 }
 
-ItemReadyConfirm.propTypes = {
+ItemPendingConfirm.propTypes = {
   open: PropTypes.bool,
   onConfirm: PropTypes.func,
   onCancel: PropTypes.func,
 };
 
-ItemReadyConfirm.defaultProps = {
+ItemPendingConfirm.defaultProps = {
   open: false,
   onConfirm: () => {},
   onCancel: () => {},

@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import StatusChangeToast from './StatusChangeToast';
 
 import { OpenInNewWindowIcon } from '@radix-ui/react-icons';
 import {
@@ -12,18 +13,16 @@ import { AgGridReact } from 'ag-grid-react';
 import styled from 'styled-components';
 
 import ItemArrivedConfirm from 'common/components/admin_modals/ItemArrivedConfirm';
+import ItemPendingConfirm from './admin_modals/ItemPendingConfirm';
 import ItemReadyConfirm from 'common/components/admin_modals/ItemReadyConfirm';
-import NewAdminConfirm from 'common/components/admin_modals/NewAdminConfirm';
-import NewMonthlyBudget from 'common/components/admin_modals/NewMonthlyBudget';
 import OrderApprovalConfirm from 'common/components/admin_modals/OrderApprovalConfirm';
 import OrderDenyConfirm from 'common/components/admin_modals/OrderDenyConfirm';
-import OrderTrackingNumber from 'common/components/admin_modals/OrderTrackingNumber';
 import ReasonForDenial from 'common/components/admin_modals/ReasonForDenial';
 
 import StatusDropdown from './StatusDropdown';
 import FormPopup from './templates/FormPopup';
 
-// Mark all grids as using legacy themes
+// Mark grids as legacy theme to fix AG Grid bug
 provideGlobalGridOptions({ theme: 'legacy' });
 
 ModuleRegistry.registerModules([AllCommunityModule]);
@@ -55,7 +54,6 @@ const EditableCell = (props) => {
   };
 
   const onBlur = async () => {
-    //console.log(props.data);
     await fetch(
       `${process.env.REACT_APP_BACKEND_URL}/admin/tracking/${props.data.orderId}`,
       {
@@ -112,21 +110,6 @@ const orderNameRenderer = (params) => {
     </div>
   );
 };
-
-// Responsible for formatting the 'Status' column
-// See StatusDropdown.jsx to see how status to color relationships work
-// const statusRenderer = (params) => {
-//   // need to implement logic for if status is being changed to 'Deny' or 'Pick up' or 'Arrived', as
-//   // these should trigger a pop-up
-//   return (
-//     <StatusDropdown
-//       value={params.value}
-//       onStatusChange={(newValue) => {
-//         params.node.setDataValue('status', newValue);
-//       }}
-//     />
-//   );
-// };
 
 // Responsible for formatting & styling the 'Priority' column
 const priorityRenderer = (params) => {
@@ -220,9 +203,6 @@ const linkRenderer = (params) => {
   );
 };
 
-// Responsible for formatting the 'Tracking Number' column
-// Tracking number should only show up if the status of respective row is NOT 'pending', or 'denied'
-
 // Responsible for formatting the 'price' column
 function currencyFormatter(params) {
   // if price value is not null, return formatted price to column
@@ -236,10 +216,8 @@ function requestDateFormatter(params) {
 }
 
 // Formats specialization
-// params.value is type JSON with multiple specialties, so just returning first one
-// in JSON for now --> figure out solution later? display multiple?
 function specializationFormatter(params) {
-  const specialization = params.value[0];
+  const specialization = params.value;
   return specialization
     ? specialization.charAt(0).toUpperCase() + specialization.slice(1)
     : ''; // prevents error when specialization is null
@@ -254,30 +232,65 @@ function programToAbbrev(params) {
   if (program === 'school') return 'SP';
 }
 
-// Use a cellRenderer when we want to:
-//    • Render a clickable button or icon that performs an action
-//    • Display formatted HTML (such as embedding an image or hyperlink)
-//    • Introduce custom interactive components (like dropdowns or custom tooltips)
+// Validates status change
+const checkValidStatusChange = (currStatus, newStatus) => {
+  const statusMap = {
+    denied: ['pending'],
+    approved: ['pending', 'arrived'],
+    pending: ['denied', 'approved'],
+    arrived: ['approved', 'ready'],
+  };
+  const isValid = statusMap[currStatus].includes(newStatus);
+  return isValid;
+};
+
 export default function OrderTable() {
   const [rowData, setRowData] = useState([]);
-  // Store the pending row with its previous status
-  const [pendingRow, setPendingRow] = useState(null);
+  const [pendingRow, setPendingRow] = useState(null); // Store the pending row (row we are editing) with its previous status
+  // Below states control popups and toasts
   const [showApprovalConfirm, setShowApprovalConfirm] = useState(false);
   const [showDenyConfirm, setShowDenyConfirm] = useState(false);
   const [showReasonForDenial, setShowReasonForDenial] = useState(false);
-  // const [showItemArrived, setShowItemArrived] = useState(false); // if true, then 'Item Arrived?' Popup
-  // const [showItemPickUp, setShowItemPickUp] = useState(false); // if true, then 'Item Ready for Pickup?' Popup
-  // const [showNewBudget, setShowNewBudget] = useState(false); // if true, then 'Enter new budget' Popup
-  // New separate status cell renderer function:
+  const [showItemArrived, setShowItemArrived] = useState(false);
+  const [showItemPickUp, setShowItemPickUp] = useState(false);
+  const [showItemPending, setShowItemPending] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMsg, setToastMsg] = useState('');
+
+  // Renders the status cells (column)
   const statusCellRenderer = (params) => {
     const handleStatusChange = (newValue) => {
+      // Check if this status change is 'allowed'
+      const validChange = checkValidStatusChange(params.data.status, newValue);
+      // If not, show toast to notify user that they cannot do it
+      if (!validChange) {
+        const currStatus =
+          params.data.status.charAt(0).toUpperCase() +
+          params.data.status.slice(1);
+        const newStatus = newValue.charAt(0).toUpperCase() + newValue.slice(1);
+        const msg = `Cannot change status from "${currStatus}" to "${newStatus}". Please select a valid status.`;
+        setToastMsg(msg);
+        setShowToast(true);
+        return;
+      }
+      // If status change is allowed, show appropriate popup
       if (newValue === 'approved') {
-        // Save reference to row along with the previous status.
+        // Save reference to row along with the previous status in case
+        // user wants to undo their action
         setPendingRow({ params, prev: params.value });
         setShowApprovalConfirm(true);
       } else if (newValue === 'denied') {
         setPendingRow({ params, prev: params.value });
         setShowDenyConfirm(true);
+      } else if (newValue === 'arrived') {
+        setPendingRow({ params, prev: params.value });
+        setShowItemArrived(true);
+      } else if (newValue === 'ready') {
+        setPendingRow({ params, prev: params.value });
+        setShowItemPickUp(true);
+      } else if (newValue === 'pending') {
+        setPendingRow({ params, prev: params.value });
+        setShowItemPending(true);
       } else {
         params.node.setDataValue('status', newValue);
       }
@@ -289,6 +302,8 @@ export default function OrderTable() {
       />
     );
   };
+
+  // Tracks row data during tracking # change
   const updateTrackingNumber = (orderId, newTrackingNumber) => {
     setRowData((prevRowData) =>
       prevRowData.map((row) =>
@@ -299,7 +314,7 @@ export default function OrderTable() {
     );
   };
 
-  // all column names and respective settings
+  // All column names and respective settings
   const [colDefs] = useState([
     {
       headerName: 'Order Name',
@@ -342,7 +357,7 @@ export default function OrderTable() {
       headerName: 'Tracking Number',
       field: 'trackingNumber',
       editable: (params) => {
-        // Specify your conditions here
+        // Status must be 'approved' to enter a tracking number
         return params.data.status === 'approved';
       },
       cellEditor: EditableCell,
@@ -372,7 +387,13 @@ export default function OrderTable() {
       headerName: 'Therapist Name',
       field: 'therapistName',
     },
+    {
+      headerName: 'Status Tracker',
+      field: 'statusTracker',
+      hide: true,
+    },
   ]);
+
   // Default column definitions for table; columns cannot be resized, instead they fit to width
   const defaultColDef = useMemo(() => {
     return {
@@ -385,6 +406,8 @@ export default function OrderTable() {
       },
     };
   }, []);
+
+  // On initial render, load all order data into the table
   useEffect(() => {
     fetch(`${process.env.REACT_APP_BACKEND_URL}/orders/`)
       .then((result) => result.json())
@@ -395,11 +418,10 @@ export default function OrderTable() {
           setRowData([]);
           return;
         }
-
-        // transform each order of JSON into flat object for table
+        // Transform each order of JSON into flat object for table
         const transformedData = data.map((order) => ({
           orderId: order.order_id,
-          orderName: order.item_name,
+          orderName: order.items.item_name,
           status: order.status,
           priorityLevel: order.priority_level,
           description: order.order_description,
@@ -412,6 +434,7 @@ export default function OrderTable() {
           therapistName: `${order.users.firstname} ${order.users.lastname}`,
           ppu: order.items.price_per_unit,
           quantity: order.quantity,
+          statusHistory: ['pending'],
         }));
         setRowData(transformedData);
       })
@@ -420,7 +443,8 @@ export default function OrderTable() {
         setRowData([]);
       });
   }, []);
-  // makes columns fit to width of the grid, no overflow/scrolling
+
+  // Make columns fit to width of the grid, no overflow/scrolling
   const autoSizeStrategy = useMemo(() => {
     return {
       type: 'fitGridWidth',
@@ -434,7 +458,8 @@ export default function OrderTable() {
       ],
     };
   }, []);
-  // the component we are actually returning
+
+  // The actual component (order table) we are actually returning
   return (
     <div style={{ padding: '20px' }}>
       {/* The actual order table */}
@@ -447,13 +472,18 @@ export default function OrderTable() {
           autoSizeStrategy={autoSizeStrategy}
         />
       </div>
-      {/* IMPLEMENT API CALLS TO UPDATE THE BACKEND!!!!!!!!!!!!!A;LDFJADLKFJAS;DLKF */}
+      {/* Toast for when user does invalid status transition */}
+      <StatusChangeToast
+        open={showToast}
+        setOpen={setShowToast}
+        title='Invalid Status Change'
+        description={toastMsg}
+      />
       {/* Appears when user is changing the status from something else to 'Approved' */}
       {showApprovalConfirm && (
         <OrderApprovalConfirm
           open={true}
-          // If user clicks 'Confirm' for switching status to 'Approved,' then the backend is updated via
-          // the 'fetch()' call
+          // If user clicks 'Confirm' for switching status to 'Approved,' then the backend is updated
           onApprove={async () => {
             await fetch(
               `${process.env.REACT_APP_BACKEND_URL}/admin/approve/${pendingRow.params.data.orderId}`,
@@ -464,20 +494,7 @@ export default function OrderTable() {
                 },
               }
             );
-            // maybe backend code must be updated for this to work?
-            // Since this order is approved, set reason for denial to null (in case this order used to be denied)
-            // await fetch(
-            //   `${process.env.REACT_APP_BACKEND_URL}/admin/deny/${pendingRow.params.data.orderId}`,
-            //   {
-            //     method: 'PUT',
-            //     headers: {
-            //       'Content-Type': 'applications/json',
-            //     },
-            //     body: JSON.stringify({
-            //       reason_for_denial: null,
-            //     }),
-            //   }
-            // );
+            // If row is currently being edited (always should), update row data
             if (pendingRow) {
               const updatedData = rowData.map((row) =>
                 row.orderId === pendingRow.params.data.orderId
@@ -485,6 +502,7 @@ export default function OrderTable() {
                   : row
               );
               setRowData(updatedData);
+              // Refresh row to update in real time
               pendingRow.params.api.refreshCells({
                 rowNodes: [pendingRow.params.node],
               });
@@ -492,10 +510,9 @@ export default function OrderTable() {
             setShowApprovalConfirm(false);
             setPendingRow(null);
           }}
-          // User decides to cancel the process of switching status to 'Approved,' so backend
-          // is NOT updated and reverts to previous status
+          // User decides to cancel the process of switching status to 'Approved,' revert to previous state
           onCancel={() => {
-            // remain unchanged for cancellation logic
+            // Revert row we are editing to previous state before edit
             if (pendingRow) {
               const updatedData = rowData.map((row) =>
                 row.orderId === pendingRow.params.data.orderId
@@ -503,6 +520,7 @@ export default function OrderTable() {
                   : row
               );
               setRowData(updatedData);
+              // Refresh row to update in real time
               pendingRow.params.api.refreshCells({
                 rowNodes: [pendingRow.params.node],
               });
@@ -516,12 +534,9 @@ export default function OrderTable() {
       {showDenyConfirm && (
         <OrderDenyConfirm
           open={true}
-          // If user clicks 'Deny' for switching status to 'Denied,' then popup appears to confirm
-          // the user really wants to deny it
-          // ISSUE IS THAT THE BACKEND UPDATES IMMEDIATELY AND DOES NOT ENTER THE REASON FOR DENIAL WINDOW
-          // BEFORE UPDATING BACKEND
+          // If user clicks 'Deny' for switching status to 'Denied,' then the backend is updated
           onDeny={() => {
-            // on deny confirmation, switch status to 'Denied' on frontend and show the reason for popup window
+            // If row is currently being edited (always should), update row data
             if (pendingRow) {
               const updatedData = rowData.map((row) =>
                 row.orderId === pendingRow.params.data.orderId
@@ -529,6 +544,7 @@ export default function OrderTable() {
                   : row
               );
               setRowData(updatedData);
+              // Refresh in real time
               pendingRow.params.api.refreshCells({
                 rowNodes: [pendingRow.params.node],
               });
@@ -537,7 +553,7 @@ export default function OrderTable() {
             setShowReasonForDenial(true);
           }}
           onCancel={() => {
-            // remain unchanged for cancellation logic
+            // Revert to previous row data if user decides to undo 'Deny'
             if (pendingRow) {
               const updatedData = rowData.map((row) =>
                 row.orderId === pendingRow.params.data.orderId
@@ -545,6 +561,7 @@ export default function OrderTable() {
                   : row
               );
               setRowData(updatedData);
+              // Refresh in real time
               pendingRow.params.api.refreshCells({
                 rowNodes: [pendingRow.params.node],
               });
@@ -554,12 +571,12 @@ export default function OrderTable() {
           }}
         />
       )}
+      {/* Reason for denial popup */}
       {showReasonForDenial && (
         <ReasonForDenial
           open={true}
           // When user submits reason for denial, the backend is updated to reflect new 'Denied' order
           onSubmit={async (reason) => {
-            // When submitted, update the status cell to 'Denied' to backend
             await fetch(
               `${process.env.REACT_APP_BACKEND_URL}/admin/deny/${pendingRow.params.data.orderId}`,
               {
@@ -573,6 +590,7 @@ export default function OrderTable() {
                 }),
               }
             );
+            // Update status to denied
             if (pendingRow) {
               const updatedData = rowData.map((row) =>
                 row.orderId === pendingRow.params.data.orderId
@@ -587,8 +605,7 @@ export default function OrderTable() {
             setShowReasonForDenial(false);
             setPendingRow(null);
           }}
-          // If user decides to cancel process of switching status to 'Denied,' then the
-          // backend is NOT updated and reverts to previous status
+          // Backend not updated if user decides to cancel their denial process
           onCancel={() => {
             // Revert status to its previous value when user cancels
             if (pendingRow) {
@@ -607,13 +624,151 @@ export default function OrderTable() {
           }}
         />
       )}
-      <ItemArrivedConfirm />
-      <ItemReadyConfirm />
-      <NewAdminConfirm />
-      <NewMonthlyBudget />
-      <OrderApprovalConfirm />
-      <OrderTrackingNumber />
-      <ReasonForDenial />
+      {/* Appears when user is switching status to 'Arrived' */}
+      {showItemArrived && (
+        <ItemArrivedConfirm
+          open={true}
+          // When user submits confirms that the order has arrived, update the backend
+          onConfirm={async () => {
+            await fetch(
+              `${process.env.REACT_APP_BACKEND_URL}/admin/arrived/${pendingRow.params.data.orderId}`,
+              {
+                method: 'PUT',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+              }
+            );
+            // Update status to be arrived
+            if (pendingRow) {
+              const updatedData = rowData.map((row) =>
+                row.orderId === pendingRow.params.data.orderId
+                  ? { ...row, status: 'arrived' }
+                  : row
+              );
+              setRowData(updatedData);
+              pendingRow.params.api.refreshCells({
+                rowNodes: [pendingRow.params.node],
+              });
+            }
+            setShowItemArrived(false);
+            setPendingRow(null);
+          }}
+          // If user decides to cancel process of 'Arrived' status, revert to previous data
+          onCancel={() => {
+            // Revert status to its previous value when user cancels
+            if (pendingRow) {
+              const updatedData = rowData.map((row) =>
+                row.orderId === pendingRow.params.data.orderId
+                  ? { ...row, status: pendingRow.prev }
+                  : row
+              );
+              setRowData(updatedData);
+              pendingRow.params.api.refreshCells({
+                rowNodes: [pendingRow.params.node],
+              });
+            }
+            setShowItemArrived(false);
+            setPendingRow(null);
+          }}
+        />
+      )}
+      {/* Appears when user is switching status to 'Ready' */}
+      {showItemPickUp && (
+        <ItemReadyConfirm
+          open={true}
+          // When user submits confirms that the order has arrived, update the backend
+          onConfirm={async () => {
+            await fetch(
+              `${process.env.REACT_APP_BACKEND_URL}/admin/ready/${pendingRow.params.data.orderId}`,
+              {
+                method: 'PUT',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+              }
+            );
+            if (pendingRow) {
+              const updatedData = rowData.map((row) =>
+                row.orderId === pendingRow.params.data.orderId
+                  ? { ...row, status: 'ready' }
+                  : row
+              );
+              setRowData(updatedData);
+              pendingRow.params.api.refreshCells({
+                rowNodes: [pendingRow.params.node],
+              });
+            }
+            setShowItemPickUp(false);
+            setPendingRow(null);
+          }}
+          // If user decides to cancel process of switching status to 'Ready,' revert
+          onCancel={() => {
+            // Revert status to its previous value when user cancels
+            if (pendingRow) {
+              const updatedData = rowData.map((row) =>
+                row.orderId === pendingRow.params.data.orderId
+                  ? { ...row, status: pendingRow.prev }
+                  : row
+              );
+              setRowData(updatedData);
+              pendingRow.params.api.refreshCells({
+                rowNodes: [pendingRow.params.node],
+              });
+            }
+            setShowItemPickUp(false);
+            setPendingRow(null);
+          }}
+        />
+      )}
+      {/* Appears when user is switching status to 'Review' */}
+      {showItemPending && (
+        <ItemPendingConfirm
+          open={true}
+          // When user submits confirms that the order has arrived, update the backend
+          onConfirm={async () => {
+            await fetch(
+              `${process.env.REACT_APP_BACKEND_URL}/admin/revert/${pendingRow.params.data.orderId}`,
+              {
+                method: 'PUT',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+              }
+            );
+            if (pendingRow) {
+              const updatedData = rowData.map((row) =>
+                row.orderId === pendingRow.params.data.orderId
+                  ? { ...row, status: 'pending' }
+                  : row
+              );
+              setRowData(updatedData);
+              pendingRow.params.api.refreshCells({
+                rowNodes: [pendingRow.params.node],
+              });
+            }
+            setShowItemPending(false);
+            setPendingRow(null);
+          }}
+          // If user decides to cancel process of switching status to 'Review,' then revert
+          onCancel={() => {
+            // Revert status to its previous value when user cancels
+            if (pendingRow) {
+              const updatedData = rowData.map((row) =>
+                row.orderId === pendingRow.params.data.orderId
+                  ? { ...row, status: pendingRow.prev }
+                  : row
+              );
+              setRowData(updatedData);
+              pendingRow.params.api.refreshCells({
+                rowNodes: [pendingRow.params.node],
+              });
+            }
+            setShowItemPending(false);
+            setPendingRow(null);
+          }}
+        />
+      )}
     </div>
   );
 }

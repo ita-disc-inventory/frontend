@@ -6,6 +6,7 @@ import { useUser } from 'common/contexts/UserContext';
 import { useNavigate } from 'react-router-dom';
 import PasswordChangeForm from 'common/components/PasswordChangeForm';
 import PropTypes from 'prop-types';
+import NewAdmin from 'common/components/admin_modals/NewAdmin';
 
 const SettingsPage = styled.div`
   flex: 1 0 0;
@@ -15,7 +16,17 @@ const SettingsPage = styled.div`
   text-align: center;
   padding: 2rem;
 `;
-
+const AddAdminButton = styled.button`
+  background-color: var(--newadmin-purple);
+  color: white;
+  border-radius: 25px;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  cursor: pointer;
+  font-size: 1.25rem;
+  margin-top: 1rem;
+  align-self: center;
+`;
 const TextContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -91,7 +102,7 @@ const CheckboxContainer = styled.div`
   gap: 10px; /* Add some space between the checkboxes */
 `;
 
-const SingleSelectDropdown = ({ options, selectedOption, onChange }) => {
+export const SingleSelectDropdown = ({ options, selectedOption, onChange }) => {
   const handleChange = (event) => {
     onChange(event.target.value);
   };
@@ -116,8 +127,9 @@ SingleSelectDropdown.propTypes = {
 };
 
 export default function AdminSettings() {
-  const { user, logout } = useUser();
+  const { user, setUser, logout } = useUser();
   const [specialization, setSpecialization] = useState('');
+  const [showNewAdminPopup, setshowNewAdminPopup] = useState(false);
   const therapistMap = {
     art: 'Art Therapy',
     dance: 'Dance / Movement Therapy',
@@ -134,6 +146,13 @@ export default function AdminSettings() {
   const handlePasswordChange = () => {
     navigate('/forgot-password');
   };
+  const handleAddAdminClick = () => {
+    setshowNewAdminPopup(true);
+  };
+  const handleCloseNewAdminPopup = () => {
+    setshowNewAdminPopup(false);
+  };
+
   const handleUpdate = async () => {
     try {
       const response = await fetch(
@@ -151,15 +170,18 @@ export default function AdminSettings() {
         alert('Settings updated successfully');
       } else {
         alert('Failed to update settings');
+        return;
       }
+      const updatedUser = { ...user, specialization: specialization };
+      setUser(updatedUser); // Assuming `setUser` is available from `useUser()`
+
       setSpecialization('');
 
-      navigate('/'); // Redirect to the admin page after successful update
+      navigate(`/${user.position_title}`); // Redirect to the admin page after successful update
     } catch (error) {
       console.error('Error updating settings:', error);
     }
   };
-  console.log(user.position_title);
 
   return (
     <SettingsPage>
@@ -192,6 +214,11 @@ export default function AdminSettings() {
         ) : (
           <FieldValue>{''}</FieldValue>
         )}
+        {user.specialization === 'super_admin' && (
+          <AddAdminButton onClick={handleAddAdminClick}>
+            Add a admin
+          </AddAdminButton>
+        )}
         <ChangePasswordButton onClick={handlePasswordChange}>
           Change Password
         </ChangePasswordButton>
@@ -200,6 +227,42 @@ export default function AdminSettings() {
         )}
         <LogoutButton onClick={logout}>Logout</LogoutButton>
       </TextContainer>
+      {/* Render the NewAdminConfirm popup */}
+      {showNewAdminPopup && (
+        <NewAdmin
+          open={true}
+          onCancel={handleCloseNewAdminPopup} // Close the popup when the user clicks "Close"
+          onConfirm={async (adminData) => {
+            try {
+              const response = await fetch(
+                `${process.env.REACT_APP_BACKEND_URL}/auth/signup`,
+                {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify(adminData),
+                  credentials: 'include',
+                }
+              );
+
+              if (response.ok) {
+                alert('Admin created successfully');
+              } else {
+                const errorData = await response.json();
+                alert(
+                  `Failed to create admin: ${errorData.error || 'Unknown error'}`
+                );
+              }
+            } catch (error) {
+              console.error('Error creating admin:', error);
+            } finally {
+              // Close the popup after the operation
+              handleCloseNewAdminPopup();
+            }
+          }}
+        />
+      )}
     </SettingsPage>
   );
 }

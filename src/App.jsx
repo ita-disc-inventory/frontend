@@ -6,6 +6,7 @@ import {
   PrivateRoute,
   PublicOnlyRoute,
 } from 'common/components/routes/ProtectedRoutes';
+import { OrderProvider } from 'common/contexts/OrderContext';
 import { UserProvider } from 'common/contexts/UserContext';
 import NavLayout from 'common/layouts/NavLayout';
 import AuthCallback from 'pages/account/AuthCallback';

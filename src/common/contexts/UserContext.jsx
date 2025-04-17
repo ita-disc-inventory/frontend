@@ -23,7 +23,6 @@ export function UserProvider({ children }) {
 
   const checkAuth = async () => {
     const token = localStorage.getItem('authToken');
-    console.log('Token from localStorage:', token);
 
     try {
       const response = await fetch(buildUrl('/auth/me'), {
@@ -38,7 +37,6 @@ export function UserProvider({ children }) {
       }
 
       const userData = await response.json();
-      console.log('User data:', userData);
       setUser(userData);
       return true;
     } catch (error) {
