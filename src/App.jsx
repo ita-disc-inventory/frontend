@@ -15,10 +15,10 @@ import ResetPassword from 'pages/account/ResetPassword';
 import SignUp from 'pages/account/SignUp';
 import AdminHome from 'pages/admin/AdminHome';
 import SettingsPage from 'pages/settings/SettingsPage';
-import Home from 'pages/home/Home';
 import NotFound from 'pages/not-found/NotFound';
 import TherapistHome from 'pages/therapist/TherapistHome';
 // import TherapistSettings from 'pages/therapist/TherapistSettings';
+import RoleBasedRedirect from 'common/components/routes/RoleBasedRedirect';
 
 import './App.css';
 
@@ -29,7 +29,7 @@ export default function App() {
         <Routes>
           <Route path='/' element={<NavLayout />}>
             <Route element={<PrivateRoute />}>
-              <Route index element={<Home />} />
+              <Route index element={<RoleBasedRedirect />} />
               <Route path='admin' element={<AdminHome />} />
               <Route path='/settings' element={<SettingsPage />} />
               <Route path='therapist' element={<TherapistHome />} />
