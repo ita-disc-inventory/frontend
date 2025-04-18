@@ -5,6 +5,8 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import {
   PrivateRoute,
   PublicOnlyRoute,
+  AdminRoute,
+  TherapistRoute,
 } from 'common/components/routes/ProtectedRoutes';
 import { OrderProvider } from 'common/contexts/OrderContext';
 import { UserProvider } from 'common/contexts/UserContext';
@@ -31,9 +33,14 @@ export default function App() {
           <Route path='/' element={<NavLayout />}>
             <Route element={<PrivateRoute />}>
               <Route index element={<RoleBasedRedirect />} />
-              <Route path='admin' element={<AdminHome />} />
               <Route path='/settings' element={<SettingsPage />} />
-              <Route path='therapist' element={<TherapistHome />} />
+              {/* Role-protected routes */}
+              <Route element={<AdminRoute />}>
+                <Route path='admin' element={<AdminHome />} />
+              </Route>
+              <Route element={<TherapistRoute />}>
+                <Route path='therapist' element={<TherapistHome />} />
+              </Route>
             </Route>
             <Route element={<PublicOnlyRoute />}>
               <Route path='login' element={<Login />} />

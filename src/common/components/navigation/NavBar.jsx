@@ -25,7 +25,6 @@ const RightAligned = styled.div`
   align-items: center;
   height: 100%;
   padding-right: 20px;
-  cursor: pointer;
 `;
 
 const LogoPlaceholder = styled(Button.Invisible)`
