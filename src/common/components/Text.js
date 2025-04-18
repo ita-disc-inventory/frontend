@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 export const Title = styled.h1`
-  font-size: 2.5em;
+  font-size: 2.25em;
   font-weight: bold;
   margin: 0;
 `;

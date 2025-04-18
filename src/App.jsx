@@ -5,6 +5,8 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import {
   PrivateRoute,
   PublicOnlyRoute,
+  AdminRoute,
+  TherapistRoute,
 } from 'common/components/routes/ProtectedRoutes';
 import { OrderProvider } from 'common/contexts/OrderContext';
 import { UserProvider } from 'common/contexts/UserContext';
@@ -16,38 +18,41 @@ import ResetPassword from 'pages/account/ResetPassword';
 import SignUp from 'pages/account/SignUp';
 import AdminHome from 'pages/admin/AdminHome';
 import SettingsPage from 'pages/settings/SettingsPage';
-import Home from 'pages/home/Home';
 import NotFound from 'pages/not-found/NotFound';
 import TherapistHome from 'pages/therapist/TherapistHome';
 // import TherapistSettings from 'pages/therapist/TherapistSettings';
+import RoleBasedRedirect from 'common/components/routes/RoleBasedRedirect';
 
 import './App.css';
 
 export default function App() {
   return (
     <UserProvider>
-      <OrderProvider>
-        <BrowserRouter>
-          <Routes>
-            <Route path='/' element={<NavLayout />}>
-              <Route element={<PrivateRoute />}>
-                <Route index element={<Home />} />
+      <BrowserRouter>
+        <Routes>
+          <Route path='/' element={<NavLayout />}>
+            <Route element={<PrivateRoute />}>
+              <Route index element={<RoleBasedRedirect />} />
+              <Route path='/settings' element={<SettingsPage />} />
+              {/* Role-protected routes */}
+              <Route element={<AdminRoute />}>
                 <Route path='admin' element={<AdminHome />} />
-                <Route path='/settings' element={<SettingsPage />} />
+              </Route>
+              <Route element={<TherapistRoute />}>
                 <Route path='therapist' element={<TherapistHome />} />
               </Route>
-              <Route element={<PublicOnlyRoute />}>
-                <Route path='login' element={<Login />} />
-                <Route path='signup' element={<SignUp />} />
-              </Route>
-              <Route path='forgot-password' element={<RequestPasswordReset />} />
-              <Route path='auth/callback' element={<AuthCallback />} />
-              <Route path='auth/reset-password' element={<ResetPassword />} />
-              <Route path='*' element={<NotFound />} />
             </Route>
-          </Routes>
-        </BrowserRouter>
-      </OrderProvider>
+            <Route element={<PublicOnlyRoute />}>
+              <Route path='login' element={<Login />} />
+              <Route path='signup' element={<SignUp />} />
+            </Route>
+            <Route path='forgot-password' element={<RequestPasswordReset />} />
+            <Route path='auth/callback' element={<AuthCallback />} />
+            <Route path='auth/reset-password' element={<ResetPassword />} />
+            <Route path='*' element={<NotFound />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
     </UserProvider>
   );
 }
