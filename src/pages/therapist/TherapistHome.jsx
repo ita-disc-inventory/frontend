@@ -41,7 +41,6 @@ export default function TherapistHome() {
     <TherapistHomePage>
       <TextContainer>
         <Title>Therapist Homepage</Title>
-        <Subtitle>Welcome to the therapist dashboard!</Subtitle>
       </TextContainer>
 
       <ButtonContainer>
