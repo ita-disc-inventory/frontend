@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 
 import styled from 'styled-components';
 
-import { CustomInput } from './form/CustomInput';
-import FormPopup from './templates/FormPopup';
+import { CustomInput } from '../form/CustomInput';
+import FormPopup from '../templates/FormPopup';
 import BudgetDropdown from './BudgetDropdown';
 import PriorityDropdown from './PriorityDropdown';
 import {

@@ -19,7 +19,7 @@ import OrderApprovalConfirm from 'common/components/admin_modals/OrderApprovalCo
 import OrderDenyConfirm from 'common/components/admin_modals/OrderDenyConfirm';
 import ReasonForDenial from 'common/components/admin_modals/ReasonForDenial';
 
-import StatusDropdown from './StatusDropdown';
+import StatusDropdown from './table_pop_ups/StatusDropdown';
 import FormPopup from './templates/FormPopup';
 
 // Mark grids as legacy theme to fix AG Grid bug
