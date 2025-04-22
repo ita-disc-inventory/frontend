@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { Title, Subtitle } from 'common/components/Text';
+import { Title, Subtitle } from 'common/components/form/Text';
 import { useUser } from 'common/contexts/UserContext';
 import { useNavigate } from 'react-router-dom';
-import PasswordChangeForm from 'common/components/PasswordChangeForm';
+import PasswordChangeForm from 'common/components/table_pop_ups/PasswordChangeForm';
 import PropTypes from 'prop-types';
 import NewAdmin from 'common/components/admin_modals/NewAdmin';
 

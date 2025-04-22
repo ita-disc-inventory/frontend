@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 import ResetPassword from 'pages/account/ResetPassword';
 
-import FormPopup from './templates/FormPopup';
+import FormPopup from '../templates/FormPopup';
 
 const ButtonContainer = styled.div`
   display: flex;

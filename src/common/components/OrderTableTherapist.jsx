@@ -14,7 +14,7 @@ import styled from 'styled-components';
 
 import FormPopup from './templates/FormPopup';
 import CancelOrder from './table_pop_ups/CancelOrder';
-import CancelOrderButton from './CancelOrderButton';
+import CancelOrderButton from './therapist_modals/CancelOrderButton';
 
 // Mark all grids as using legacy themes
 provideGlobalGridOptions({ theme: 'legacy' });
