@@ -239,6 +239,7 @@ const checkValidStatusChange = (currStatus, newStatus) => {
     approved: ['pending', 'arrived'],
     pending: ['denied', 'approved'],
     arrived: ['approved', 'ready'],
+    ready: ['arrived', 'pending', 'approved'],
   };
   const isValid = statusMap[currStatus].includes(newStatus);
   return isValid;
