@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import { UserContext } from 'common/contexts/UserContext';
 import { Subtitle, Title } from 'common/components/Text';
 import OrderTable from 'common/components/OrderTableTherapist';
-import NewOrderForm from 'common/components/NewOrderForm';
+import NewOrderForm from 'common/components/table_pop_ups/NewOrderForm';
 
 const TherapistHomePage = styled.div`
   flex: 1 0 0;

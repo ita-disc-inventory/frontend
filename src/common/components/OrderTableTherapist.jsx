@@ -13,7 +13,7 @@ import { AgGridReact } from 'ag-grid-react';
 import styled from 'styled-components';
 
 import FormPopup from './templates/FormPopup';
-import CancelOrder from './therapist_modals/CancelOrder';
+import CancelOrder from './table_pop_ups/CancelOrder';
 import CancelOrderButton from './CancelOrderButton';
 
 // Mark all grids as using legacy themes
