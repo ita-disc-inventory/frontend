@@ -80,35 +80,6 @@ const StyledDescription = styled(Dialog.Description)`
   font-size: 15px;
   line-height: 1.5;
 `;
-// Below is unused for now, may use later (leaving commented out, ignore until further notice)
-// const StyledFieldset = styled.fieldset`
-//   display: flex;
-//   gap: 20px;
-//   align-items: center;
-//   margin-bottom: 15px;
-// `;
-
-// const StyledLabel = styled.label`
-//   font-size: 15px;
-//   color: var(--violet-11);
-//   width: 90px;
-//   text-align: right;
-// `;
-
-// const StyledInput = styled.input`
-//   width: 100%;
-//   flex: 1;
-//   border-radius: 4px;
-//   padding: 0 10px;
-//   font-size: 15px;
-//   line-height: 1;
-//   color: var(--violet-11);
-//   box-shadow: 0 0 0 1px var(--violet-7);
-//   height: 35px;
-//   &:focus {
-//     box-shadow: 0 0 0 2px var(--violet-8);
-//   }
-// `;
 
 const StyledButton = styled.button`
   display: inline-flex;
