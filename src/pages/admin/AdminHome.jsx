@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
 import OrderTable from 'common/components/OrderTable';
-import { Title as BaseTitle, Subtitle } from 'common/components/Text';
+import { Title as BaseTitle, Subtitle } from 'common/components/form/Text';
 
 const AdminHomePage = styled.div`
   flex: 1 0 0;

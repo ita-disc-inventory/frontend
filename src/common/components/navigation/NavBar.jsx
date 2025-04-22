@@ -4,7 +4,7 @@ import 'App.css';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
-import { Button } from 'common/components/Button';
+import { Button } from 'common/components/form/Button';
 import { useUser } from 'common/contexts/UserContext';
 
 const StyledNav = styled.nav`

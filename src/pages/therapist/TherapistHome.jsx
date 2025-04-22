@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { UserContext } from 'common/contexts/UserContext';
-import { Subtitle, Title } from 'common/components/Text';
+import { Subtitle, Title } from 'common/components/form/Text';
 import OrderTable from 'common/components/OrderTableTherapist';
 import NewOrderForm from 'common/components/table_pop_ups/NewOrderForm';
 

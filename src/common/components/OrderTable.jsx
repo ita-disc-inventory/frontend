@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import StatusChangeToast from './StatusChangeToast';
+import StatusChangeToast from './therapist_modals/StatusChangeToast';
 
 import { OpenInNewWindowIcon } from '@radix-ui/react-icons';
 import {

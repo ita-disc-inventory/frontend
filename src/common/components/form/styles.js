@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { Button } from 'common/components/Button';
+import { Button } from 'common/components/form/Button';
 
 export const InputContainer = styled.div``;
 
