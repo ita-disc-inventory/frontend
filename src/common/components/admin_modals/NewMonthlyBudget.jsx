@@ -1,9 +1,25 @@
 import React, { useState } from 'react';
-
+import * as Select from '@radix-ui/react-select';
 import { Dialog } from 'radix-ui';
 import styled from 'styled-components';
 
 import FormPopup from 'common/components/templates/FormPopup';
+import Dropdown, {
+  StyledLabel,
+  StyledSelectItem,
+} from 'common/components/templates/Dropdown';
+
+const Programs = [
+  {
+    label: 'programs',
+    items: [
+      { label: 'program 1', value: '1' },
+      { label: 'program 2', value: '2' },
+      { label: 'program 3', value: '3' },
+      { label: 'program 4', value: '4' },
+    ],
+  },
+];
 
 const StyledButton = styled.button`
   display: inline-flex;
@@ -26,6 +42,7 @@ const StyledButton = styled.button`
 
 export default function NewMonthlyBudget() {
   const [budget, setBudget] = useState('$');
+  const [program, setProgram] = useState('');
 
   const handleBudgetChange = (e) => {
     let value = e.target.value;
@@ -36,6 +53,12 @@ export default function NewMonthlyBudget() {
     if (/^\$\d*\.?\d{0,2}$/.test(value) || value === '$') {
       setBudget(value);
     }
+  };
+
+  const handleProgramChange = (newValue) => {
+    console.log(newValue);
+    setProgram(newValue);
+    console.log('Selected Program:', program);
   };
 
   const handleSubmit = (e) => {
@@ -49,6 +72,21 @@ export default function NewMonthlyBudget() {
       title='New Monthly Budget'
       buttonText='Set Budget'
       customForm={true}
+      noDesc={true}
+      styles={{
+        display: 'flex',
+        marginLeft: 'auto',
+        marginRight: '2rem',
+        padding: '8px 16px',
+        fontSize: '14px',
+        fontWeight: '600',
+        color: 'white',
+        backgroundColor: 'var(--green-9)',
+        borderRadius: '6px',
+        border: 'none',
+        boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)',
+        cursor: 'pointer',
+      }}
     >
       <label
         style={{
@@ -78,6 +116,25 @@ export default function NewMonthlyBudget() {
           marginBottom: '20px',
         }}
       />
+      <Dropdown
+        styles={{ border: '1px solid black' }} // pass an object not a string
+        placeholder='Program'
+        onValueChange={handleProgramChange}
+        value={program}
+      >
+        {Programs.map((group, i) => {
+          return (
+            <Select.Group key={`group-${i}`}>
+              <StyledLabel>{group.label}</StyledLabel>
+              {group.items.map((item) => (
+                <StyledSelectItem value={item.value} key={item.value}>
+                  {item.label}
+                </StyledSelectItem>
+              ))}
+            </Select.Group>
+          );
+        })}
+      </Dropdown>
       <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
         <Dialog.Close asChild>
           <StyledButton type='submit' onClick={handleSubmit}>
