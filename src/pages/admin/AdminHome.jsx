@@ -5,6 +5,7 @@ import styled from 'styled-components';
 
 import OrderTable from 'common/components/OrderTable';
 import { Title as BaseTitle, Subtitle } from 'common/components/form/Text';
+import NewMonthlyBudget from 'common/components/admin_modals/NewMonthlyBudget';
 
 const AdminHomePage = styled.div`
   flex: 1 0 0;
@@ -26,20 +27,64 @@ const ContentContainer = styled.div`
 `;
 
 const LeftAlignedTitle = styled(BaseTitle)`
-  text-align: left;
+  text-align: center;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.5rem;
+  position: relative;
 `;
 
 const BudgetListContainer = styled.div`
-  display: flex-column;
-  margin: 2rem 0;
+  margin: 2rem auto;
   width: 100%;
-  max-width: 800px;
-  text-align: left;
+  max-width: 500px;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  padding: 1.5rem;
+  h2 {
+    margin-top: 0;
+    margin-bottom: 1.25rem;
+    color: #333;
+    font-weight: 600;
+    text-align: center;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid #eee;
+  }
 `;
 
-const BudgetItem = styled.div`
-  padding: 0;
-  font-size: 16px;
+const BudgetGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1.25rem;
+`;
+
+const BudgetCard = styled.div`
+  padding: 1rem;
+  background-color: #f9fafb;
+  border-radius: 8px;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  .program-title {
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    color: #555;
+    text-align: center;
+  }
+
+  .budget-amount {
+    font-weight: 700;
+    font-size: 1.25rem;
+    color: var(--green-9, #2e7d32);
+  }
 `;
 
 const StatusMessage = styled.div`
@@ -47,7 +92,6 @@ const StatusMessage = styled.div`
   color: ${(props) => (props.error ? 'red' : '#666')};
   font-style: italic;
 `;
-
 
 function ProgramBudgetList() {
   const [programBudgets, setProgramBudgets] = useState([]);
@@ -94,13 +138,19 @@ function ProgramBudgetList() {
 
   return (
     <BudgetListContainer>
-      <Subtitle>Budgets:</Subtitle>
-      {programBudgets.map((program) => (
-        <BudgetItem key={program.program_id}>
-          {program.program_title || 'Unknown Program'}: $
-          {parseFloat(program.program_budget).toFixed(2)}
-        </BudgetItem>
-      ))}
+      <h2>Program Budgets</h2>
+      <BudgetGrid>
+        {programBudgets.map((program) => (
+          <BudgetCard key={program.program_id}>
+            <div className='program-title'>
+              {program.program_title || 'Unknown Program'}
+            </div>
+            <div className='budget-amount'>
+              ${parseFloat(program.program_budget).toFixed(2)}
+            </div>
+          </BudgetCard>
+        ))}
+      </BudgetGrid>
     </BudgetListContainer>
   );
 }
@@ -113,6 +163,7 @@ export default function AdminHome() {
       <ContentContainer>
         <LeftAlignedTitle>Admin Homepage</LeftAlignedTitle>
         <ProgramBudgetList />
+        <NewMonthlyBudget />
       </ContentContainer>
 
       <ButtonContainer></ButtonContainer>
