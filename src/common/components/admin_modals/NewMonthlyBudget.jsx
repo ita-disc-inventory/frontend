@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import * as Select from '@radix-ui/react-select';
 import { Dialog } from 'radix-ui';
 import styled from 'styled-components';
@@ -44,6 +44,10 @@ export default function NewMonthlyBudget() {
   const [budget, setBudget] = useState('$');
   const [program, setProgram] = useState('');
 
+  useEffect(() => {
+    console.log('Selected Program (updated):', program);
+  }, [program]);
+
   const handleBudgetChange = (e) => {
     let value = e.target.value;
 
@@ -56,9 +60,7 @@ export default function NewMonthlyBudget() {
   };
 
   const handleProgramChange = (newValue) => {
-    console.log(newValue);
     setProgram(newValue);
-    console.log('Selected Program:', program);
   };
 
   const handleSubmit = (e) => {
