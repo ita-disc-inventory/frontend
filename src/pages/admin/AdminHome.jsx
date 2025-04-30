@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 
-import OrderTable from 'common/components/OrderTable';
-import { Title as BaseTitle } from 'common/components/form/Text';
 import NewMonthlyBudget from 'common/components/admin_modals/NewMonthlyBudget';
+import { Title as BaseTitle } from 'common/components/form/Text';
+import OrderTable from 'common/components/OrderTable';
 import ProgramBudgetList from 'common/components/ProgramBudgetList';
 
 const AdminHomePage = styled.div`
@@ -13,10 +13,6 @@ const AdminHomePage = styled.div`
   align-items: center;
   text-align: center;
   padding: 2rem;
-`;
-
-const ButtonContainer = styled.div`
-  margin-top: 2rem;
 `;
 
 const ContentContainer = styled.div`
@@ -33,21 +29,6 @@ const LeftAlignedTitle = styled(BaseTitle)`
   margin-bottom: 1.5rem;
   padding-bottom: 0.5rem;
   position: relative;
-`;
-
-const SetBudgetButton = styled.button`
-  display: flex;
-  margin-left: auto;
-  margin-right: 2rem;
-  padding: 8px 16px;
-  font-size: 14px;
-  font-weight: 600;
-  color: white;
-  background-color: var(--green-9);
-  border-radius: 6px;
-  border: none;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  cursor: pointer;
 `;
 
 export default function AdminHome() {
@@ -86,15 +67,12 @@ export default function AdminHome() {
     <AdminHomePage>
       <ContentContainer>
         <LeftAlignedTitle>Admin Homepage</LeftAlignedTitle>
-        <ProgramBudgetList />
-        <SetBudgetButton
-          onClick={() => {
+        <ProgramBudgetList
+          onSetBudgetClick={() => {
             setShowBudgetPopup(true);
             console.log('Set Budget button clicked');
           }}
-        >
-          Set Budget
-        </SetBudgetButton>
+        />
         {showBudgetPopup && (
           <NewMonthlyBudget
             onCancel={() => setShowBudgetPopup(false)}
@@ -102,8 +80,6 @@ export default function AdminHome() {
           />
         )}
       </ContentContainer>
-
-      <ButtonContainer></ButtonContainer>
       <OrderTable />
     </AdminHomePage>
   );

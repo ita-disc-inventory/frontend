@@ -1,34 +1,57 @@
-import React, { useState, useEffect } from 'react';
+import { useUser } from 'common/contexts/UserContext';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 const BudgetListContainer = styled.div`
-  margin: 2rem auto;
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  margin: 1rem auto;
   width: 100%;
   max-width: 1000px;
   background-color: white;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  padding: 1.5rem;
+  padding: 1rem;
+  justify-content: space-evenly;
+`;
+
+const BudgetHeader = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
 
   h2 {
-    margin-top: 0;
-    margin-bottom: 1.25rem;
     color: #333;
-    font-weight: 600;
-    text-align: center;
-    padding-bottom: 0.75rem;
-    border-bottom: 1px solid #eee;
+    font-weight: 700;
+    text-align: left;
   }
+`;
+
+const BudgetButton = styled.button`
+  padding: 6px 12px;
+  font-size: 14px;
+  font-weight: 600;
+  color: white;
+  background-color: var(--green-9);
+  border-radius: 6px;
+  border: none;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  margin-top: 0.5rem;
+  align-self: flex-start;
 `;
 
 const BudgetGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 1.25rem;
+  gap: 0.75rem;
 `;
 
 const BudgetCard = styled.div`
-  padding: 1rem;
+  padding: 0.75rem;
   background-color: #f9fafb;
   border-radius: 8px;
   transition:
@@ -40,26 +63,27 @@ const BudgetCard = styled.div`
 
   .program-title {
     font-weight: 500;
-    margin-bottom: 0.5rem;
-    font-size: 0.9rem;
+    margin-bottom: 0.25rem;
+    font-size: 0.85rem;
     color: #555;
     text-align: center;
   }
 
   .budget-amount {
     font-weight: 700;
-    font-size: 1.25rem;
+    font-size: 1.1rem;
     color: var(--green-9, #2e7d32);
   }
 `;
 
 const StatusMessage = styled.div`
-  margin-top: 1rem;
+  margin-top: 0.75rem;
   color: ${(props) => (props.error ? 'red' : '#666')};
   font-style: italic;
 `;
 
-export default function ProgramBudgetList() {
+export default function ProgramBudgetList({ onSetBudgetClick }) {
+  const { user } = useUser();
   const [programBudgets, setProgramBudgets] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -102,9 +126,17 @@ export default function ProgramBudgetList() {
     return <StatusMessage>No program budgets available</StatusMessage>;
   }
 
+  // Check if user is admin to determine whether to show the button
+  const isAdmin = user && user.position_title === 'admin';
+
   return (
     <BudgetListContainer>
-      <h2>Program Budget</h2>
+      <BudgetHeader>
+        <h2>Budget</h2>
+        {isAdmin && onSetBudgetClick && (
+          <BudgetButton onClick={onSetBudgetClick}>Set Budget</BudgetButton>
+        )}
+      </BudgetHeader>
       <BudgetGrid>
         {programBudgets.map((program) => {
           // Helper function to capitalize first letter
