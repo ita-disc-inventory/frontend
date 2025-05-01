@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from 'react';
 import * as Select from '@radix-ui/react-select';
 import { Dialog } from 'radix-ui';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import FormPopup from 'common/components/templates/FormPopup';
 import Dropdown, {
   StyledLabel,
   StyledSelectItem,
 } from 'common/components/templates/Dropdown';
+import FormPopup from 'common/components/templates/FormPopup';
 
 const Programs = [
   {
@@ -45,7 +45,7 @@ const StyledButton = styled.button`
 
 export default function NewMonthlyBudget({ onCancel, onConfirm }) {
   const [budget, setBudget] = useState('$');
-  const [programID, setProgram] = useState('');
+  const [programID, setProgramID] = useState('');
 
   useEffect(() => {
     console.log('Selected Program (updated):', programID);
@@ -63,7 +63,7 @@ export default function NewMonthlyBudget({ onCancel, onConfirm }) {
   };
 
   const handleProgramChange = (newValue) => {
-    setProgram(newValue);
+    setProgramID(newValue);
   };
 
   const handleSubmit = (e) => {
@@ -81,7 +81,7 @@ export default function NewMonthlyBudget({ onCancel, onConfirm }) {
     console.log('Selected Program:', programID);
     // Reset the form
     setBudget('$');
-    setProgram('');
+    setProgramID('');
     onConfirm({ budget: numericBudget, programID });
   };
 
