@@ -1,12 +1,11 @@
-import React, {useContext} from 'react';
-
-import { useNavigate } from 'react-router-dom';
+import React, { useContext } from 'react';
 import styled from 'styled-components';
 
 import { UserContext } from 'common/contexts/UserContext';
-import { Subtitle, Title } from 'common/components/form/Text';
+import { Title } from 'common/components/form/Text';
 import OrderTable from 'common/components/OrderTableTherapist';
 import NewOrderForm from 'common/components/table_pop_ups/NewOrderForm';
+import ProgramBudgetList from 'common/components/ProgramBudgetList';
 
 const TherapistHomePage = styled.div`
   flex: 1 0 0;
@@ -30,7 +29,6 @@ const FormDiv = styled.div`
   padding-bottom: 10px;
 `;
 
-
 export default function TherapistHome() {
   const { user } = useContext(UserContext);
 
@@ -39,9 +37,10 @@ export default function TherapistHome() {
       <TextContainer>
         <Title>Welcome, {user?.firstname}!</Title>
       </TextContainer>
-        <FormDiv>
-          <NewOrderForm />
-        </FormDiv>
+      <ProgramBudgetList />
+      <FormDiv>
+        <NewOrderForm />
+      </FormDiv>
       <OrderTable />
     </TherapistHomePage>
   );
