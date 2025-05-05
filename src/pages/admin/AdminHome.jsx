@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
-
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 
+import NewMonthlyBudget from 'common/components/admin_modals/NewMonthlyBudget';
+import { Title as BaseTitle } from 'common/components/form/Text';
 import OrderTable from 'common/components/OrderTable';
-import { Title as BaseTitle, Subtitle } from 'common/components/form/Text';
+import ProgramBudgetList from 'common/components/ProgramBudgetList';
 
 const AdminHomePage = styled.div`
   flex: 1 0 0;
@@ -15,10 +15,6 @@ const AdminHomePage = styled.div`
   padding: 2rem;
 `;
 
-const ButtonContainer = styled.div`
-  margin-top: 2rem;
-`;
-
 const ContentContainer = styled.div`
   margin-left: 2vw;
   margin-right: 2vw;
@@ -26,95 +22,64 @@ const ContentContainer = styled.div`
 `;
 
 const LeftAlignedTitle = styled(BaseTitle)`
-  text-align: left;
+  text-align: center;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.5rem;
+  position: relative;
 `;
-
-const BudgetListContainer = styled.div`
-  display: flex-column;
-  margin: 2rem 0;
-  width: 100%;
-  max-width: 800px;
-  text-align: left;
-`;
-
-const BudgetItem = styled.div`
-  padding: 0;
-  font-size: 16px;
-`;
-
-const StatusMessage = styled.div`
-  margin-top: 1rem;
-  color: ${(props) => (props.error ? 'red' : '#666')};
-  font-style: italic;
-`;
-
-function ProgramBudgetList() {
-  const [programBudgets, setProgramBudgets] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    const fetchProgramBudgets = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-
-        const response = await fetch(
-          `${process.env.REACT_APP_BACKEND_URL}/budget`
-        );
-
-        if (!response.ok) {
-          throw new Error(`Could not get budgets! Status: ${response.status}`);
-        }
-
-        const programs = await response.json();
-        setProgramBudgets(programs);
-      } catch (err) {
-        setError(`Error fetching budgets: ${err.message}`);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchProgramBudgets();
-  }, []);
-
-  if (loading) {
-    return <StatusMessage>Loading program budgets...</StatusMessage>;
-  }
-
-  if (error) {
-    return <StatusMessage error>{error}</StatusMessage>;
-  }
-
-  if (programBudgets.length === 0) {
-    return <StatusMessage>No program budgets available</StatusMessage>;
-  }
-
-  return (
-    <BudgetListContainer>
-      <Subtitle>Budgets:</Subtitle>
-      {programBudgets.map((program) => (
-        <BudgetItem key={program.program_id}>
-          {program.program_title || 'Unknown Program'}: $
-          {parseFloat(program.program_budget).toFixed(2)}
-        </BudgetItem>
-      ))}
-    </BudgetListContainer>
-  );
-}
 
 export default function AdminHome() {
-  const navigate = useNavigate();
-
+  const [showBudgetPopup, setShowBudgetPopup] = useState(false);
+  const handleBudgetUpdate = async (data) => {
+    let budget = data.budget;
+    let programID = data.programID;
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/admin/budget/${programID}`,
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            budget: budget,
+          }),
+          credentials: 'include',
+        }
+      );
+      if (!response.ok) {
+        throw new Error(`Failed to update budget: ${response.status}`);
+      }
+      const updatedBudget = await response.json();
+      console.log('Budget updated successfully:', updatedBudget);
+      // Increment the refresh trigger to force re-render and data refresh
+      window.location.reload();
+    } catch (error) {
+      console.error('Error updating budget:', error);
+    } finally {
+      setShowBudgetPopup(false);
+    }
+  };
   return (
     <AdminHomePage>
       <ContentContainer>
         <LeftAlignedTitle>Admin Homepage</LeftAlignedTitle>
-        <ProgramBudgetList />
+        <ProgramBudgetList
+          onSetBudgetClick={() => {
+            setShowBudgetPopup(true);
+            console.log('Set Budget button clicked');
+          }}
+        />
+        {showBudgetPopup && (
+          <NewMonthlyBudget
+            onCancel={() => setShowBudgetPopup(false)}
+            onConfirm={handleBudgetUpdate}
+          />
+        )}
       </ContentContainer>
-
-      <ButtonContainer></ButtonContainer>
       <OrderTable />
     </AdminHomePage>
   );

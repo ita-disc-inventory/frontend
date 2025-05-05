@@ -199,6 +199,7 @@ export default function FormPopup({
   open, // new controlled prop
   onOpenChange, // required in controlled mode
   title = 'Form Popup', // title of the form
+  noDesc = false, // if true, then no description
   description = 'Form Desc.', // form desc.
   children, // any additional DOM elts you would want to add to form
   onSubmit, // what happens when form is submitted
@@ -280,7 +281,7 @@ export default function FormPopup({
         <StyledOverlay /> {/* allows for 'dimmed' background */}
         <StyledContent maxWidth={maxWidth}>
           <StyledTitle>{title}</StyledTitle>
-          <StyledDescription>{description}</StyledDescription>
+          {!noDesc && <StyledDescription>{description}</StyledDescription>}
           {/* if custom form is true, then caller must be providing their own form (since form nested in a form is NOT allowed) */}
           {customForm && <div>{children}</div>}
           {/* if custom form is false, then caller is expecting to use supplied form (not providing their own) */}
@@ -349,6 +350,7 @@ FormPopup.propTypes = {
   buttonColor: PropTypes.string,
   customForm: PropTypes.bool,
   styles: PropTypes.string,
+  noDesc: PropTypes.bool,
 };
 
 FormPopup.defaultProps = {
@@ -366,4 +368,5 @@ FormPopup.defaultProps = {
   buttonColor: 'blue',
   customForm: false,
   styles: '',
+  noDesc: false,
 };
