@@ -160,6 +160,17 @@ export default function NewOrderForm() {
     return Object.keys(errors).length === 0;
   };
 
+  const resetForm = () => {
+    setProgram('');
+    setItemName('');
+    setQuantity('');
+    setLink('');
+    setPriorityLevel('');
+    setPPU('');
+    setReasonForBuying('');
+    setFormErrors({});
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -174,6 +185,25 @@ export default function NewOrderForm() {
     const progId = getProgramIdByName(program);
     const userId = user.id;
 
+    // Before submitting order to backend, need to validate budget
+    const budgetResponse = await fetch(
+      `${process.env.REACT_APP_BACKEND_URL}/budget`
+    );
+    if (!budgetResponse.ok) {
+      throw new Error(`Could not get budgets! Status: ${response.status}`);
+    }
+    const programs = await budgetResponse.json();
+    const selectedProgram = programs.find((p) => p.program_id === progId);
+    if (selectedProgram.program_budget < total) {
+      console.log('Cannot submit order! Insufficient budget.');
+      setFormErrors((prev) => ({
+        ...prev,
+        budget: `Insufficient budget. The order total ($${total}) exceeds the available budget for ${program} ($${selectedProgram.program_budget}).`,
+      }));
+      return false;
+    }
+
+    // If valid budget, go through with form submission
     const response = await fetch(
       `${process.env.REACT_APP_BACKEND_URL}/therapist/order`,
       {
@@ -206,6 +236,7 @@ export default function NewOrderForm() {
 
     // Close the dialog by finding and clicking the close button
     document.querySelector('button[aria-label="Close"]')?.click();
+    resetForm();
 
     return true; // Allow form submission
   };
@@ -216,10 +247,16 @@ export default function NewOrderForm() {
       description='Please fill out all fields of the form below for your requested
                 item and read the Order Guidelines.'
       onSubmit={handleSubmit}
+      onClose={resetForm}
       maxWidth='50%'
       defaultSubmit={true}
       buttonText='Place New Order'
     >
+      {formErrors.budget && (
+        <ErrorMessage style={{ marginBottom: '15px' }}>
+          {formErrors.budget}
+        </ErrorMessage>
+      )}
       <FormContainer>
         <Column>
           {/* Program Budget Field - Required Dropdown */}

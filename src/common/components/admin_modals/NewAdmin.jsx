@@ -35,19 +35,6 @@ const InputField = styled.input`
   margin-bottom: 20px;
 `;
 
-const SelectField = styled.select`
-  width: 100%;
-  border-radius: 4px;
-  padding: 10px;
-  font-size: 15px;
-  line-height: 1.5;
-  color: black;
-  border: solid 2px var(--text);
-  height: 40px;
-  margin-bottom: 20px;
-  background-color: white;
-`;
-
 const Label = styled.label`
   display: block;
   font-size: 15px;
