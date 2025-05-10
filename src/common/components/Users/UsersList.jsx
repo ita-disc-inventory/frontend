@@ -5,7 +5,7 @@ import { useUser } from '../../contexts/UserContext';
 
 const SPECIALIZATION_OPTIONS = {
   admin: ['standard_admin', 'super_admin'],
-  therapist: ['art', 'music']
+  therapist: ['art', 'music', 'dance', 'drama']
 };
 
 const UsersContainer = styled.div`
@@ -124,8 +124,8 @@ const StatusBadge = styled.span`
   border-radius: 0.25rem;
   font-size: 0.875rem;
   font-weight: 500;
-  background-color: ${props => props.approved === 'true' ? '#dcfce7' : '#fee2e2'};
-  color: ${props => props.approved === 'true' ? '#166534' : '#991b1b'};
+  background-color: ${props => props.$approved ? '#dcfce7' : '#fee2e2'};
+  color: ${props => props.$approved ? '#166534' : '#991b1b'};
 `;
 
 export default function UsersList() {
@@ -285,7 +285,7 @@ export default function UsersList() {
                 </Select>
               </Td>
               <Td>
-                <StatusBadge approved={String(user.approved)}>
+                <StatusBadge $approved={user.approved}>
                   {user.approved ? 'Approved' : 'Not Approved'}
                 </StatusBadge>
               </Td>
