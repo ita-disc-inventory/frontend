@@ -13,6 +13,7 @@
     "classnames": "^2.5.1",
     "clsx": "^2.1.1",
     "cra-template": "1.2.0",
+    "date-fns": "^4.1.0",
     "lucide-react": "^0.476.0",
     "primeicons": "^7.0.0",
     "primereact": "^10.9.2",

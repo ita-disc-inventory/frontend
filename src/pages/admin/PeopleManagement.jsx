@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import UsersList from '../../common/components/Users/UsersList'
 
 const Container = styled.div`
   max-width: 1200px;
@@ -21,7 +22,7 @@ const PeopleManagement = () => {
     <Container>
       <ContentBox>
         <Title>User Management</Title>
-        {/* Add your user management content here */}
+        <UsersList />
       </ContentBox>
     </Container>
   );
