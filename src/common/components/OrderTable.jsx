@@ -1,7 +1,9 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import StatusChangeToast from './therapist_modals/StatusChangeToast';
-
+import { useUser } from 'common/contexts/UserContext'; // Import the user context
 import { OpenInNewWindowIcon } from '@radix-ui/react-icons';
+import CancelOrderButton from 'common/components/therapist_modals/CancelOrderButton';
+import CancelOrder from 'common/components/table_pop_ups/CancelOrder';
 import {
   AllCommunityModule,
   ModuleRegistry,
@@ -217,6 +219,8 @@ function requestDateFormatter(params) {
 
 // Formats specialization
 function specializationFormatter(params) {
+  if (params.value === 'super_admin') return 'Super Admin';
+  if (params.value === 'standard_admin') return 'Standard Admin';
   const specialization = params.value;
   return specialization
     ? specialization.charAt(0).toUpperCase() + specialization.slice(1)
@@ -246,6 +250,7 @@ const checkValidStatusChange = (currStatus, newStatus) => {
 };
 
 export default function OrderTable() {
+  const { user } = useUser();
   const [rowData, setRowData] = useState([]);
   const [pendingRow, setPendingRow] = useState(null); // Store the pending row (row we are editing) with its previous status
   // Below states control popups and toasts
@@ -255,8 +260,28 @@ export default function OrderTable() {
   const [showItemArrived, setShowItemArrived] = useState(false);
   const [showItemPickUp, setShowItemPickUp] = useState(false);
   const [showItemPending, setShowItemPending] = useState(false);
+  const [showCancelConfirm, setShowCancelConfirm] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [toastMsg, setToastMsg] = useState('');
+
+  const CancelOrderRenderer = (params) => {
+    // Only show cancel button if the order belongs to the current user
+    if (params.data.requestor_id === user.id) {
+      return (
+        <CancelOrderButton
+          onClick={() => {
+            setPendingRow({
+              params,
+              prev: params.data.status,
+            });
+            setShowCancelConfirm(true);
+          }}
+        />
+      );
+    }
+    // Return empty div if the order doesn't belong to the user
+    return <div></div>;
+  };
 
   // Renders the status cells (column)
   const statusCellRenderer = (params) => {
@@ -393,6 +418,11 @@ export default function OrderTable() {
       field: 'statusTracker',
       hide: true,
     },
+    {
+      field: 'button',
+      headerName: '',
+      cellRenderer: CancelOrderRenderer,
+    },
   ]);
 
   // Default column definitions for table; columns cannot be resized, instead they fit to width
@@ -436,6 +466,7 @@ export default function OrderTable() {
           ppu: order.items.price_per_unit,
           quantity: order.quantity,
           statusHistory: ['pending'],
+          requestor_id: order.requestor_id,
         }));
         setRowData(transformedData);
       })
@@ -766,6 +797,58 @@ export default function OrderTable() {
               });
             }
             setShowItemPending(false);
+            setPendingRow(null);
+          }}
+        />
+      )}
+      {showCancelConfirm && (
+        <CancelOrder
+          open={true}
+          onConfirm={async () => {
+            // Fix 2: Add API call to backend
+            try {
+              await fetch(
+                `${process.env.REACT_APP_BACKEND_URL}/therapist/order/${pendingRow.params.data.orderId}`,
+                {
+                  method: 'DELETE',
+                  headers: {
+                    'Content-Type': 'application/json',
+                  },
+                }
+              );
+
+              // Fix 3: Update row data with new 'cancel' status
+              if (pendingRow) {
+                const updatedData = rowData.map((row) =>
+                  row.orderId === pendingRow.params.data.orderId
+                    ? { ...row, status: 'cancel' }
+                    : row
+                );
+                setRowData(updatedData);
+                pendingRow.params.api.refreshCells({
+                  rowNodes: [pendingRow.params.node],
+                });
+              }
+            } catch (error) {
+              console.error('Error cancelling order:', error);
+            }
+            setShowCancelConfirm(false);
+            setPendingRow(null);
+          }}
+          onCancel={() => {
+            // Revert the status to its previous value
+            if (pendingRow) {
+              const updatedData = rowData.map((row) =>
+                row.orderId === pendingRow.params.data.orderId
+                  ? { ...row, status: pendingRow.prev }
+                  : row
+              );
+              setRowData(updatedData);
+              pendingRow.params.api.refreshCells({
+                rowNodes: [pendingRow.params.node],
+              });
+            }
+            setShowCancelConfirm(false);
             setPendingRow(null);
           }}
         />
