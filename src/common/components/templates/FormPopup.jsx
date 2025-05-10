@@ -80,35 +80,6 @@ const StyledDescription = styled(Dialog.Description)`
   font-size: 15px;
   line-height: 1.5;
 `;
-// Below is unused for now, may use later (leaving commented out, ignore until further notice)
-// const StyledFieldset = styled.fieldset`
-//   display: flex;
-//   gap: 20px;
-//   align-items: center;
-//   margin-bottom: 15px;
-// `;
-
-// const StyledLabel = styled.label`
-//   font-size: 15px;
-//   color: var(--violet-11);
-//   width: 90px;
-//   text-align: right;
-// `;
-
-// const StyledInput = styled.input`
-//   width: 100%;
-//   flex: 1;
-//   border-radius: 4px;
-//   padding: 0 10px;
-//   font-size: 15px;
-//   line-height: 1;
-//   color: var(--violet-11);
-//   box-shadow: 0 0 0 1px var(--violet-7);
-//   height: 35px;
-//   &:focus {
-//     box-shadow: 0 0 0 2px var(--violet-8);
-//   }
-// `;
 
 const StyledButton = styled.button`
   display: inline-flex;
@@ -232,6 +203,7 @@ export default function FormPopup({
   description = 'Form Desc.', // form desc.
   children, // any additional DOM elts you would want to add to form
   onSubmit, // what happens when form is submitted
+  onClose, // callback when form is closed
   maxWidth = '500px', // allows us to define how wide this form is
   defaultSubmit = true, // if true, then basic 'Submit' and 'Cancel' buttons. If false, then caller expected to provide buttons
   submitText = 'Submit', // default 'Submit' text
@@ -247,7 +219,13 @@ export default function FormPopup({
   // Controlled mode: if open is defined, do not render trigger button.
   if (open !== undefined) {
     return (
-      <Dialog.Root open={open} onOpenChange={onOpenChange}>
+      <Dialog.Root
+        open={open}
+        onOpenChange={(isOpen) => {
+          if (!isOpen && onClose) onClose();
+          if (onOpenChange) onOpenChange(isOpen);
+        }}
+      >
         <Dialog.Portal>
           <StyledOverlay /> {/* allows for 'dimmed' background */}
           <StyledContent maxWidth={maxWidth}>
@@ -281,7 +259,10 @@ export default function FormPopup({
                       <Dialog.Close asChild>
                         <StyledButton
                           className={cancelColor}
-                          onClick={cancelOnClick}
+                          onClick={(e) => {
+                            if (cancelOnClick) cancelOnClick(e);
+                            if (onClose) onClose();
+                          }}
                           type='button'
                         >
                           {cancelText}
@@ -299,7 +280,11 @@ export default function FormPopup({
   }
   // Uncontrolled mode: render trigger button.
   return (
-    <Dialog.Root>
+    <Dialog.Root
+      onOpenChange={(isOpen) => {
+        if (!isOpen && onClose) onClose();
+      }}
+    >
       <Dialog.Trigger asChild>
         {/* specify the button color here as a prop */}
         <StyledButton className={buttonColor} style={styles}>
@@ -337,7 +322,13 @@ export default function FormPopup({
                       {submitText}
                     </StyledButton>
                     <Dialog.Close asChild>
-                      <StyledButton className={cancelColor} type='button'>
+                      <StyledButton
+                        className={cancelColor}
+                        type='button'
+                        onClick={() => {
+                          if (onClose) onClose();
+                        }}
+                      >
                         {cancelText}
                       </StyledButton>
                     </Dialog.Close>
@@ -348,7 +339,12 @@ export default function FormPopup({
           )}
           {/* The 'X' close button that allows us to close the form */}
           <Dialog.Close asChild>
-            <IconButton aria-label='Close'>
+            <IconButton
+              aria-label='Close'
+              onClick={() => {
+                if (onClose) onClose();
+              }}
+            >
               <Cross2Icon />
             </IconButton>
           </Dialog.Close>
@@ -368,6 +364,7 @@ FormPopup.propTypes = {
   description: PropTypes.string,
   children: PropTypes.node.isRequired,
   onSubmit: PropTypes.func.isRequired,
+  onClose: PropTypes.func, // callback when form is closed
   maxWidth: PropTypes.string,
   defaultSubmit: PropTypes.bool,
   submitText: PropTypes.string,
@@ -398,4 +395,5 @@ FormPopup.defaultProps = {
   customForm: false,
   styles: '',
   noDesc: false,
+  onClose: () => {},
 };

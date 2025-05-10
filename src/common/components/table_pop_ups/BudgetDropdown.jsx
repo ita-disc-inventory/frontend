@@ -41,13 +41,6 @@ const BudgetText = styled.h6`
   font-weight: normal;
 `;
 
-// Accept props for a controlled component
-// Order of function calls when user changes the value of the dropdown:
-//  1. onValueChange callback
-//  2. handleStatusChange()
-//  3. setStatus(newValue) ==> schedules a re-render (async operation)
-//  4. onStatusChange(newValue)
-//  5. on next render, useEffect() hook runs
 export default function BudgetDropdown({ value, onProgramChange, required }) {
   const [program, setProgram] = useState(value || '');
   const [budget, setBudget] = useState(null);
@@ -154,7 +147,7 @@ export default function BudgetDropdown({ value, onProgramChange, required }) {
         ) : error ? (
           <BudgetText style={{ color: 'red' }}>{error}</BudgetText>
         ) : budget !== null ? (
-          <BudgetText>Budget: ${budget}</BudgetText>
+          <BudgetText>Budget: ${Math.ceil(budget * 100) / 100}</BudgetText>
         ) : (
           <BudgetText>No budget information available</BudgetText>
         ))}

@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { Title, Subtitle } from 'common/components/form/Text';
+import { Title } from 'common/components/form/Text';
 import { useUser } from 'common/contexts/UserContext';
 import { useNavigate } from 'react-router-dom';
-import PasswordChangeForm from 'common/components/table_pop_ups/PasswordChangeForm';
 import PropTypes from 'prop-types';
 import NewAdmin from 'common/components/admin_modals/NewAdmin';
 
@@ -95,11 +94,6 @@ const UpdateButton = styled.button`
   font-size: 1.25rem;
   margin-top: 1rem;
   align-self: center;
-`;
-const CheckboxContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 10px; /* Add some space between the checkboxes */
 `;
 
 export const SingleSelectDropdown = ({ options, selectedOption, onChange }) => {
