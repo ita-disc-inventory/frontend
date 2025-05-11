@@ -555,7 +555,7 @@ export default function OrderTable() {
   const handleExportCSV = () => {
     if (gridApi) {
       gridApi.exportDataAsCsv({
-        fileName: 'orders.csv',
+        fileName: `orders-${new Date().toISOString().slice(0, 10)}.csv`,
         processCellCallback: (params) => {
           // Handle special formatting for certain columns
           if (params.column.getColId() === 'price') {
