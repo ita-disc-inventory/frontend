@@ -15,6 +15,7 @@ import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
 import { AgGridReact } from 'ag-grid-react';
 import styled from 'styled-components';
+import * as XLSX from 'xlsx';
 
 import ItemArrivedConfirm from 'common/components/admin_modals/ItemArrivedConfirm';
 import ItemPendingConfirm from './admin_modals/ItemPendingConfirm';
@@ -219,16 +220,6 @@ function requestDateFormatter(params) {
   return `${month}/${day}/${year}`;
 }
 
-// Changes new Date() format to readable
-function formatExportDate(dateString) {
-  const day = String(dateString.getDate()).padStart(2, '0');
-  const month = String(dateString.getMonth() + 1).padStart(2, '0');
-  const year = String(dateString.getFullYear()).slice(-2);
-  const hours = String(dateString.getHours()).padStart(2, '0');
-  const minutes = String(dateString.getMinutes()).padStart(2, '0');
-  return `${day}-${month}-${year} T${hours}:${minutes}`;
-}
-
 // Formats specialization
 function specializationFormatter(params) {
   if (params.value === 'super_admin') return 'Super Admin';
@@ -270,7 +261,7 @@ const ButtonContainer = styled.div`
 `;
 
 const ExportButton = styled.button`
-  background-color: #4CAF50;
+  background-color: #4caf50;
   border: none;
   color: white;
   padding: 7px 14px;
@@ -291,12 +282,12 @@ const ExportDropdown = styled.div`
 `;
 
 const DropdownContent = styled.div`
-  display: ${props => props.isVisible ? 'block' : 'none'};
+  display: ${(props) => (props.isVisible ? 'block' : 'none')};
   position: absolute;
   right: 0;
   background-color: #f9f9f9;
   min-width: 160px;
-  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
   z-index: 1;
   border-radius: 4px;
 `;
@@ -327,12 +318,8 @@ export default function OrderTable() {
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [toastMsg, setToastMsg] = useState('');
-<<<<<<< HEAD
-  const gridRef = useRef();
-=======
   const [showExportDropdown, setShowExportDropdown] = useState(false);
   const exportDropdownRef = useRef(null);
->>>>>>> b1d1dd0053b4a1044381131f114f381c44cea527
 
   const CancelOrderRenderer = (params) => {
     // Only show cancel button if the order belongs to the current user
@@ -408,16 +395,6 @@ export default function OrderTable() {
           : row
       )
     );
-  };
-
-  const handleCSVExport = () => {
-    const gridApi = gridRef.current.api;
-    const date = formatExportDate(new Date());
-    console.log(date);
-    gridApi.exportDataAsCsv({
-      fileName: `export_${date}.csv`,
-      onlySelected: false,
-    });
   };
 
   // All column names and respective settings
@@ -589,7 +566,7 @@ export default function OrderTable() {
             return `${month}/${day}/${year}`;
           }
           return params.value;
-        }
+        },
       });
     }
     setShowExportDropdown(false);
@@ -597,27 +574,44 @@ export default function OrderTable() {
 
   const handleExportExcel = () => {
     if (gridApi) {
-      gridApi.exportDataAsExcel({
-        fileName: 'orders.xlsx',
-        processCellCallback: (params) => {
-          // Handle special formatting for certain columns
-          if (params.column.getColId() === 'price') {
-            return params.value ? `$${params.value.toLocaleString()}` : '';
-          }
-          if (params.column.getColId() === 'requestDate') {
-            const [year, month, day] = params.value.split('-');
-            return `${month}/${day}/${year}`;
-          }
-          return params.value;
+      const rowData = [];
+      // Use forEachNodeAfterFilterAndSort to respect both filtering and sorting
+      gridApi.forEachNodeAfterFilterAndSort((node) => {
+        if (node.data) {
+          const row = {};
+          gridApi.getColumns().forEach((column) => {
+            const colId = column.getColId();
+            let value = node.data[colId];
+
+            // Format specific columns
+            if (colId === 'price') {
+              value = value ? `$${value.toLocaleString()}` : '';
+            }
+            if (colId === 'requestDate') {
+              const [year, month, day] = value.split('-');
+              value = `${month}/${day}/${year}`;
+            }
+
+            row[column.getColDef().headerName] = value;
+          });
+          rowData.push(row);
         }
       });
+
+      const worksheet = XLSX.utils.json_to_sheet(rowData);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, 'Orders');
+      XLSX.writeFile(workbook, 'orders.xlsx');
     }
     setShowExportDropdown(false);
   };
 
   useEffect(() => {
     function handleClickOutside(event) {
-      if (exportDropdownRef.current && !exportDropdownRef.current.contains(event.target)) {
+      if (
+        exportDropdownRef.current &&
+        !exportDropdownRef.current.contains(event.target)
+      ) {
         setShowExportDropdown(false);
       }
     }
@@ -631,23 +625,35 @@ export default function OrderTable() {
   // The actual component (order table) we are actually returning
   return (
     <div style={{ padding: '20px' }}>
-      <div style={{ display: 'flex', justifyContent: 'flex-start', gap: '10px', marginBottom: '10px' }}>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'flex-start',
+          gap: '10px',
+          marginBottom: '10px',
+        }}
+      >
         <NewOrderForm />
         <ExportDropdown ref={exportDropdownRef}>
-          <ExportButton onClick={() => setShowExportDropdown(!showExportDropdown)}>
+          <ExportButton
+            onClick={() => setShowExportDropdown(!showExportDropdown)}
+          >
             Export Data
           </ExportButton>
           <DropdownContent isVisible={showExportDropdown}>
             <DropdownItem onClick={handleExportCSV}>Export as CSV</DropdownItem>
-            <DropdownItem onClick={handleExportExcel}>Export as Excel</DropdownItem>
+            <DropdownItem onClick={handleExportExcel}>
+              Export as Excel
+            </DropdownItem>
           </DropdownContent>
         </ExportDropdown>
       </div>
-      
-      <div className='ag-theme-quartz' style={{ height: '500px' }}>
-        <button onClick={handleCSVExport}>Export to CSV</button>
+
+      <div
+        className='ag-theme-quartz'
+        style={{ height: 'calc(100vh - 300px)' }}
+      >
         <AgGridReact
-          ref={gridRef}
           rowData={rowData}
           defaultColDef={defaultColDef}
           columnDefs={colDefs}

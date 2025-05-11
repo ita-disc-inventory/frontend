@@ -5,7 +5,7 @@ import { useUser } from '../../contexts/UserContext';
 
 const SPECIALIZATION_OPTIONS = {
   admin: ['standard_admin', 'super_admin'],
-  therapist: ['art', 'music', 'dance', 'drama']
+  therapist: ['art', 'music', 'dance', 'drama'],
 };
 
 const UsersContainer = styled.div`
@@ -44,17 +44,17 @@ const Select = styled.select`
 
 const ActionButton = styled.button`
   padding: 0.5rem 1rem;
-  background-color: ${props => {
+  background-color: ${(props) => {
     if (props.$disabled) return '#cbd5e1';
     return props.$reactivate ? '#059669' : '#ef4444';
   }};
   color: white;
   border: none;
   border-radius: 0.25rem;
-  cursor: ${props => props.$disabled ? 'not-allowed' : 'pointer'};
-  opacity: ${props => props.$disabled ? '0.7' : '1'};
+  cursor: ${(props) => (props.$disabled ? 'not-allowed' : 'pointer')};
+  opacity: ${(props) => (props.$disabled ? '0.7' : '1')};
   &:hover {
-    background-color: ${props => {
+    background-color: ${(props) => {
       if (props.$disabled) return '#cbd5e1';
       return props.$reactivate ? '#047857' : '#dc2626';
     }};
@@ -94,13 +94,16 @@ const ModalButton = styled.button`
   border-radius: 0.25rem;
   cursor: pointer;
   border: none;
-  ${props => props.$primary ? `
+  ${(props) =>
+    props.$primary
+      ? `
     background-color: #ef4444;
     color: white;
     &:hover {
       background-color: #dc2626;
     }
-  ` : `
+  `
+      : `
     background-color: #e2e8f0;
     &:hover {
       background-color: #cbd5e1;
@@ -124,8 +127,8 @@ const StatusBadge = styled.span`
   border-radius: 0.25rem;
   font-size: 0.875rem;
   font-weight: 500;
-  background-color: ${props => props.$approved ? '#dcfce7' : '#fee2e2'};
-  color: ${props => props.$approved ? '#166534' : '#991b1b'};
+  background-color: ${(props) => (props.$approved ? '#dcfce7' : '#fee2e2')};
+  color: ${(props) => (props.$approved ? '#166534' : '#991b1b')};
 `;
 
 export default function UsersList() {
@@ -187,11 +190,13 @@ export default function UsersList() {
         throw new Error('Failed to update specialization');
       }
 
-      setUsers(users.map(user => 
-        user.id === userId 
-          ? { ...user, specialization: newSpecialization }
-          : user
-      ));
+      setUsers(
+        users.map((user) =>
+          user.id === userId
+            ? { ...user, specialization: newSpecialization }
+            : user
+        )
+      );
     } catch (err) {
       console.error('Error updating specialization:', err);
       setError(err.message);
@@ -218,11 +223,11 @@ export default function UsersList() {
         throw new Error('Failed to update user status');
       }
 
-      setUsers(users.map(user => 
-        user.id === userId 
-          ? { ...user, approved: newStatus }
-          : user
-      ));
+      setUsers(
+        users.map((user) =>
+          user.id === userId ? { ...user, approved: newStatus } : user
+        )
+      );
       setDeleteModalOpen(false);
       setUserToDelete(null);
     } catch (err) {
@@ -275,13 +280,17 @@ export default function UsersList() {
               <Td>
                 <Select
                   value={user.specialization}
-                  onChange={(e) => handleSpecializationChange(user.id, e.target.value)}
+                  onChange={(e) =>
+                    handleSpecializationChange(user.id, e.target.value)
+                  }
                 >
-                  {SPECIALIZATION_OPTIONS[user.position_title]?.map((option) => (
-                    <option key={option} value={option}>
-                      {option}
-                    </option>
-                  ))}
+                  {SPECIALIZATION_OPTIONS[user.position_title]?.map(
+                    (option) => (
+                      <option key={option} value={option}>
+                        {option}
+                      </option>
+                    )
+                  )}
                 </Select>
               </Td>
               <Td>
@@ -292,22 +301,22 @@ export default function UsersList() {
               <Td>{format(new Date(user.created_at), 'MMM d, yyyy HH:mm')}</Td>
               <Td>
                 {user.approved ? (
-                  <ActionButton 
+                  <ActionButton
                     onClick={() => handleDeleteClick(user)}
                     $disabled={user.id === currentUser.id}
                     title={
-                      user.id === currentUser.id 
-                        ? "You cannot deactivate your own account" 
-                        : "Deactivate user"
+                      user.id === currentUser.id
+                        ? 'You cannot deactivate your own account'
+                        : 'Deactivate user'
                     }
                   >
                     Deactivate
                   </ActionButton>
                 ) : (
-                  <ActionButton 
+                  <ActionButton
                     onClick={() => handleReactivateClick(user)}
                     $reactivate
-                    title="Reactivate user"
+                    title='Reactivate user'
                   >
                     Reactivate
                   </ActionButton>
@@ -323,8 +332,9 @@ export default function UsersList() {
           <ModalContent>
             <h3>Confirm Deactivation</h3>
             <p>
-              Are you sure you want to deactivate {userToDelete?.username}? 
-              The user's approved status will be set to false, and the user will no longer be able to place orders.
+              Are you sure you want to deactivate {userToDelete?.username}? The
+              user's approved status will be set to false, and the user will no
+              longer be able to place orders.
             </p>
             <ModalButtons>
               <ModalButton onClick={() => setDeleteModalOpen(false)}>
