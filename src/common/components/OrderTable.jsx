@@ -620,7 +620,7 @@ export default function OrderTable() {
         </ExportDropdown>
       </div>
       
-      <div className='ag-theme-quartz' style={{ height: '500px' }}>
+      <div className='ag-theme-quartz' style={{ height: 'calc(100vh - 300px)' }}>
         <AgGridReact
           rowData={rowData}
           defaultColDef={defaultColDef}
