@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState, useRef } from 'react';
 import StatusChangeToast from './therapist_modals/StatusChangeToast';
 import { useUser } from 'common/contexts/UserContext'; // Import the user context
 import { OpenInNewWindowIcon } from '@radix-ui/react-icons';
@@ -217,6 +217,16 @@ function requestDateFormatter(params) {
   return `${month}/${day}/${year}`;
 }
 
+// Changes new Date() format to readable
+function formatExportDate(dateString) {
+  const day = String(dateString.getDate()).padStart(2, '0');
+  const month = String(dateString.getMonth() + 1).padStart(2, '0');
+  const year = String(dateString.getFullYear()).slice(-2);
+  const hours = String(dateString.getHours()).padStart(2, '0');
+  const minutes = String(dateString.getMinutes()).padStart(2, '0');
+  return `${day}-${month}-${year} T${hours}:${minutes}`;
+}
+
 // Formats specialization
 function specializationFormatter(params) {
   if (params.value === 'super_admin') return 'Super Admin';
@@ -263,6 +273,7 @@ export default function OrderTable() {
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [toastMsg, setToastMsg] = useState('');
+  const gridRef = useRef();
 
   const CancelOrderRenderer = (params) => {
     // Only show cancel button if the order belongs to the current user
@@ -338,6 +349,16 @@ export default function OrderTable() {
           : row
       )
     );
+  };
+
+  const handleCSVExport = () => {
+    const gridApi = gridRef.current.api;
+    const date = formatExportDate(new Date());
+    console.log(date);
+    gridApi.exportDataAsCsv({
+      fileName: `export_${date}.csv`,
+      onlySelected: false,
+    });
   };
 
   // All column names and respective settings
@@ -496,7 +517,9 @@ export default function OrderTable() {
     <div style={{ padding: '20px' }}>
       {/* The actual order table */}
       <div className='ag-theme-quartz' style={{ height: '500px' }}>
+        <button onClick={handleCSVExport}>Export to CSV</button>
         <AgGridReact
+          ref={gridRef}
           rowData={rowData}
           defaultColDef={defaultColDef}
           columnDefs={colDefs}
