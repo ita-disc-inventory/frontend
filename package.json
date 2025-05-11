@@ -8,11 +8,13 @@
     "@radix-ui/react-dialog": "^1.1.6",
     "@radix-ui/react-icons": "^1.3.2",
     "@tailwindcss/cli": "^4.0.9",
+    "ag-grid-enterprise": "^33.2.4",
     "ag-grid-react": "^33.1.1",
     "class-variance-authority": "^0.7.1",
     "classnames": "^2.5.1",
     "clsx": "^2.1.1",
     "cra-template": "1.2.0",
+    "date-fns": "^4.1.0",
     "lucide-react": "^0.476.0",
     "primeicons": "^7.0.0",
     "primereact": "^10.9.2",
@@ -25,7 +27,8 @@
     "styled-components": "^6.1.13",
     "tailwind-merge": "^3.0.2",
     "tailwindcss-animate": "^1.0.7",
-    "web-vitals": "^4.2.4"
+    "web-vitals": "^4.2.4",
+    "xlsx": "^0.18.5"
   },
   "scripts": {
     "start": "PORT=3001 react-scripts start",
