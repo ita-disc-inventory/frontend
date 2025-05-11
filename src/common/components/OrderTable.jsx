@@ -4,10 +4,12 @@ import { useUser } from 'common/contexts/UserContext'; // Import the user contex
 import { OpenInNewWindowIcon } from '@radix-ui/react-icons';
 import CancelOrderButton from 'common/components/therapist_modals/CancelOrderButton';
 import CancelOrder from 'common/components/table_pop_ups/CancelOrder';
+import NewOrderForm from 'common/components/table_pop_ups/NewOrderForm';
 import {
   AllCommunityModule,
   ModuleRegistry,
   provideGlobalGridOptions,
+  GridApi,
 } from 'ag-grid-community';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
@@ -259,9 +261,61 @@ const checkValidStatusChange = (currStatus, newStatus) => {
   return isValid;
 };
 
+const ButtonContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  margin-bottom: 10px;
+  justify-content: flex-end;
+`;
+
+const ExportButton = styled.button`
+  background-color: #4CAF50;
+  border: none;
+  color: white;
+  padding: 7px 14px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 14px;
+  cursor: pointer;
+  border-radius: 4px;
+  &:hover {
+    background-color: #45a049;
+  }
+`;
+
+const ExportDropdown = styled.div`
+  position: relative;
+  display: inline-block;
+`;
+
+const DropdownContent = styled.div`
+  display: ${props => props.isVisible ? 'block' : 'none'};
+  position: absolute;
+  right: 0;
+  background-color: #f9f9f9;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+  border-radius: 4px;
+`;
+
+const DropdownItem = styled.a`
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+  cursor: pointer;
+  &:hover {
+    background-color: #f1f1f1;
+  }
+`;
+
 export default function OrderTable() {
   const { user } = useUser();
   const [rowData, setRowData] = useState([]);
+  const [gridApi, setGridApi] = useState(null);
   const [pendingRow, setPendingRow] = useState(null); // Store the pending row (row we are editing) with its previous status
   // Below states control popups and toasts
   const [showApprovalConfirm, setShowApprovalConfirm] = useState(false);
@@ -273,7 +327,12 @@ export default function OrderTable() {
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [toastMsg, setToastMsg] = useState('');
+<<<<<<< HEAD
   const gridRef = useRef();
+=======
+  const [showExportDropdown, setShowExportDropdown] = useState(false);
+  const exportDropdownRef = useRef(null);
+>>>>>>> b1d1dd0053b4a1044381131f114f381c44cea527
 
   const CancelOrderRenderer = (params) => {
     // Only show cancel button if the order belongs to the current user
@@ -512,10 +571,79 @@ export default function OrderTable() {
     };
   }, []);
 
+  const onGridReady = (params) => {
+    setGridApi(params.api);
+  };
+
+  const handleExportCSV = () => {
+    if (gridApi) {
+      gridApi.exportDataAsCsv({
+        fileName: 'orders.csv',
+        processCellCallback: (params) => {
+          // Handle special formatting for certain columns
+          if (params.column.getColId() === 'price') {
+            return params.value ? `$${params.value.toLocaleString()}` : '';
+          }
+          if (params.column.getColId() === 'requestDate') {
+            const [year, month, day] = params.value.split('-');
+            return `${month}/${day}/${year}`;
+          }
+          return params.value;
+        }
+      });
+    }
+    setShowExportDropdown(false);
+  };
+
+  const handleExportExcel = () => {
+    if (gridApi) {
+      gridApi.exportDataAsExcel({
+        fileName: 'orders.xlsx',
+        processCellCallback: (params) => {
+          // Handle special formatting for certain columns
+          if (params.column.getColId() === 'price') {
+            return params.value ? `$${params.value.toLocaleString()}` : '';
+          }
+          if (params.column.getColId() === 'requestDate') {
+            const [year, month, day] = params.value.split('-');
+            return `${month}/${day}/${year}`;
+          }
+          return params.value;
+        }
+      });
+    }
+    setShowExportDropdown(false);
+  };
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (exportDropdownRef.current && !exportDropdownRef.current.contains(event.target)) {
+        setShowExportDropdown(false);
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
   // The actual component (order table) we are actually returning
   return (
     <div style={{ padding: '20px' }}>
-      {/* The actual order table */}
+      <div style={{ display: 'flex', justifyContent: 'flex-start', gap: '10px', marginBottom: '10px' }}>
+        <NewOrderForm />
+        <ExportDropdown ref={exportDropdownRef}>
+          <ExportButton onClick={() => setShowExportDropdown(!showExportDropdown)}>
+            Export Data
+          </ExportButton>
+          <DropdownContent isVisible={showExportDropdown}>
+            <DropdownItem onClick={handleExportCSV}>Export as CSV</DropdownItem>
+            <DropdownItem onClick={handleExportExcel}>Export as Excel</DropdownItem>
+          </DropdownContent>
+        </ExportDropdown>
+      </div>
+      
       <div className='ag-theme-quartz' style={{ height: '500px' }}>
         <button onClick={handleCSVExport}>Export to CSV</button>
         <AgGridReact
@@ -525,6 +653,7 @@ export default function OrderTable() {
           columnDefs={colDefs}
           rowHeight={50}
           autoSizeStrategy={autoSizeStrategy}
+          onGridReady={onGridReady}
         />
       </div>
       {/* Toast for when user does invalid status transition */}

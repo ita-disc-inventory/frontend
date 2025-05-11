@@ -1,7 +1,5 @@
 import React from 'react';
-
-import { Navigate, Outlet } from 'react-router-dom';
-
+import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { useUser } from 'common/contexts/UserContext';
 
 export function PrivateRoute() {
@@ -16,6 +14,7 @@ export function PrivateRoute() {
 
 export function AdminRoute() {
   const { user, isLoading } = useUser();
+  const location = useLocation();
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -24,6 +23,13 @@ export function AdminRoute() {
   // Check if user exists and has admin role
   if (!user) {
     return <Navigate to='/login' replace />;
+  }
+
+  // Special handling for /manageusers route
+  if (location.pathname === '/manageusers') {
+    if (user.position_title !== 'admin' || user.specialization !== 'super_admin') {
+      return <Navigate to='/admin' replace />;
+    }
   }
 
   // Redirect non-admin users to their appropriate page

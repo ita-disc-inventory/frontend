@@ -25,6 +25,7 @@ const RightAligned = styled.div`
   align-items: center;
   height: 100%;
   padding-right: 20px;
+  gap: 20px;
 `;
 
 const LogoPlaceholder = styled(Button.Invisible)`
@@ -32,6 +33,21 @@ const LogoPlaceholder = styled(Button.Invisible)`
   font-size: 1.7rem;
   font-weight: bold;
   font-family: monospace;
+`;
+
+const NavLink = styled.button`
+  background: none;
+  border: none;
+  color: inherit;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+  }
 `;
 
 export default function NavBar() {
@@ -57,11 +73,16 @@ export default function NavBar() {
       <>
         {user && ( // If user is logged in, show their name and settings icon
           <RightAligned>
+            {user.position_title === 'admin' && user.specialization === 'super_admin' && (
+              <NavLink onClick={() => navigate('/manageusers')}>
+                Manage Users
+              </NavLink>
+            )}
             <span id='userName_display'>
               {user.firstname} {user.lastname}
             </span>
             <span
-              style={{ marginLeft: '10px', cursor: 'pointer' }}
+              style={{ cursor: 'pointer' }}
               onClick={handleNavigation}
             >
               <svg

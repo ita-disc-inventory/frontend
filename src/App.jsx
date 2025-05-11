@@ -21,6 +21,7 @@ import NotFound from 'pages/not-found/NotFound';
 import TherapistHome from 'pages/therapist/TherapistHome';
 // import TherapistSettings from 'pages/therapist/TherapistSettings';
 import RoleBasedRedirect from 'common/components/routes/RoleBasedRedirect';
+import PeopleManagement from 'pages/admin/PeopleManagement';
 
 import './App.css';
 
@@ -36,6 +37,7 @@ export default function App() {
               {/* Role-protected routes */}
               <Route element={<AdminRoute />}>
                 <Route path='admin' element={<AdminHome />} />
+                <Route path='manageusers' element={<PeopleManagement />} />
               </Route>
               <Route element={<TherapistRoute />}>
                 <Route path='therapist' element={<TherapistHome />} />

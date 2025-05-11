@@ -5,7 +5,7 @@ import NewMonthlyBudget from 'common/components/admin_modals/NewMonthlyBudget';
 import { Title as BaseTitle } from 'common/components/form/Text';
 import OrderTable from 'common/components/OrderTable';
 import ProgramBudgetList from 'common/components/ProgramBudgetList';
-import NewOrderForm from 'common/components/table_pop_ups/NewOrderForm';
+
 
 const AdminHomePage = styled.div`
   flex: 1 0 0;
@@ -80,7 +80,6 @@ export default function AdminHome() {
             onConfirm={handleBudgetUpdate}
           />
         )}
-        <NewOrderForm />
       </ContentContainer>
       <OrderTable />
     </AdminHomePage>
