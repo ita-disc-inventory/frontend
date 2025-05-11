@@ -574,34 +574,68 @@ export default function OrderTable() {
 
   const handleExportExcel = () => {
     if (gridApi) {
-      const rowData = [];
-      // Use forEachNodeAfterFilterAndSort to respect both filtering and sorting
-      gridApi.forEachNodeAfterFilterAndSort((node) => {
-        if (node.data) {
-          const row = {};
-          gridApi.getColumns().forEach((column) => {
-            const colId = column.getColId();
-            let value = node.data[colId];
-
-            // Format specific columns
-            if (colId === 'price') {
-              value = value ? `$${value.toLocaleString()}` : '';
-            }
-            if (colId === 'requestDate') {
-              const [year, month, day] = value.split('-');
-              value = `${month}/${day}/${year}`;
-            }
-
-            row[column.getColDef().headerName] = value;
-          });
-          rowData.push(row);
+      // First get the CSV data using AG Grid's built-in CSV export
+      const csvData = gridApi.getDataAsCsv({
+        processCellCallback: (params) => {
+          // Handle special formatting for certain columns
+          if (params.column.getColId() === 'price') {
+            return params.value ? `$${params.value.toLocaleString()}` : '';
+          }
+          if (params.column.getColId() === 'requestDate') {
+            const [year, month, day] = params.value.split('-');
+            return `${month}/${day}/${year}`;
+          }
+          return params.value;
         }
       });
 
-      const worksheet = XLSX.utils.json_to_sheet(rowData);
+      // Convert CSV to worksheet
+      const worksheet = XLSX.read(csvData, { type: 'string' }).Sheets.Sheet1;
+
+      // Get the range of the worksheet
+      const range = XLSX.utils.decode_range(worksheet['!ref']);
+
+      // Find the requestDate column index
+      const headerRow = range.s.r;
+      let dateColIndex = -1;
+      for (let C = range.s.c; C <= range.e.c; ++C) {
+        const cell = worksheet[XLSX.utils.encode_cell({ r: headerRow, c: C })];
+        if (cell && cell.v === 'Request Date') {
+          dateColIndex = C;
+          break;
+        }
+      }
+
+      // Format date cells if we found the date column
+      if (dateColIndex !== -1) {
+        for (let R = range.s.r + 1; R <= range.e.r; ++R) {
+          const cell = worksheet[XLSX.utils.encode_cell({ r: R, c: dateColIndex })];
+          if (cell && cell.v) {
+            try {
+              // Get the original date from the row data
+              const rowData = gridApi.getRowNode(R - 1)?.data;
+              if (rowData && rowData.requestDate) {
+                const [year, month, day] = rowData.requestDate.split('-');
+                // Keep it as a formatted string
+                cell.t = 's';
+                cell.v = `${month}/${day}/${year}`;
+              }
+            } catch (error) {
+              console.error('Error formatting date:', error);
+              // Keep the original value if there's an error
+              cell.t = 's';
+            }
+          }
+        }
+      }
+
+      // Create a new workbook and append the worksheet
       const workbook = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(workbook, worksheet, 'Orders');
-      XLSX.writeFile(workbook, 'orders.xlsx');
+
+      // Generate XLSX file and trigger download
+      const timestamp = new Date().toISOString().slice(0, 10);
+      XLSX.writeFile(workbook, `orders-${timestamp}.xlsx`);
     }
     setShowExportDropdown(false);
   };
@@ -648,11 +682,8 @@ export default function OrderTable() {
           </DropdownContent>
         </ExportDropdown>
       </div>
-
-      <div
-        className='ag-theme-quartz'
-        style={{ height: 'calc(100vh - 300px)' }}
-      >
+      
+      <div className='ag-theme-quartz' style={{ height: 'calc(100vh - 300px)' }}>
         <AgGridReact
           rowData={rowData}
           defaultColDef={defaultColDef}
