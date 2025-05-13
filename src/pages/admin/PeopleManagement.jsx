@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import UsersList from '../../common/components/Users/UsersList'
+import UsersList from 'common/components/Users/UsersList/UsersList'
 
 const Container = styled.div`
   max-width: 1200px;
