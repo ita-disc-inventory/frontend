@@ -14,14 +14,12 @@ import {
   ModalButton,
   ErrorMessage,
   LoadingMessage,
-  StatusBadge
-} from "./UsersListStyles"
+  StatusBadge,
+} from './UsersListStyles';
 const SPECIALIZATION_OPTIONS = {
   admin: ['standard_admin', 'super_admin'],
-  therapist: ['art', 'music', 'dance', 'drama']
+  therapist: ['art', 'music', 'dance', 'drama'],
 };
-
-
 
 export default function UsersList() {
   const [users, setUsers] = useState([]);
@@ -82,11 +80,13 @@ export default function UsersList() {
         throw new Error('Failed to update specialization');
       }
 
-      setUsers(users.map(user => 
-        user.id === userId 
-          ? { ...user, specialization: newSpecialization }
-          : user
-      ));
+      setUsers(
+        users.map((user) =>
+          user.id === userId
+            ? { ...user, specialization: newSpecialization }
+            : user
+        )
+      );
     } catch (err) {
       console.error('Error updating specialization:', err);
       setError(err.message);
@@ -113,11 +113,11 @@ export default function UsersList() {
         throw new Error('Failed to update user status');
       }
 
-      setUsers(users.map(user => 
-        user.id === userId 
-          ? { ...user, approved: newStatus }
-          : user
-      ));
+      setUsers(
+        users.map((user) =>
+          user.id === userId ? { ...user, approved: newStatus } : user
+        )
+      );
       setDeleteModalOpen(false);
       setUserToDelete(null);
     } catch (err) {
@@ -170,13 +170,17 @@ export default function UsersList() {
               <Td>
                 <Select
                   value={user.specialization}
-                  onChange={(e) => handleSpecializationChange(user.id, e.target.value)}
+                  onChange={(e) =>
+                    handleSpecializationChange(user.id, e.target.value)
+                  }
                 >
-                  {SPECIALIZATION_OPTIONS[user.position_title]?.map((option) => (
-                    <option key={option} value={option}>
-                      {option}
-                    </option>
-                  ))}
+                  {SPECIALIZATION_OPTIONS[user.position_title]?.map(
+                    (option) => (
+                      <option key={option} value={option}>
+                        {option}
+                      </option>
+                    )
+                  )}
                 </Select>
               </Td>
               <Td>
@@ -187,22 +191,22 @@ export default function UsersList() {
               <Td>{format(new Date(user.created_at), 'MMM d, yyyy HH:mm')}</Td>
               <Td>
                 {user.approved ? (
-                  <ActionButton 
+                  <ActionButton
                     onClick={() => handleDeleteClick(user)}
                     $disabled={user.id === currentUser.id}
                     title={
-                      user.id === currentUser.id 
-                        ? "You cannot deactivate your own account" 
-                        : "Deactivate user"
+                      user.id === currentUser.id
+                        ? 'You cannot deactivate your own account'
+                        : 'Deactivate user'
                     }
                   >
                     Deactivate
                   </ActionButton>
                 ) : (
-                  <ActionButton 
+                  <ActionButton
                     onClick={() => handleReactivateClick(user)}
                     $reactivate
-                    title="Reactivate user"
+                    title='Reactivate user'
                   >
                     Reactivate
                   </ActionButton>
@@ -218,8 +222,9 @@ export default function UsersList() {
           <ModalContent>
             <h3>Confirm Deactivation</h3>
             <p>
-              Are you sure you want to deactivate {userToDelete?.username}? 
-              The user's approved status will be set to false, and the user will no longer be able to place orders.
+              Are you sure you want to deactivate {userToDelete?.username}? The
+              user's approved status will be set to false, and the user will no
+              longer be able to place orders.
             </p>
             <ModalButtons>
               <ModalButton onClick={() => setDeleteModalOpen(false)}>

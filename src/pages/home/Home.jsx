@@ -5,7 +5,7 @@ import styled from 'styled-components';
 
 import { Button } from 'common/components/form/Button';
 import { Subtitle, Title } from 'common/components/form/Text';
-import UsersList from 'common/components/Users/UsersList';
+import UsersList from 'common/components/Users/UsersList/UsersList'
 import { UserContext } from 'common/contexts/UserContext';
 
 const TextContainer = styled.div`
