@@ -223,8 +223,8 @@ export default function UsersList() {
             <h3>Confirm Deactivation</h3>
             <p>
               Are you sure you want to deactivate {userToDelete?.username}? The
-              user&apos;s approved status will be set to false, and the user
-              will no longer be able to place orders.
+              user's approved status will be set to false, and the user will no
+              longer be able to place orders.
             </p>
             <ModalButtons>
               <ModalButton onClick={() => setDeleteModalOpen(false)}>

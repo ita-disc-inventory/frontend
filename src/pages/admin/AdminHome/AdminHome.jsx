@@ -1,36 +1,12 @@
 import React, { useState } from 'react';
-import styled from 'styled-components';
-
+import {
+  AdminHomePage,
+  ContentContainer,
+  LeftAlignedTitle,
+} from './AdminHomeStyles';
 import NewMonthlyBudget from 'common/components/admin_modals/NewMonthlyBudget';
-import { Title as BaseTitle } from 'common/components/form/Text';
 import OrderTable from 'common/components/OrderTable';
 import ProgramBudgetList from 'common/components/ProgramBudgetList';
-
-
-const AdminHomePage = styled.div`
-  flex: 1 0 0;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  padding: 2rem;
-`;
-
-const ContentContainer = styled.div`
-  margin-left: 2vw;
-  margin-right: 2vw;
-  text-align: left;
-`;
-
-const LeftAlignedTitle = styled(BaseTitle)`
-  text-align: center;
-  font-size: 2rem;
-  font-weight: 700;
-  color: #333;
-  margin-bottom: 1.5rem;
-  padding-bottom: 0.5rem;
-  position: relative;
-`;
 
 export default function AdminHome() {
   const [showBudgetPopup, setShowBudgetPopup] = useState(false);
