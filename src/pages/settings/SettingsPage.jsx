@@ -16,7 +16,7 @@ import {
   LogoutButton,
   UpdateButton,
 } from './SettingsPageStyles';
-
+import LogoutModal from 'common/components/navigation/LogoutModal/LogoutModal';
 
 export const SingleSelectDropdown = ({ options, selectedOption, onChange }) => {
   const handleChange = (event) => {
@@ -43,6 +43,7 @@ SingleSelectDropdown.propTypes = {
 };
 
 export default function AdminSettings() {
+  const [isLogoutOpen, setIsLogoutOpen] = useState(false);
   const { user, setUser, logout } = useUser();
   const [specialization, setSpecialization] = useState('');
   const [showNewAdminPopup, setshowNewAdminPopup] = useState(false);
@@ -99,6 +100,11 @@ export default function AdminSettings() {
     }
   };
 
+  const handleLogout = async () => {
+    await logout();
+    setIsLogoutOpen(false);
+  };
+
   return (
     <SettingsPage>
       <TextContainer>
@@ -141,7 +147,14 @@ export default function AdminSettings() {
         {user.position_title === 'therapist' && (
           <UpdateButton onClick={handleUpdate}>Update Settings</UpdateButton>
         )}
-        <LogoutButton onClick={logout}>Logout</LogoutButton>
+        <LogoutButton onClick={() => setIsLogoutOpen(true)}>
+          Logout
+        </LogoutButton>
+        <LogoutModal
+          isOpen={isLogoutOpen}
+          onClose={() => setIsLogoutOpen(false)}
+          onLogout={handleLogout}
+        />
       </TextContainer>
       {/* Render the NewAdminConfirm popup */}
       {showNewAdminPopup && (

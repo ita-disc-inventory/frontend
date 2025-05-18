@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import YNPopup from 'common/components/templates/YNPopup';
+import YNPopup from 'common/components/templates/YNPopup/YNPopup';
 
 export default function ItemArrivedConfirm({ open, onCancel, onConfirm }) {
   return (

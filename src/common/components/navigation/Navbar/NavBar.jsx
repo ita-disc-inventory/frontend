@@ -2,53 +2,14 @@ import React from 'react';
 
 import 'App.css';
 import { useNavigate } from 'react-router-dom';
-import styled from 'styled-components';
-
-import { Button } from 'common/components/form/Button';
 import { useUser } from 'common/contexts/UserContext';
-
-const StyledNav = styled.nav`
-  display: flex;
-  background-color: #d9d9d920;
-  height: 60px;
-  width: 100%;
-  font-size: 20px;
-`;
-
-const LeftAligned = styled.div`
-  flex: 1;
-  display: flex;
-  gap: 10px;
-`;
-const RightAligned = styled.div`
-  display: flex;
-  align-items: center;
-  height: 100%;
-  padding-right: 20px;
-  gap: 20px;
-`;
-
-const LogoPlaceholder = styled(Button.Invisible)`
-  padding: 0;
-  font-size: 1.7rem;
-  font-weight: bold;
-  font-family: monospace;
-`;
-
-const NavLink = styled.button`
-  background: none;
-  border: none;
-  color: inherit;
-  font-size: 16px;
-  cursor: pointer;
-  padding: 8px 12px;
-  border-radius: 4px;
-  transition: background-color 0.2s;
-
-  &:hover {
-    background-color: rgba(0, 0, 0, 0.05);
-  }
-`;
+import {
+  StyledNav,
+  LeftAligned,
+  RightAligned,
+  LogoPlaceholder,
+  NavLink,
+} from './NavbarStyles';
 
 export default function NavBar() {
   const navigate = useNavigate();
@@ -73,18 +34,16 @@ export default function NavBar() {
       <>
         {user && ( // If user is logged in, show their name and settings icon
           <RightAligned>
-            {user.position_title === 'admin' && user.specialization === 'super_admin' && (
-              <NavLink onClick={() => navigate('/manageusers')}>
-                Manage Users
-              </NavLink>
-            )}
+            {user.position_title === 'admin' &&
+              user.specialization === 'super_admin' && (
+                <NavLink onClick={() => navigate('/manageusers')}>
+                  Manage Users
+                </NavLink>
+              )}
             <span id='userName_display'>
               {user.firstname} {user.lastname}
             </span>
-            <span
-              style={{ cursor: 'pointer' }}
-              onClick={handleNavigation}
-            >
+            <span style={{ cursor: 'pointer' }} onClick={handleNavigation}>
               <svg
                 width='16'
                 height='16'
@@ -105,7 +64,7 @@ export default function NavBar() {
                   r='4'
                   stroke='currentColor'
                   strokeWidth='1.5'
-                  strokeLine='round'
+                  strokeLinecap='round'
                   strokeLinejoin='round'
                 />
               </svg>

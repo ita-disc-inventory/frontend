@@ -8,7 +8,7 @@ import Dropdown, {
   StyledLabel,
   StyledSelectItem,
   StyledSeparator,
-} from 'common/components/templates/Dropdown';
+} from 'common/components/templates/Dropdown/Dropdown';
 import { ProgramOptions } from 'common/utils/ProgramOptions';
 
 // Styled components to match other form elements

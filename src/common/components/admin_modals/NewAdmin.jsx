@@ -1,4 +1,4 @@
-import FormPopup from 'common/components/templates/FormPopup';
+import FormPopup from 'common/components/templates/FormPopup/FormPopup';
 import PropTypes from 'prop-types';
 import { Dialog } from 'radix-ui';
 import React, { useState } from 'react';

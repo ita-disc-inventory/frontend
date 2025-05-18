@@ -1,5 +1,5 @@
 import React from 'react';
-import YNPopup from 'common/components/templates/YNPopup';
+import YNPopup from 'common/components/templates/YNPopup/YNPopup';
 
 export default function CancelOrder({ open, onConfirm, onCancel }) {
   return (

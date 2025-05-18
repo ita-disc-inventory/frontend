@@ -7,7 +7,7 @@ import Dropdown, {
   StyledLabel,
   StyledSelectItem,
   StyledSeparator,
-} from 'common/components/templates/Dropdown';
+} from 'common/components/templates/Dropdown/Dropdown';
 
 export default function StatusDropdown({ value, onStatusChange }) {
   const [status, setStatus] = useState(value || '');
