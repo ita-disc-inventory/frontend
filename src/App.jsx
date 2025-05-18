@@ -15,13 +15,13 @@ import Login from 'pages/account/Login';
 import RequestPasswordReset from 'pages/account/RequestPasswordReset';
 import ResetPassword from 'pages/account/ResetPassword';
 import SignUp from 'pages/account/SignUp';
-import AdminHome from 'pages/admin/AdminHome';
+import AdminHome from 'pages/admin/AdminHome/AdminHome';
 import SettingsPage from 'pages/settings/SettingsPage';
 import NotFound from 'pages/not-found/NotFound';
 import TherapistHome from 'pages/therapist/TherapistHome';
 // import TherapistSettings from 'pages/therapist/TherapistSettings';
 import RoleBasedRedirect from 'common/components/routes/RoleBasedRedirect';
-import PeopleManagement from 'pages/admin/PeopleManagement';
+import PeopleManagement from 'pages/admin/PeopleManagement/PeopleManagement';
 
 import './App.css';
 
