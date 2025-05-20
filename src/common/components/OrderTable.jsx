@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState, useRef } from 'react';
 import StatusChangeToast from './therapist_modals/StatusChangeToast';
-import { useUser } from 'common/contexts/UserContext'; // Import the user context
+import { useUser } from 'common/contexts/UserContext'; 
 import { OpenInNewWindowIcon } from '@radix-ui/react-icons';
 import CancelOrderButton from 'common/components/therapist_modals/CancelOrderButton';
 import CancelOrder from 'common/components/table_pop_ups/CancelOrder';
