@@ -4,14 +4,14 @@ import styled from 'styled-components';
 
 import { CustomInput } from 'common/components/form/CustomInput';
 import FormPopup from 'common/components/templates/FormPopup';
+import { useOrders } from 'common/contexts/OrderContext';
+import { useUser } from 'common/contexts/UserContext';
+import {
+  getProgramIdByName,
+  getProgramNameById,
+} from 'common/utils/ProgramMapping';
 import BudgetDropdown from './BudgetDropdown';
 import PriorityDropdown from './PriorityDropdown';
-import {
-  getProgramNameById,
-  getProgramIdByName,
-} from 'common/utils/ProgramMapping';
-import { useUser } from 'common/contexts/UserContext';
-import { useOrders } from 'common/contexts/OrderContext';
 
 const FormContainer = styled.div`
   display: flex;
@@ -238,6 +238,7 @@ export default function NewOrderForm() {
     document.querySelector('button[aria-label="Close"]')?.click();
     resetForm();
 
+    window.location.reload();
     return true; // Allow form submission
   };
 
