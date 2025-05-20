@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Dialog } from 'radix-ui';
 import styled from 'styled-components';
 
-import FormPopup from 'common/components/templates/FormPopup';
+import FormPopup from 'common/components/templates/FormPopup/FormPopup';
 
 const StyledButton = styled.button`
   display: inline-flex;

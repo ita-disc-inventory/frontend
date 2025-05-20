@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
-import FormPopup from 'common/components/templates/FormPopup';
+import FormPopup from 'common/components/templates/FormPopup/FormPopup';
 
 const TextAreaContainer = styled.div`
   margin-bottom: 15px;

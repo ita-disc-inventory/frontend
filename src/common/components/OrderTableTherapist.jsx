@@ -12,7 +12,7 @@ import 'ag-grid-community/styles/ag-theme-quartz.css';
 import { AgGridReact } from 'ag-grid-react';
 import styled from 'styled-components';
 
-import FormPopup from './templates/FormPopup';
+import FormPopup from './templates/FormPopup/FormPopup';
 import CancelOrder from './table_pop_ups/CancelOrder';
 import CancelOrderButton from './therapist_modals/CancelOrderButton';
 

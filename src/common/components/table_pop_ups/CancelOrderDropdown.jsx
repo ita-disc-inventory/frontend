@@ -7,15 +7,8 @@ import Dropdown, {
   StyledLabel,
   StyledSelectItem,
   StyledSeparator,
-} from 'common/components/templates/Dropdown';
+} from 'common/components/templates/Dropdown/Dropdown';
 
-// Accept props for a controlled component
-// Order of function calls when user changes the value of the dropdown:
-//  1. onValueChange callback
-//  2. handleStatusChange()
-//  3. setStatus(newValue) ==> schedules a re-render (async operation)
-//  4. onStatusChange(newValue)
-//  5. on next render, useEffect() hook runs
 export default function StatusDropdown({ value, onStatusChange }) {
   const [status, setStatus] = useState(value || '');
 
