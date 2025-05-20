@@ -6,7 +6,7 @@ import Dropdown, {
   StyledLabel,
   StyledSelectItem,
   StyledSeparator,
-} from 'common/components/templates/Dropdown';
+} from 'common/components/templates/Dropdown/Dropdown';
 import { Filters } from 'common/utils/Filters';
 
 export default function FilterDropdown() {

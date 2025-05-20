@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 
 import { CustomInput } from 'common/components/form/CustomInput';
-import FormPopup from 'common/components/templates/FormPopup';
+import FormPopup from 'common/components/templates/FormPopup/FormPopup';
 import { useOrders } from 'common/contexts/OrderContext';
 import { useUser } from 'common/contexts/UserContext';
 import {
@@ -190,7 +190,9 @@ export default function NewOrderForm() {
       `${process.env.REACT_APP_BACKEND_URL}/budget`
     );
     if (!budgetResponse.ok) {
-      throw new Error(`Could not get budgets! Status: ${response.status}`);
+      throw new Error(
+        `Could not get budgets! Status: ${budgetResponse.status}`
+      );
     }
     const programs = await budgetResponse.json();
     const selectedProgram = programs.find((p) => p.program_id === progId);

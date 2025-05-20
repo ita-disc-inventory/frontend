@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState, useRef } from 'react';
 import StatusChangeToast from './therapist_modals/StatusChangeToast';
-import { useUser } from 'common/contexts/UserContext'; // Import the user context
+import { useUser } from 'common/contexts/UserContext'; 
 import { OpenInNewWindowIcon } from '@radix-ui/react-icons';
 import CancelOrderButton from 'common/components/therapist_modals/CancelOrderButton';
 import CancelOrder from 'common/components/table_pop_ups/CancelOrder';
@@ -9,7 +9,6 @@ import {
   AllCommunityModule,
   ModuleRegistry,
   provideGlobalGridOptions,
-  GridApi,
 } from 'ag-grid-community';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
@@ -25,7 +24,7 @@ import OrderDenyConfirm from 'common/components/admin_modals/OrderDenyConfirm';
 import ReasonForDenial from 'common/components/admin_modals/ReasonForDenial';
 
 import StatusDropdown from './table_pop_ups/StatusDropdown';
-import FormPopup from './templates/FormPopup';
+import FormPopup from './templates/FormPopup/FormPopup';
 
 // Mark grids as legacy theme to fix AG Grid bug
 provideGlobalGridOptions({ theme: 'legacy' });
@@ -251,14 +250,6 @@ const checkValidStatusChange = (currStatus, newStatus) => {
   const isValid = statusMap[currStatus].includes(newStatus);
   return isValid;
 };
-
-const ButtonContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  gap: 10px;
-  margin-bottom: 10px;
-  justify-content: flex-end;
-`;
 
 const ExportButton = styled.button`
   background-color: #4caf50;

@@ -6,8 +6,8 @@ import styled from 'styled-components';
 import Dropdown, {
   StyledLabel,
   StyledSelectItem,
-} from 'common/components/templates/Dropdown';
-import FormPopup from 'common/components/templates/FormPopup';
+} from 'common/components/templates/Dropdown/Dropdown';
+import FormPopup from 'common/components/templates/FormPopup/FormPopup';
 
 const Programs = [
   {
