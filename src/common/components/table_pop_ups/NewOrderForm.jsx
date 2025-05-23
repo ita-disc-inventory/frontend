@@ -254,6 +254,24 @@ export default function NewOrderForm() {
       maxWidth='50%'
       defaultSubmit={true}
       buttonText='Place New Order'
+      styles={{
+        fontSize: '14px',
+        backgroundColor: 'var(--primary-green)',
+        color: 'var(--white)',
+        fontWeight: '500',
+        borderRadius: '5px',
+        transition: 'background-color 0.2s ease',
+        border: 'none',
+        boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+        '&:hover': {
+          backgroundColor: '#19d93d',
+          boxShadow: '0 2px 4px rgba(0, 0, 0, 0.15)',
+        },
+        '&:focus': {
+          outline: '2px solidrgb(11, 154, 37)',
+          outlineOffset: '2px',
+        },
+      }}
     >
       {formErrors.budget && (
         <ErrorMessage style={{ marginBottom: '15px' }}>
