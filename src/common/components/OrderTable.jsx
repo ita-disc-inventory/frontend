@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState, useRef } from 'react';
 import StatusChangeToast from './therapist_modals/StatusChangeToast';
-import { useUser } from 'common/contexts/UserContext'; 
+import { useUser } from 'common/contexts/UserContext';
 import { OpenInNewWindowIcon } from '@radix-ui/react-icons';
 import CancelOrderButton from 'common/components/therapist_modals/CancelOrderButton';
 import CancelOrder from 'common/components/table_pop_ups/CancelOrder';
@@ -488,9 +488,16 @@ export default function OrderTable() {
 
   // On initial render, load all order data into the table
   useEffect(() => {
-    fetch(`${process.env.REACT_APP_BACKEND_URL}/orders/`)
+    fetch(`${process.env.REACT_APP_BACKEND_URL}/orders/`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+      },
+    })
       .then((result) => result.json())
       .then((data) => {
+        console.log(data);
         // Check if data is an array
         if (!Array.isArray(data)) {
           console.error('Expected array but received:', typeof data);
@@ -577,7 +584,7 @@ export default function OrderTable() {
             return `${month}/${day}/${year}`;
           }
           return params.value;
-        }
+        },
       });
 
       // Convert CSV to worksheet
@@ -600,7 +607,8 @@ export default function OrderTable() {
       // Format date cells if we found the date column
       if (dateColIndex !== -1) {
         for (let R = range.s.r + 1; R <= range.e.r; ++R) {
-          const cell = worksheet[XLSX.utils.encode_cell({ r: R, c: dateColIndex })];
+          const cell =
+            worksheet[XLSX.utils.encode_cell({ r: R, c: dateColIndex })];
           if (cell && cell.v) {
             try {
               // Get the original date from the row data
@@ -673,8 +681,11 @@ export default function OrderTable() {
           </DropdownContent>
         </ExportDropdown>
       </div>
-      
-      <div className='ag-theme-quartz' style={{ height: 'calc(100vh - 300px)' }}>
+
+      <div
+        className='ag-theme-quartz'
+        style={{ height: 'calc(100vh - 300px)' }}
+      >
         <AgGridReact
           rowData={rowData}
           defaultColDef={defaultColDef}
@@ -702,8 +713,10 @@ export default function OrderTable() {
               {
                 method: 'PUT',
                 headers: {
+                  authorization: `Bearer ${localStorage.getItem('authToken')}`,
                   'Content-Type': 'application/json',
                 },
+                credentials: 'include',
               }
             );
             // If row is currently being edited (always should), update row data
@@ -795,11 +808,13 @@ export default function OrderTable() {
                 method: 'PUT',
                 headers: {
                   'Content-Type': 'application/json',
+                  authorization: `Bearer ${localStorage.getItem('authToken')}`,
                 },
                 // pass the denial reason from the popup if available:
                 body: JSON.stringify({
                   reason_for_denial: `${reason}`,
                 }),
+                credentials: 'include',
               }
             );
             // Update status to denied
@@ -848,7 +863,9 @@ export default function OrderTable() {
                 method: 'PUT',
                 headers: {
                   'Content-Type': 'application/json',
+                  authorization: `Bearer ${localStorage.getItem('authToken')}`,
                 },
+                credentials: 'include',
               }
             );
             // Update status to be arrived
@@ -897,7 +914,9 @@ export default function OrderTable() {
                 method: 'PUT',
                 headers: {
                   'Content-Type': 'application/json',
+                  authorization: `Bearer ${localStorage.getItem('authToken')}`,
                 },
+                credentials: 'include',
               }
             );
             if (pendingRow) {
@@ -945,7 +964,9 @@ export default function OrderTable() {
                 method: 'PUT',
                 headers: {
                   'Content-Type': 'application/json',
+                  authorization: `Bearer ${localStorage.getItem('authToken')}`,
                 },
+                credentials: 'include',
               }
             );
             if (pendingRow) {
@@ -993,7 +1014,11 @@ export default function OrderTable() {
                   method: 'DELETE',
                   headers: {
                     'Content-Type': 'application/json',
+                    authorization: `Bearer ${localStorage.getItem(
+                      'authToken'
+                    )}`,
                   },
+                  credentials: 'include',
                 }
               );
 

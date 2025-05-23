@@ -139,7 +139,14 @@ export default function NewOrderForm() {
     const userId = user.id;
 
     const budgetResponse = await fetch(
-      `${process.env.REACT_APP_BACKEND_URL}/budget`
+      `${process.env.REACT_APP_BACKEND_URL}/budget`,
+      {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+        },
+        credentials: 'include',
+      }
     );
     if (!budgetResponse.ok) {
       throw new Error(
@@ -163,7 +170,9 @@ export default function NewOrderForm() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('authToken')}`,
         },
+        credentials: 'include',
         body: JSON.stringify({
           order_link: link,
           price_per_unit: PPU,

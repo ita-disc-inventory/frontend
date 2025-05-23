@@ -44,7 +44,13 @@ export default function BudgetDropdown({ value, onProgramChange, required }) {
         setError(null);
 
         const response = await fetch(
-          `${process.env.REACT_APP_BACKEND_URL}/budget`
+          `${process.env.REACT_APP_BACKEND_URL}/budget`, {
+            method: 'GET',
+            credentials: 'include',
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+            },
+          }
         );
 
         if (!response.ok) {
