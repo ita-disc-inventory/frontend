@@ -1,13 +1,12 @@
 import * as Select from '@radix-ui/react-select';
-import { Dialog } from 'radix-ui';
-import React, { useEffect, useState } from 'react';
-import styled from 'styled-components';
-
 import Dropdown, {
   StyledLabel,
   StyledSelectItem,
 } from 'common/components/templates/Dropdown/Dropdown';
 import FormPopup from 'common/components/templates/FormPopup/FormPopup';
+import { Dialog } from 'radix-ui';
+import React, { useEffect, useState } from 'react';
+import { StyledButton } from './NewMonthlyBudgetStyles';
 
 const Programs = [
   {
@@ -23,25 +22,6 @@ const Programs = [
     ],
   },
 ];
-
-const StyledButton = styled.button`
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 4px;
-  padding: 0 15px;
-  font-size: 15px;
-  line-height: 1;
-  font-weight: 500;
-  height: 35px;
-  user-select: none;
-  background-color: var(--green-4);
-  color: var(--green-11);
-  outline-color: var(--green-7);
-  &:hover {
-    background-color: var(--green-5);
-  }
-`;
 
 export default function NewMonthlyBudget({ onCancel, onConfirm }) {
   const [budget, setBudget] = useState('$');
@@ -68,10 +48,7 @@ export default function NewMonthlyBudget({ onCancel, onConfirm }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Submit the budget value to the server or perform any action needed
-    // remove the dollar sign for processing
 
-    // check if budget is valid
     if (budget === '$' || programID === '') {
       alert('Please enter a valid budget and select a program.');
       return;
@@ -79,7 +56,7 @@ export default function NewMonthlyBudget({ onCancel, onConfirm }) {
     const numericBudget = parseFloat(budget.replace(/[$,]/g, ''));
     console.log('New Monthly Budget:', numericBudget);
     console.log('Selected Program:', programID);
-    // Reset the form
+
     setBudget('$');
     setProgramID('');
     onConfirm({ budget: numericBudget, programID });
@@ -93,6 +70,7 @@ export default function NewMonthlyBudget({ onCancel, onConfirm }) {
       }}
       title='New Monthly Budget'
       customForm={true}
+      description={null}
       noDesc={true}
     >
       <label
@@ -124,7 +102,7 @@ export default function NewMonthlyBudget({ onCancel, onConfirm }) {
         }}
       />
       <Dropdown
-        styles={{ border: '1px solid black' }} // pass an object not a string
+        styles={{ border: '1px solid black' }}
         placeholder='Program'
         onValueChange={handleProgramChange}
         value={programID}
