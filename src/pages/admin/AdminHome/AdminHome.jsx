@@ -20,6 +20,7 @@ export default function AdminHome() {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
+            Authorization: `Bearer ${localStorage.getItem('authToken')}`,
           },
           body: JSON.stringify({
             budget: budget,

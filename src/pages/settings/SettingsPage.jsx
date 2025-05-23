@@ -78,8 +78,10 @@ export default function AdminSettings() {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
+            Authorization: `Bearer ${localStorage.getItem('authToken')}`,
           },
           body: JSON.stringify({ specialization: specialization }),
+          credentials: 'include',
         }
       );
       console.log(response);

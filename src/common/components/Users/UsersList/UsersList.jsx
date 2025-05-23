@@ -75,6 +75,7 @@ export default function UsersList() {
           body: JSON.stringify({ specialization: newSpecialization }),
         }
       );
+      console.log('Response:', response);
 
       if (!response.ok) {
         throw new Error('Failed to update specialization');
@@ -96,6 +97,7 @@ export default function UsersList() {
   const handleStatusChange = async (userId, newStatus) => {
     try {
       const token = localStorage.getItem('authToken');
+
       const response = await fetch(
         `${process.env.REACT_APP_BACKEND_URL}/admin/users/${userId}`,
         {
@@ -223,7 +225,7 @@ export default function UsersList() {
             <h3>Confirm Deactivation</h3>
             <p>
               Are you sure you want to deactivate {userToDelete?.username}? The
-              user's approved status will be set to false, and the user will no
+              user`s approved status will be set to false, and the user will no
               longer be able to place orders.
             </p>
             <ModalButtons>

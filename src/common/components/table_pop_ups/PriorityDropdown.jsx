@@ -2,34 +2,18 @@ import React from 'react';
 
 import * as Select from '@radix-ui/react-select';
 import PropTypes from 'prop-types';
-import styled from 'styled-components';
 
 import Dropdown, {
   StyledLabel,
   StyledSelectItem,
   StyledSeparator,
 } from 'common/components/templates/Dropdown/Dropdown';
-
-// Styled components to match other form elements
-const DropdownContainer = styled.div`
-  margin-bottom: 15px;
-`;
-
-const InputLabel = styled.h3`
-  margin: 0;
-  text-align: left;
-  font-weight: normal;
-  font-size: 1rem;
-  margin-bottom: 4px;
-`;
-
-const LabelText = styled.span`
-  margin-right: 2px;
-`;
-
-const RequiredIndicator = styled.span`
-  color: red;
-`;
+import {
+  DropdownContainer,
+  InputLabel,
+  LabelText,
+  RequiredIndicator,
+} from './PriorityDropdownStyles';
 
 // Priority options
 const PriorityOptions = [

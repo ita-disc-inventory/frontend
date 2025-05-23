@@ -371,7 +371,14 @@ export default function OrderTable() {
   }, []);
   useEffect(() => {
     // Fetch orders data whenever orderVersion changes
-    fetch(`${process.env.REACT_APP_BACKEND_URL}/orders/`)
+    fetch(`${process.env.REACT_APP_BACKEND_URL}/orders/`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+      },
+      credentials: 'include',
+    })
       .then((result) => result.json())
       .then((data) => {
         // Check if data is an array
@@ -445,7 +452,9 @@ export default function OrderTable() {
                   method: 'DELETE',
                   headers: {
                     'Content-Type': 'application/json',
+                    Authorization: `Bearer ${localStorage.getItem('authToken')}`,
                   },
+                  credentials: 'include',
                 }
               );
 
