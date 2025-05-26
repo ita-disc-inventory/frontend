@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
 
-import styled from 'styled-components';
-
 import { CustomInput } from 'common/components/form/CustomInput';
 import FormPopup from 'common/components/templates/FormPopup/FormPopup';
 import { useOrders } from 'common/contexts/OrderContext';
@@ -11,55 +9,13 @@ import {
   getProgramNameById,
 } from 'common/utils/ProgramMapping';
 import BudgetDropdown from './BudgetDropdown';
+import {
+  Column,
+  ErrorMessage,
+  FormContainer,
+  TextAreaContainer,
+} from './NewOrderFormStyles';
 import PriorityDropdown from './PriorityDropdown';
-
-const FormContainer = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-
-  @media (max-width: 1400px) {
-    flex-direction: column;
-    gap: 0px;
-  }
-`;
-
-const Column = styled.div`
-  flex: 1 1 45%;
-
-  @media (max-width: 1400px) {
-    flex: 1 1 100%;
-  }
-`;
-
-const TextAreaContainer = styled.div`
-  margin-bottom: 15px;
-
-  label {
-    display: block;
-    font-size: 15px;
-    color: black;
-  }
-
-  textarea {
-    width: 100%;
-    border-radius: 4px;
-    padding: 10px;
-    font-size: 15px;
-    line-height: 1.5;
-    color: black;
-    border: solid 2px var(--text);
-    height: 100px;
-    resize: none;
-  }
-`;
-
-const ErrorMessage = styled.div`
-  color: red;
-  margin-top: -10px;
-  margin-bottom: 10px;
-  font-size: 14px;
-`;
 
 export default function NewOrderForm() {
   const [program, setProgram] = useState('');
@@ -77,7 +33,6 @@ export default function NewOrderForm() {
     if (selectedProgram) {
       const programName = getProgramNameById(selectedProgram);
       setProgram(programName);
-      // Clear any previous error for program
       setFormErrors((prev) => ({ ...prev, program: '' }));
     }
   };
@@ -127,7 +82,6 @@ export default function NewOrderForm() {
   const validateForm = () => {
     const errors = {};
 
-    // Check all required fields
     if (!program) {
       errors.program = 'Please select a program';
     }
@@ -174,10 +128,9 @@ export default function NewOrderForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validate form before submission
     if (!validateForm()) {
       console.log('Form validation failed', formErrors);
-      return false; // Prevent form submission
+      return false;
     }
 
     const reqDate = new Date().toISOString().split('T')[0].replace(/-/g, '-');
@@ -185,9 +138,15 @@ export default function NewOrderForm() {
     const progId = getProgramIdByName(program);
     const userId = user.id;
 
-    // Before submitting order to backend, need to validate budget
     const budgetResponse = await fetch(
-      `${process.env.REACT_APP_BACKEND_URL}/budget`
+      `${process.env.REACT_APP_BACKEND_URL}/budget`,
+      {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+        },
+        credentials: 'include',
+      }
     );
     if (!budgetResponse.ok) {
       throw new Error(
@@ -205,14 +164,15 @@ export default function NewOrderForm() {
       return false;
     }
 
-    // If valid budget, go through with form submission
     const response = await fetch(
       `${process.env.REACT_APP_BACKEND_URL}/therapist/order`,
       {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('authToken')}`,
         },
+        credentials: 'include',
         body: JSON.stringify({
           order_link: link,
           price_per_unit: PPU,
@@ -233,15 +193,11 @@ export default function NewOrderForm() {
       return false;
     }
 
-    // Refresh the orders table
     refreshOrders();
-
-    // Close the dialog by finding and clicking the close button
     document.querySelector('button[aria-label="Close"]')?.click();
     resetForm();
-
     window.location.reload();
-    return true; // Allow form submission
+    return true;
   };
 
   return (
@@ -280,7 +236,6 @@ export default function NewOrderForm() {
       )}
       <FormContainer>
         <Column>
-          {/* Program Budget Field - Required Dropdown */}
           <BudgetDropdown
             value={program}
             onProgramChange={handleProgramChange}
@@ -290,7 +245,6 @@ export default function NewOrderForm() {
             <ErrorMessage>{formErrors.program}</ErrorMessage>
           )}
 
-          {/* Item Name Field - Text Input */}
           <CustomInput.Text
             title='Item Name'
             value={itemName}
@@ -302,7 +256,6 @@ export default function NewOrderForm() {
             <ErrorMessage>{formErrors.itemName}</ErrorMessage>
           )}
 
-          {/* Link Field - Text Input */}
           <CustomInput.Text
             title='Link to Purchase Item'
             value={link}
@@ -312,7 +265,6 @@ export default function NewOrderForm() {
           />
           {formErrors.link && <ErrorMessage>{formErrors.link}</ErrorMessage>}
 
-          {/* PPU Field - Text Input */}
           <CustomInput.Text
             title='Price Per Unit'
             value={PPU}
@@ -323,7 +275,6 @@ export default function NewOrderForm() {
           {formErrors.PPU && <ErrorMessage>{formErrors.PPU}</ErrorMessage>}
         </Column>
         <Column>
-          {/* Quantity Field - Text Input */}
           <CustomInput.Text
             title='Quantity'
             value={quantity}
@@ -335,7 +286,6 @@ export default function NewOrderForm() {
             <ErrorMessage>{formErrors.quantity}</ErrorMessage>
           )}
 
-          {/* Priority Level Field - Dropdown */}
           <PriorityDropdown
             value={priorityLevel}
             onPriorityChange={handlePriorityLevelChange}
@@ -345,7 +295,6 @@ export default function NewOrderForm() {
             <ErrorMessage>{formErrors.priorityLevel}</ErrorMessage>
           )}
 
-          {/* Reason for Buying Field - Textarea */}
           <TextAreaContainer>
             <label
               htmlFor='reasonForBuying'
@@ -364,17 +313,6 @@ export default function NewOrderForm() {
               onChange={handleReasonForBuyingChange}
               placeholder='Enter reason for buying'
               required
-              style={{
-                width: '100%',
-                borderRadius: '4px',
-                padding: '10px',
-                fontSize: '15px',
-                lineHeight: '1.5',
-                color: 'black',
-                border: 'solid 2px var(--text)',
-                height: '100px',
-                resize: 'none',
-              }}
             />
             {formErrors.reasonForBuying && (
               <ErrorMessage>{formErrors.reasonForBuying}</ErrorMessage>

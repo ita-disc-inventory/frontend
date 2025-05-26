@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 
 import * as Select from '@radix-ui/react-select';
 import PropTypes from 'prop-types';
-import styled from 'styled-components';
 
 import Dropdown, {
   StyledLabel,
@@ -10,36 +9,13 @@ import Dropdown, {
   StyledSeparator,
 } from 'common/components/templates/Dropdown/Dropdown';
 import { ProgramOptions } from 'common/utils/ProgramOptions';
-
-// Styled components to match other form elements
-const DropdownContainer = styled.div`
-  margin-bottom: 25px;
-`;
-
-const InputLabel = styled.h3`
-  margin: 0;
-  text-align: left;
-  font-weight: normal;
-  font-size: 1rem;
-  margin-bottom: 4px;
-`;
-
-const LabelText = styled.span`
-  margin-right: 2px;
-`;
-
-const RequiredIndicator = styled.span`
-  color: red;
-`;
-
-const BudgetText = styled.h6`
-  position: absolute;
-  left: 35px;
-  padding: 0;
-  color: blue;
-  font-size: 14px;
-  font-weight: normal;
-`;
+import {
+  BudgetText,
+  DropdownContainer,
+  InputLabel,
+  LabelText,
+  RequiredIndicator,
+} from './BudgetDropdownStyles';
 
 export default function BudgetDropdown({ value, onProgramChange, required }) {
   const [program, setProgram] = useState(value || '');
@@ -68,7 +44,13 @@ export default function BudgetDropdown({ value, onProgramChange, required }) {
         setError(null);
 
         const response = await fetch(
-          `${process.env.REACT_APP_BACKEND_URL}/budget`
+          `${process.env.REACT_APP_BACKEND_URL}/budget`, {
+            method: 'GET',
+            credentials: 'include',
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+            },
+          }
         );
 
         if (!response.ok) {

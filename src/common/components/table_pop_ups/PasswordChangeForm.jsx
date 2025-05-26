@@ -1,16 +1,8 @@
 import React from 'react';
 
-import styled from 'styled-components';
-
+import FormPopup from 'common/components/templates/FormPopup/FormPopup';
 import ResetPassword from 'pages/account/ResetPassword';
-
-import FormPopup from '../templates/FormPopup/FormPopup';
-
-const ButtonContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  margin-top: 20px;
-`;
+import { ButtonContainer } from './PasswordChangeFormStyles';
 
 export default function PasswordChangeForm() {
   return (
