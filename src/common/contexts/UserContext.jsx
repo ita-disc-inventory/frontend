@@ -114,11 +114,14 @@ export function UserProvider({ children }) {
 
   const requestPasswordReset = async (email) => {
     try {
+      const access_token = localStorage.getItem('authToken');
       const response = await fetch(buildUrl('/auth/reset-password'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${access_token}`,
         },
+        credentials: 'include',
         body: JSON.stringify({ email }),
       });
 
