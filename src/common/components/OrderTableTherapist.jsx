@@ -353,7 +353,7 @@ export default function OrderTable() {
     },
     {
       field: 'button',
-      headerName: 'Button',
+      headerName: '',
       cellRenderer: CancelOrderRenderer,
     },
   ]);
