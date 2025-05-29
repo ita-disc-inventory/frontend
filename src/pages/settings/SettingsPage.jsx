@@ -140,7 +140,7 @@ export default function AdminSettings() {
         )}
         {user.specialization === 'super_admin' && (
           <AddAdminButton onClick={handleAddAdminClick}>
-            Add a admin
+            Add Admin
           </AddAdminButton>
         )}
         <ChangePasswordButton onClick={handlePasswordChange}>
