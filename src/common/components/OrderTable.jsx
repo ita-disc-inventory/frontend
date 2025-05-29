@@ -13,7 +13,6 @@ import {
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
 import { AgGridReact } from 'ag-grid-react';
-import styled from 'styled-components';
 import * as XLSX from 'xlsx';
 
 import ItemArrivedConfirm from 'common/components/admin_modals/ItemArrivedConfirm';
@@ -25,30 +24,18 @@ import ReasonForDenial from 'common/components/admin_modals/ReasonForDenial';
 
 import StatusDropdown from './table_pop_ups/StatusDropdown';
 import FormPopup from './templates/FormPopup/FormPopup';
+import {
+  ExportButton,
+  ExportDropdown,
+  DropdownContent,
+  DropdownItem,
+  StyledLink,
+} from './OrderTableStyles';
 
 // Mark grids as legacy theme to fix AG Grid bug
 provideGlobalGridOptions({ theme: 'legacy' });
 
 ModuleRegistry.registerModules([AllCommunityModule]);
-
-const StyledLink = styled.a`
-  text-decoration: underline;
-  &:link {
-    color: blue;
-  }
-
-  &:visited {
-    color: blue;
-  }
-
-  &:hover {
-    color: darkblue;
-  }
-
-  &:active {
-    color: purple;
-  }
-`;
 
 const EditableCell = (props) => {
   const [value, setValue] = useState(props.value);
@@ -196,11 +183,16 @@ const descriptionRenderer = (params) => {
 
 // Responsible for formatting the 'Link' column
 const linkRenderer = (params) => {
+  let url = params.value;
+  // If the value does not start with http:// or https://, prepend https://
+  if (url && !/^https?:\/\//i.test(url)) {
+    url = 'https://' + url;
+  }
   return (
     <span>
       {/* Use basic StyledLink component (defined at top of doc) for styling.
       Link remains blue after visiting, subject to change in future. */}
-      <StyledLink href={params.value} target='_blank' rel='noreferrer'>
+      <StyledLink href={url} target='_blank' rel='noreferrer'>
         Link
       </StyledLink>
     </span>
@@ -250,49 +242,6 @@ const checkValidStatusChange = (currStatus, newStatus) => {
   const isValid = statusMap[currStatus].includes(newStatus);
   return isValid;
 };
-
-const ExportButton = styled.button`
-  background-color: #4caf50;
-  border: none;
-  color: white;
-  padding: 7px 14px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 14px;
-  cursor: pointer;
-  border-radius: 4px;
-  &:hover {
-    background-color: #45a049;
-  }
-`;
-
-const ExportDropdown = styled.div`
-  position: relative;
-  display: inline-block;
-`;
-
-const DropdownContent = styled.div`
-  display: ${(props) => (props.isVisible ? 'block' : 'none')};
-  position: absolute;
-  right: 0;
-  background-color: #f9f9f9;
-  min-width: 160px;
-  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-  z-index: 1;
-  border-radius: 4px;
-`;
-
-const DropdownItem = styled.a`
-  color: black;
-  padding: 12px 16px;
-  text-decoration: none;
-  display: block;
-  cursor: pointer;
-  &:hover {
-    background-color: #f1f1f1;
-  }
-`;
 
 export default function OrderTable() {
   const { user } = useUser();

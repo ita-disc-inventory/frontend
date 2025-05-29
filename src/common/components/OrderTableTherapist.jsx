@@ -167,11 +167,16 @@ const descriptionRenderer = (params) => {
 
 // Responsible for formatting the 'Link' column
 const linkRenderer = (params) => {
+  let url = params.value;
+  // If the value does not start with http:// or https://, prepend https://
+  if (url && !/^https?:\/\//i.test(url)) {
+    url = 'https://' + url;
+  }
   return (
     <span>
       {/* Use basic StyledLink component (defined at top of doc) for styling.
       Link remains blue after visiting, subject to change in future. */}
-      <StyledLink href={params.value} target='_blank' rel='noreferrer'>
+      <StyledLink href={url} target='_blank' rel='noreferrer'>
         Link
       </StyledLink>
     </span>
