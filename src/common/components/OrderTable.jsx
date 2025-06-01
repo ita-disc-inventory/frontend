@@ -51,6 +51,7 @@ const EditableCell = (props) => {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
         },
         body: JSON.stringify({ tracking_number: value }),
       }
