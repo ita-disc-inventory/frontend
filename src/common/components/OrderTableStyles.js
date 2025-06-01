@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 const ExportButton = styled.button`
-  background-color: #4caf50;
+  background-color: var(--green-9, #2e7d32);
   border: none;
   color: white;
   padding: 7px 14px;
@@ -8,6 +8,7 @@ const ExportButton = styled.button`
   text-decoration: none;
   display: inline-block;
   font-size: 14px;
+  font-weight: 500;
   cursor: pointer;
   border-radius: 4px;
   &:hover {
