@@ -171,9 +171,10 @@ export default function AdminSettings() {
                   method: 'POST',
                   headers: {
                     'Content-Type': 'application/json',
+                    authorization: `Bearer ${localStorage.getItem('authToken')}`,
                   },
-                  body: JSON.stringify(adminData),
                   credentials: 'include',
+                  body: JSON.stringify(adminData),
                 }
               );
 
