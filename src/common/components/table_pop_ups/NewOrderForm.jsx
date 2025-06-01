@@ -212,7 +212,7 @@ export default function NewOrderForm() {
       buttonText='Place New Order'
       styles={{
         fontSize: '14px',
-        backgroundColor: 'var(--primary-green)',
+        backgroundColor: 'var(--status-approved-green)',
         color: 'var(--white)',
         fontWeight: '500',
         borderRadius: '5px',
