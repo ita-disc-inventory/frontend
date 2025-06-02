@@ -52,7 +52,7 @@ const EditableCell = (props) => {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+          Authorization: `Bearer ${localStorage.getItem('authToken')}`,
         },
         body: JSON.stringify({ tracking_number: value }),
       }
@@ -660,7 +660,7 @@ export default function OrderTable() {
           open={true}
           // If user clicks 'Confirm' for switching status to 'Approved,' then the backend is updated
           onApprove={async () => {
-            await fetchWithRetries(
+            const response = await fetchWithRetries(
               `${process.env.REACT_APP_BACKEND_URL}/admin/approve/${pendingRow.params.data.orderId}`,
               {
                 method: 'PUT',
@@ -671,6 +671,13 @@ export default function OrderTable() {
                 credentials: 'include',
               }
             );
+            if (!response.ok) {
+              const errorData = await response.json();
+              console.error('Error approving order:', errorData);
+              setToastMsg('Failed to approve order. Please try again later.');
+              setShowToast(true);
+              return;
+            }
             // If row is currently being edited (always should), update row data
             if (pendingRow) {
               const updatedData = rowData.map((row) =>

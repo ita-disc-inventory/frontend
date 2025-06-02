@@ -8,7 +8,9 @@ export async function fetchWithRetries(url, options = {}, retries = 3, delay = 1
                 if (attempt < retries) {
                     await new Promise(res => setTimeout(res, delay));
                     continue;
-                }
+                } else {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                  }
                 
             }
             return response;
