@@ -31,6 +31,7 @@ import {
   DropdownItem,
   StyledLink,
 } from './OrderTableStyles';
+import { fetchWithRetries } from './utils';
 
 // Mark grids as legacy theme to fix AG Grid bug
 provideGlobalGridOptions({ theme: 'legacy' });
@@ -45,7 +46,7 @@ const EditableCell = (props) => {
   };
 
   const onBlur = async () => {
-    await fetch(
+    await fetchWithRetries(
       `${process.env.REACT_APP_BACKEND_URL}/admin/tracking/${props.data.orderId}`,
       {
         method: 'PUT',
@@ -438,12 +439,13 @@ export default function OrderTable() {
 
   // On initial render, load all order data into the table
   useEffect(() => {
-    fetch(`${process.env.REACT_APP_BACKEND_URL}/orders/`, {
+    fetchWithRetries(`${process.env.REACT_APP_BACKEND_URL}/orders/`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${localStorage.getItem('authToken')}`,
       },
+      credentials: 'include',
     })
       .then((result) => result.json())
       .then((data) => {
@@ -658,7 +660,7 @@ export default function OrderTable() {
           open={true}
           // If user clicks 'Confirm' for switching status to 'Approved,' then the backend is updated
           onApprove={async () => {
-            await fetch(
+            await fetchWithRetries(
               `${process.env.REACT_APP_BACKEND_URL}/admin/approve/${pendingRow.params.data.orderId}`,
               {
                 method: 'PUT',
@@ -752,7 +754,7 @@ export default function OrderTable() {
           open={true}
           // When user submits reason for denial, the backend is updated to reflect new 'Denied' order
           onSubmit={async (reason) => {
-            await fetch(
+            await fetchWithRetries(
               `${process.env.REACT_APP_BACKEND_URL}/admin/deny/${pendingRow.params.data.orderId}`,
               {
                 method: 'PUT',
@@ -807,7 +809,7 @@ export default function OrderTable() {
           open={true}
           // When user submits confirms that the order has arrived, update the backend
           onConfirm={async () => {
-            await fetch(
+            await fetchWithRetries(
               `${process.env.REACT_APP_BACKEND_URL}/admin/arrived/${pendingRow.params.data.orderId}`,
               {
                 method: 'PUT',
@@ -858,7 +860,7 @@ export default function OrderTable() {
           open={true}
           // When user submits confirms that the order has arrived, update the backend
           onConfirm={async () => {
-            await fetch(
+            await fetchWithRetries(
               `${process.env.REACT_APP_BACKEND_URL}/admin/ready/${pendingRow.params.data.orderId}`,
               {
                 method: 'PUT',
@@ -908,7 +910,7 @@ export default function OrderTable() {
           open={true}
           // When user submits confirms that the order has arrived, update the backend
           onConfirm={async () => {
-            await fetch(
+            await fetchWithRetries(
               `${process.env.REACT_APP_BACKEND_URL}/admin/revert/${pendingRow.params.data.orderId}`,
               {
                 method: 'PUT',
@@ -958,7 +960,7 @@ export default function OrderTable() {
           onConfirm={async () => {
             // Fix 2: Add API call to backend
             try {
-              await fetch(
+              await fetchWithRetries(
                 `${process.env.REACT_APP_BACKEND_URL}/therapist/order/${pendingRow.params.data.orderId}`,
                 {
                   method: 'DELETE',
