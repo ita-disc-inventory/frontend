@@ -3,6 +3,14 @@ export async function fetchWithRetries(url, options = {}, retries = 3, delay = 5
         try {
             const response = await fetch(url, options);
             if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            else if (response.status === 204) {
+                // retry
+                if (attempt < retries) {
+                    await new Promise(res => setTimeout(res, delay));
+                    continue;
+                }
+                
+            }
             return response;
         } catch (err) {
             if (attempt === retries) throw err;
