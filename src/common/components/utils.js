@@ -1,4 +1,4 @@
-export async function fetchWithRetries(url, options = {}, retries = 3, delay = 500) {
+export async function fetchWithRetries(url, options = {}, retries = 3, delay = 1000) {
     for (let attempt = 1; attempt <= retries; attempt++) {
         try {
             const response = await fetch(url, options);
